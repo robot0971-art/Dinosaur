@@ -1,0 +1,30 @@
+# Unity generated folders
+/Library/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/Logs/
+/UserSettings/
+
+# IDE and generated project files
+/.vs/
+/.vscode/
+*.csproj
+*.sln
+*.slnx
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# Unity cache and crash output
+/MemoryCaptures/
+/Recordings/
+/sysinfo.txt
+*.stackdump
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
