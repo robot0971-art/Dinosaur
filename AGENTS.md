@@ -44,6 +44,9 @@
 - 씬 안에서 직접 연결해야 하는 Unity 컴포넌트는 `[SerializeField]`를 사용한다.
 - UI, 사운드, 이펙트, 카메라 반응은 EventBus를 통해 반응한다.
 - 먹기 판정, EXP 계산, 레벨업, 게임오버 판정은 이벤트로 숨기지 말고 직접 메서드 호출로 처리한다.
+- 이 프로젝트는 확장성과 테스트 용이성을 위해 DI 패턴을 사용한다.
+- 데이터, 엑셀 컨버터, 사운드 같은 매니저급 시스템은 가능한 인터페이스를 통해 참조한다.
+- 직접적인 `Instance` 호출이나 전역 싱글톤 접근은 지양한다.
 
 ## 추천 폴더 구조
 
@@ -201,6 +204,7 @@ Assets/Scripts/Infrastructure/DI/GameLifetimeScope.cs
 - `SpawnRule`
 - `GameStateController`
 - `DinoDataRepository`
+- `IDataService` / `ExcelDataService`
 
 씬 컴포넌트 예시:
 
@@ -340,11 +344,27 @@ Lv. 17~20 거리 10, 높이 7
 Tools/Dino Game/Excel Converter
 ```
 
+NPOI 기반 데이터 메뉴:
+
+```text
+Tools/Dino Game/Data/Create Dino Excel Template
+Tools/Dino Game/Data/Convert Dino Excel To ScriptableObject
+```
+
 생성 데이터 위치:
 
 ```text
 Assets/GameData/Generated
 ```
+
+데이터 서비스 규칙:
+
+- 엑셀 데이터 로직은 `IDataService` 인터페이스 뒤에 둔다.
+- 기본 구현체는 `ExcelDataService`다.
+- `ExcelDataService`는 NPOI로 `.xlsx` 파일을 읽고 쓴다.
+- 에디터 메뉴는 진입점일 뿐이고 실제 로직은 데이터 서비스에 둔다.
+- 엑셀에서 변환된 런타임 데이터는 `DinoDatabase` ScriptableObject로 관리한다.
+- 에디터 전용 `AssetDatabase` 코드는 `Assets/Editor` 아래에만 둔다.
 
 데이터 규칙:
 

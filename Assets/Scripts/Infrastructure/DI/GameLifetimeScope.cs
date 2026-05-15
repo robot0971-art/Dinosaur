@@ -4,6 +4,7 @@ using DinoGrow.Core.Combat;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Gameplay.Player;
+using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.UI;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterInstance(new PlayerProgress());
         builder.Register<GameStateController>(Lifetime.Singleton);
         builder.Register<StageRule>(Lifetime.Singleton);
+        builder.Register<IDataService, ExcelDataService>(Lifetime.Singleton);
 
         if (player != null)
         {
