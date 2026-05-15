@@ -15,6 +15,7 @@
 *.slnx
 *.user
 *.userprefs
+*.lscache
 *.pidb
 *.booproj
 
