@@ -494,14 +494,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c190469ab51b77b4a9c6e59b1b6eae76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Player.PlayerDinoController
+  moveSpeed: 15
+  sprintMultiplier: 2
   turnSpeed: 540
   body: {fileID: 376135607}
   visualRoot: {fileID: 376135611}
   cameraTransform: {fileID: 0}
   levelText: {fileID: 0}
-  levelTextOffset: {x: 0, y: 2.4, z: 0}
-  levelTextCharacterSize: 0.22
-  levelTextFontSize: 72
+  levelTextOffset: {x: 0, y: 1.55, z: 0}
+  levelTextCharacterSize: 0.045
+  levelTextFontSize: 36
   levelTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!54 &376135607
 Rigidbody:
@@ -861,7 +863,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.46054, y: -0, z: -33.97773}
-  m_LocalScale: {x: 50, y: 5, z: 50}
+  m_LocalScale: {x: 25, y: 5, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1125,13 +1127,13 @@ MonoBehaviour:
   - {fileID: 626844991403845606, guid: 6fbbcb4185b0825458ee25b222248504, type: 3}
   spawnParent: {fileID: 849906959}
   spawnCenter: {x: -5.46054, y: 0, z: -33.97773}
-  spawnSize: {x: 450, y: 450}
+  spawnSize: {x: 225, y: 225}
   spawnY: 0.75
-  spawnCount: 18
-  minDistanceFromPlayer: 10
+  spawnCount: 30
+  minDistanceFromPlayer: 7
   player: {fileID: 376135611}
-  minWanderSpeed: 0.8
-  maxWanderSpeed: 1.8
+  minWanderSpeed: 2.4
+  maxWanderSpeed: 4.2
 --- !u!4 &1028698014
 Transform:
   m_ObjectHideFlags: 0
@@ -1267,63 +1269,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1001 &1554515913
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.27961
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.96726
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.41451
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2464073378406765124, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5043718322182008365, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-      propertyPath: m_Name
-      value: Enemy_Lv1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
 --- !u!1 &1660015138
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,7 +1349,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: e8a24f46d334d804292b7fe0f463d79e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1687,4 +1632,3 @@ SceneRoots:
   - {fileID: 1521132394}
   - {fileID: 849906959}
   - {fileID: 1028698014}
-  - {fileID: 1554515913}

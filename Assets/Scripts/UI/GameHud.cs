@@ -94,6 +94,8 @@ namespace DinoGrow.UI
         {
             if (statusText != null)
             {
+                statusText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                statusText.verticalOverflow = VerticalWrapMode.Overflow;
                 statusText.text = value;
                 statusText.enabled = !string.IsNullOrEmpty(value);
             }

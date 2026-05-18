@@ -1,24 +1,36 @@
 using UnityEngine;
+using DinoGrow.Gameplay.Player;
 
 namespace DinoGrow.Gameplay.Enemy
 {
     public sealed class EnemyWanderMovement : MonoBehaviour
     {
-        [SerializeField] private float moveSpeed = 1.4f;
-        [SerializeField] private float turnSpeed = 240f;
-        [SerializeField] private float directionChangeInterval = 2.5f;
+        [SerializeField] private float moveSpeed = 3.2f;
+        [SerializeField] private float turnSpeed = 420f;
+        [SerializeField] private float directionChangeInterval = 1.6f;
+        [SerializeField] private float fleeDetectDistance = 18f;
+        [SerializeField] private float fleeSpeedMultiplier = 1.65f;
         [SerializeField] private Vector3 areaCenter;
         [SerializeField] private Vector2 areaSize = new(80f, 80f);
 
+        private DinoEnemy enemy;
+        private Transform player;
+        private PlayerDinoController playerController;
         private Vector3 moveDirection;
         private float nextDirectionTime;
 
-        public void Configure(Vector3 center, Vector2 size, float speed)
+        public void Configure(Vector3 center, Vector2 size, float speed, Transform playerTransform)
         {
             areaCenter = center;
             areaSize = size;
             moveSpeed = speed;
+            SetPlayer(playerTransform);
             PickNewDirection();
+        }
+
+        private void Awake()
+        {
+            enemy = GetComponent<DinoEnemy>();
         }
 
         private void Start()
@@ -28,14 +40,68 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void Update()
         {
+            if (TryGetFleeDirection(out var fleeDirection))
+            {
+                Move(fleeDirection, moveSpeed * fleeSpeedMultiplier);
+                return;
+            }
+
             if (Time.time >= nextDirectionTime || IsNearAreaEdge())
             {
                 PickNewDirection();
             }
 
-            var targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            Move(moveDirection, moveSpeed);
+        }
+
+        private void SetPlayer(Transform playerTransform)
+        {
+            player = playerTransform;
+            playerController = player != null ? player.GetComponent<PlayerDinoController>() : null;
+        }
+
+        private bool TryGetFleeDirection(out Vector3 fleeDirection)
+        {
+            fleeDirection = Vector3.zero;
+            if (enemy == null || player == null || playerController == null)
+            {
+                return false;
+            }
+
+            if (enemy.Level >= playerController.Level)
+            {
+                return false;
+            }
+
+            var awayFromPlayer = transform.position - player.position;
+            awayFromPlayer.y = 0f;
+            if (awayFromPlayer.sqrMagnitude > fleeDetectDistance * fleeDetectDistance)
+            {
+                return false;
+            }
+
+            if (awayFromPlayer.sqrMagnitude <= 0.001f)
+            {
+                awayFromPlayer = Random.onUnitSphere;
+                awayFromPlayer.y = 0f;
+            }
+
+            fleeDirection = awayFromPlayer.normalized;
+            moveDirection = fleeDirection;
+            nextDirectionTime = Time.time + directionChangeInterval;
+            return true;
+        }
+
+        private void Move(Vector3 direction, float speed)
+        {
+            if (direction.sqrMagnitude <= 0.001f)
+            {
+                return;
+            }
+
+            var targetRotation = Quaternion.LookRotation(direction, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-            transform.position += moveDirection * (moveSpeed * Time.deltaTime);
+            transform.position += direction * (speed * Time.deltaTime);
             ClampToArea();
         }
 

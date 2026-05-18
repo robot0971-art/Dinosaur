@@ -10,11 +10,11 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private Vector3 spawnCenter;
         [SerializeField] private Vector2 spawnSize = new(80f, 80f);
         [SerializeField] private float spawnY = 0.75f;
-        [SerializeField] private int spawnCount = 18;
+        [SerializeField] private int spawnCount = 24;
         [SerializeField] private float minDistanceFromPlayer = 8f;
         [SerializeField] private Transform player;
-        [SerializeField] private float minWanderSpeed = 0.8f;
-        [SerializeField] private float maxWanderSpeed = 1.8f;
+        [SerializeField] private float minWanderSpeed = 2.4f;
+        [SerializeField] private float maxWanderSpeed = 4.2f;
 
         private readonly List<DinoEnemy> spawnedEnemies = new();
 
@@ -58,7 +58,7 @@ namespace DinoGrow.Gameplay.Enemy
                 wander = enemy.gameObject.AddComponent<EnemyWanderMovement>();
             }
 
-            wander.Configure(spawnCenter, spawnSize, Random.Range(minWanderSpeed, maxWanderSpeed));
+            wander.Configure(spawnCenter, spawnSize, Random.Range(minWanderSpeed, maxWanderSpeed), player);
             spawnedEnemies.Add(enemy);
         }
 

@@ -12,15 +12,16 @@ namespace DinoGrow.Gameplay.Player
     [RequireComponent(typeof(Rigidbody))]
     public sealed class PlayerDinoController : MonoBehaviour
     {
-        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float moveSpeed = 9f;
+        [SerializeField] private float sprintMultiplier = 1.6f;
         [SerializeField] private float turnSpeed = 540f;
         [SerializeField] private Rigidbody body;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Transform cameraTransform;
         [SerializeField] private TextMesh levelText;
-        [SerializeField] private Vector3 levelTextOffset = new Vector3(0f, 2.4f, 0f);
-        [SerializeField] private float levelTextCharacterSize = 0.22f;
-        [SerializeField] private int levelTextFontSize = 72;
+        [SerializeField] private Vector3 levelTextOffset = new Vector3(0f, 1.55f, 0f);
+        [SerializeField] private float levelTextCharacterSize = 0.045f;
+        [SerializeField] private int levelTextFontSize = 36;
         [SerializeField] private Color levelTextColor = Color.white;
 
         private EatResolver eatResolver;
@@ -30,6 +31,7 @@ namespace DinoGrow.Gameplay.Player
         private StageRule stageRule;
         private GameEventBus eventBus;
         private Vector2 rotateInput;
+        private bool isSprinting;
         private Transform levelTextTransform;
         private bool createdLevelText;
 
@@ -97,6 +99,7 @@ namespace DinoGrow.Gameplay.Player
             }
 
             rotateInput = ReadRotateInput();
+            isSprinting = IsSprintPressed();
         }
 
         private void LateUpdate()
@@ -120,9 +123,9 @@ namespace DinoGrow.Gameplay.Player
 
                 // 캐릭터 이동: 카메라 기준 방향으로 이동
                 body.linearVelocity = new Vector3(
-                    targetDirection.x * moveSpeed,
+                    targetDirection.x * GetCurrentMoveSpeed(),
                     body.linearVelocity.y,
-                    targetDirection.z * moveSpeed
+                    targetDirection.z * GetCurrentMoveSpeed()
                 );
             }
             else
@@ -225,6 +228,17 @@ namespace DinoGrow.Gameplay.Player
             return input.sqrMagnitude > 1f ? input.normalized : input;
         }
 
+        private static bool IsSprintPressed()
+        {
+            var keyboard = Keyboard.current;
+            return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
+        }
+
+        private float GetCurrentMoveSpeed()
+        {
+            return isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
+        }
+
         private bool TryGetCameraRelativeDirection(Vector2 input, out Vector3 direction)
         {
             direction = Vector3.zero;
@@ -278,9 +292,7 @@ namespace DinoGrow.Gameplay.Player
                 return;
             }
 
-            levelText.text = progress.IsMaxLevel
-                ? $"Lv. {progress.Level}\nEXP MAX"
-                : $"Lv. {progress.Level}\nEXP {progress.CurrentExp}/{progress.ExpToLevelUp}";
+            levelText.text = progress.IsMaxLevel ? $"Lv. {progress.Level} MAX" : $"Lv. {progress.Level}";
         }
 
         private void UpdateLevelTextTransform()
