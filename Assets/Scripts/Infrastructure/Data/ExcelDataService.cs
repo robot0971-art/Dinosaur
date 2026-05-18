@@ -26,13 +26,14 @@ namespace DinoGrow.Infrastructure.Data
         private static readonly string[] StageHeaders =
         {
             "stageId",
-            "\ud45c\uc2dc\uc774\ub984",
-            "\uc2a4\ud3f0\uc911\uc2ecX",
-            "\uc2a4\ud3f0\uc911\uc2ecZ",
-            "\uc2a4\ud3f0\ubc94\uc704X",
-            "\uc2a4\ud3f0\ubc94\uc704Z",
-            "\uc2a4\ud3f0\ub192\uc774Y",
-            "\ud50c\ub808\uc774\uc5b4\ucd5c\uc18c\uac70\ub9ac"
+            "표시이름",
+            "스폰중심X",
+            "스폰중심Z",
+            "스폰범위X",
+            "스폰범위Z",
+            "스폰높이Y",
+            "플레이어최소거리",
+            "제한시간"
         };
 
         private static readonly string[] SpawnHeaders =
@@ -120,7 +121,8 @@ namespace DinoGrow.Infrastructure.Data
                     spawnSizeX = ReadFloat(row, headerMap, "spawnSizeX", formatter, 80f),
                     spawnSizeZ = ReadFloat(row, headerMap, "spawnSizeZ", formatter, 80f),
                     spawnY = ReadFloat(row, headerMap, "spawnY", formatter, 0.75f),
-                    minDistanceFromPlayer = ReadFloat(row, headerMap, "minDistanceFromPlayer", formatter, 8f)
+                    minDistanceFromPlayer = ReadFloat(row, headerMap, "minDistanceFromPlayer", formatter, 8f),
+                    timeLimit = ReadFloat(row, headerMap, "timeLimit", formatter, 0f)
                 };
 
                 if (record.stageId > 0)
@@ -273,8 +275,8 @@ namespace DinoGrow.Infrastructure.Data
         {
             var sheet = workbook.CreateSheet("StageTable");
             WriteHeaders(workbook, sheet, StageHeaders);
-            WriteStageSampleRow(sheet.CreateRow(1), 1, "\ucd08\uc6d0", 0f, 0f, 80f, 80f, 0.75f, 8f);
-            WriteStageSampleRow(sheet.CreateRow(2), 2, "\ub113\uc740 \ucd08\uc6d0", 0f, 0f, 100f, 100f, 0.75f, 10f);
+            WriteStageSampleRow(sheet.CreateRow(1), 1, "\ucd08\uc6d0", 0f, 0f, 80f, 80f, 0.75f, 8f, 0f);
+            WriteStageSampleRow(sheet.CreateRow(2), 2, "\ub113\uc740 \ucd08\uc6d0", 0f, 0f, 100f, 100f, 0.75f, 10f, 0f);
             AutoSizeColumns(sheet, StageHeaders.Length);
         }
 
@@ -422,6 +424,7 @@ namespace DinoGrow.Infrastructure.Data
                 "\uc2a4\ud3f0\ubc94\uc704Z" => new[] { "spawnSizeZ" },
                 "\uc2a4\ud3f0\ub192\uc774Y" => new[] { "spawnY" },
                 "\ud50c\ub808\uc774\uc5b4\ucd5c\uc18c\uac70\ub9ac" => new[] { "minDistanceFromPlayer" },
+                "\uc81c\ud55c\uc2dc\uac04" => new[] { "timeLimit" },
                 "\ucd5c\uc18c\ub808\ubca8" => new[] { "minLevel" },
                 "\ucd5c\ub300\ub808\ubca8" => new[] { "maxLevel" },
                 "\uc0dd\uc131\uc218" => new[] { "count" },
@@ -495,7 +498,7 @@ namespace DinoGrow.Infrastructure.Data
             row.CreateCell(8).SetCellValue(prefab);
         }
 
-        private static void WriteStageSampleRow(IRow row, int stageId, string displayName, float spawnCenterX, float spawnCenterZ, float spawnSizeX, float spawnSizeZ, float spawnY, float minDistanceFromPlayer)
+        private static void WriteStageSampleRow(IRow row, int stageId, string displayName, float spawnCenterX, float spawnCenterZ, float spawnSizeX, float spawnSizeZ, float spawnY, float minDistanceFromPlayer, float timeLimit)
         {
             row.CreateCell(0).SetCellValue(stageId);
             row.CreateCell(1).SetCellValue(displayName);
@@ -505,6 +508,7 @@ namespace DinoGrow.Infrastructure.Data
             row.CreateCell(5).SetCellValue(spawnSizeZ);
             row.CreateCell(6).SetCellValue(spawnY);
             row.CreateCell(7).SetCellValue(minDistanceFromPlayer);
+            row.CreateCell(8).SetCellValue(timeLimit);
         }
 
         private static void WriteSpawnSampleRow(IRow row, int stageId, string dinoId, int minLevel, int maxLevel, int count, int defeatExp, int weight, float minWanderSpeed, float maxWanderSpeed)

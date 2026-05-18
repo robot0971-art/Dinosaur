@@ -13,5 +13,6 @@ namespace DinoGrow.Core.Data
         public float spawnSizeZ;
         public float spawnY;
         public float minDistanceFromPlayer;
+        public float timeLimit;
     }
 }
