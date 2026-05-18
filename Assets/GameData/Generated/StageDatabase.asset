@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef565bcb34a6460f8958d05b044ecf3c, type: 3}
+  m_Name: StageDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Core.Data.StageDatabase
+  records:
+  - stageId: 1
+    displayName: "\uCD08\uC6D0"
+    spawnCenterX: 0
+    spawnCenterZ: 0
+    spawnSizeX: 80
+    spawnSizeZ: 80
+    spawnY: 0.75
+    minDistanceFromPlayer: 8
+  - stageId: 2
+    displayName: "\uB113\uC740 \uCD08\uC6D0"
+    spawnCenterX: 0
+    spawnCenterZ: 0
+    spawnSizeX: 100
+    spawnSizeZ: 100
+    spawnY: 0.75
+    minDistanceFromPlayer: 10

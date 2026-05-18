@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7653ae9487e48d45b6d91d3a103b631, type: 3}
+  m_Name: DinoDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Core.Data.DinoDatabase
+  records:
+  - id: player
+    displayName: "\uD50C\uB808\uC774\uC5B4"
+    level: 1
+    exp: 0
+    speed: 5
+    size: 1
+    aiType: "\uD50C\uB808\uC774\uC5B4"
+    colorType: "\uD50C\uB808\uC774\uC5B4"
+    prefab: Player
