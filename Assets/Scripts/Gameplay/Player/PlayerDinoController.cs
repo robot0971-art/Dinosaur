@@ -3,6 +3,7 @@ using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Enemy;
+using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,6 +17,7 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private float moveSpeed = 9f;
         [SerializeField] private float sprintMultiplier = 1.6f;
         [SerializeField] private float turnSpeed = 540f;
+        [SerializeField] private string playerDataId = "player";
         [SerializeField] private Rigidbody body;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Transform cameraTransform;
@@ -32,10 +34,13 @@ namespace DinoGrow.Gameplay.Player
         private GameStateController gameState;
         private StageRule stageRule;
         private GameEventBus eventBus;
+        private DinoDataRepository dinoDataRepository;
+        private PlayerGrowthDataRepository playerGrowthDataRepository;
         private Vector2 rotateInput;
         private bool isSprinting;
         private Transform levelTextTransform;
         private bool createdLevelText;
+        private float baseSize = 1f;
 
         public int Level => progress?.Level ?? 1;
 
@@ -46,7 +51,9 @@ namespace DinoGrow.Gameplay.Player
             PlayerProgress progress,
             GameStateController gameState,
             StageRule stageRule,
-            GameEventBus eventBus)
+            GameEventBus eventBus,
+            DinoDataRepository dinoDataRepository,
+            PlayerGrowthDataRepository playerGrowthDataRepository)
         {
             this.eatResolver = eatResolver;
             this.growthSystem = growthSystem;
@@ -54,6 +61,8 @@ namespace DinoGrow.Gameplay.Player
             this.gameState = gameState;
             this.stageRule = stageRule;
             this.eventBus = eventBus;
+            this.dinoDataRepository = dinoDataRepository;
+            this.playerGrowthDataRepository = playerGrowthDataRepository;
         }
 
         private void Reset()
@@ -74,6 +83,8 @@ namespace DinoGrow.Gameplay.Player
                 visualRoot = transform;
             }
 
+            baseSize = visualRoot.localScale.x;
+
             if (animatorView == null)
             {
                 animatorView = GetComponentInChildren<DinoAnimatorView>();
@@ -87,6 +98,7 @@ namespace DinoGrow.Gameplay.Player
 
         private void Start()
         {
+            ApplyPlayerData();
             EnsureLevelText();
             RefreshLevelText();
 
@@ -95,6 +107,12 @@ namespace DinoGrow.Gameplay.Player
             gameState.StartGame();
             eventBus.PublishGameStateChanged(gameState.State);
             ApplyGrowthVisuals();
+            eventBus.PublishPlayerGrowthChanged(new GrowthResult(
+                0,
+                0,
+                progress.Level,
+                progress.CurrentExp,
+                progress.IsMaxLevel));
         }
 
         private void Update()
@@ -334,8 +352,38 @@ namespace DinoGrow.Gameplay.Player
 
         private void ApplyGrowthVisuals()
         {
-            var scale = Mathf.Lerp(1f, 4.25f, Mathf.InverseLerp(1f, 20f, progress.Level));
-            visualRoot.localScale = Vector3.one * scale;
+            var growthScale = GetGrowthScale(progress.Level);
+            visualRoot.localScale = Vector3.one * baseSize * growthScale;
+        }
+
+        private void ApplyPlayerData()
+        {
+            if (dinoDataRepository == null || !dinoDataRepository.TryGetById(playerDataId, out var playerData))
+            {
+                return;
+            }
+
+            if (playerData.speed > 0f)
+            {
+                moveSpeed = playerData.speed;
+            }
+
+            if (playerData.size > 0f)
+            {
+                baseSize = playerData.size;
+            }
+        }
+
+        private float GetGrowthScale(int level)
+        {
+            if (playerGrowthDataRepository != null
+                && playerGrowthDataRepository.TryGetByLevel(level, out var growthData)
+                && growthData.scaleMultiplier > 0f)
+            {
+                return growthData.scaleMultiplier;
+            }
+
+            return Mathf.Lerp(1f, 4.25f, Mathf.InverseLerp(1f, 20f, level));
         }
     }
 }

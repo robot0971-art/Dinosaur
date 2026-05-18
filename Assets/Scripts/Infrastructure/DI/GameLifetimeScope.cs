@@ -24,16 +24,21 @@ public class GameLifetimeScope : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
+        var dinoRepository = new DinoDataRepository(dinoDatabase);
+        var stageRepository = new StageDataRepository(stageDatabase);
+        var spawnRepository = new SpawnDataRepository(spawnDatabase);
+        var playerGrowthRepository = new PlayerGrowthDataRepository(playerGrowthDatabase);
+
         builder.Register<GameEventBus>(Lifetime.Singleton);
         builder.Register<EatResolver>(Lifetime.Singleton);
         builder.Register<GrowthSystem>(Lifetime.Singleton);
-        builder.RegisterInstance(new PlayerProgress());
+        builder.RegisterInstance(CreatePlayerProgress(dinoRepository, playerGrowthRepository));
         builder.Register<GameStateController>(Lifetime.Singleton);
         builder.Register<StageRule>(Lifetime.Singleton);
-        builder.RegisterInstance(new DinoDataRepository(dinoDatabase));
-        builder.RegisterInstance(new StageDataRepository(stageDatabase));
-        builder.RegisterInstance(new SpawnDataRepository(spawnDatabase));
-        builder.RegisterInstance(new PlayerGrowthDataRepository(playerGrowthDatabase));
+        builder.RegisterInstance(dinoRepository);
+        builder.RegisterInstance(stageRepository);
+        builder.RegisterInstance(spawnRepository);
+        builder.RegisterInstance(playerGrowthRepository);
 
         if (player != null)
         {
@@ -44,5 +49,30 @@ public class GameLifetimeScope : LifetimeScope
         {
             builder.RegisterComponent(gameHud);
         }
+    }
+
+    private static PlayerProgress CreatePlayerProgress(
+        DinoDataRepository dinoRepository,
+        PlayerGrowthDataRepository playerGrowthRepository)
+    {
+        var startLevel = PlayerProgress.DefaultStartLevel;
+        var startExp = 0;
+        var maxLevel = playerGrowthRepository.MaxLevel > 0
+            ? playerGrowthRepository.MaxLevel
+            : PlayerProgress.DefaultMaxLevel;
+        var expToLevelUp = PlayerProgress.DefaultExpToLevelUp;
+
+        if (dinoRepository.TryGetById("player", out var playerData))
+        {
+            startLevel = playerData.level;
+            startExp = playerData.exp;
+        }
+
+        if (playerGrowthRepository.TryGetByLevel(startLevel, out var growthData) && growthData.requiredExp > 0)
+        {
+            expToLevelUp = growthData.requiredExp;
+        }
+
+        return new PlayerProgress(startLevel, startExp, maxLevel, expToLevelUp);
     }
 }

@@ -21,6 +21,7 @@ MonoBehaviour:
     spawnSizeZ: 80
     spawnY: 0.75
     minDistanceFromPlayer: 8
+    timeLimit: 0
   - stageId: 2
     displayName: "\uB113\uC740 \uCD08\uC6D0"
     spawnCenterX: 0
@@ -29,3 +30,4 @@ MonoBehaviour:
     spawnSizeZ: 100
     spawnY: 0.75
     minDistanceFromPlayer: 10
+    timeLimit: 0

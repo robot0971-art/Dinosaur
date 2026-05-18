@@ -6,6 +6,7 @@ namespace DinoGrow.Infrastructure.Data
     public sealed class PlayerGrowthDataRepository
     {
         private readonly Dictionary<int, PlayerGrowthDataRecord> recordsByLevel = new Dictionary<int, PlayerGrowthDataRecord>();
+        private int maxLevel;
 
         public PlayerGrowthDataRepository(PlayerGrowthDatabase database)
         {
@@ -22,6 +23,10 @@ namespace DinoGrow.Infrastructure.Data
                 }
 
                 recordsByLevel[record.level] = record;
+                if (record.level > maxLevel)
+                {
+                    maxLevel = record.level;
+                }
             }
         }
 
@@ -29,5 +34,7 @@ namespace DinoGrow.Infrastructure.Data
         {
             return recordsByLevel.TryGetValue(level, out record);
         }
+
+        public int MaxLevel => maxLevel;
     }
 }
