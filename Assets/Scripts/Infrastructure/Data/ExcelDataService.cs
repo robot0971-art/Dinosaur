@@ -1,188 +1,278 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using DinoGrow.Core.Data;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+using UnityEngine;
 
-namespace DinoGrow.Infrastructure.Data
+namespace Dino.Infrastructure.Data
 {
-    public sealed class ExcelDataService : IDataService
+    public class ExcelDataService : IDataService, IExcelConverter
     {
-        private static readonly string[] DinoHeaders =
+        private readonly Dictionary<string, object> _dataCache = new Dictionary<string, object>();
+        private readonly string _dataPath;
+
+        public ExcelDataService()
         {
-            "id",
-            "displayName",
-            "level",
-            "exp",
-            "speed",
-            "size",
-            "aiType",
-            "colorType",
-            "prefab"
-        };
-
-        public IReadOnlyList<DinoDataRecord> LoadDinoRows(string xlsxPath)
-        {
-            if (string.IsNullOrWhiteSpace(xlsxPath))
+            _dataPath = Path.Combine(Application.dataPath, "GameData");
+            if (!Directory.Exists(_dataPath))
             {
-                throw new ArgumentException("Excel path is empty.", nameof(xlsxPath));
+                Directory.CreateDirectory(_dataPath);
             }
-
-            if (!File.Exists(xlsxPath))
-            {
-                throw new FileNotFoundException("Excel file not found.", xlsxPath);
-            }
-
-            using var stream = new FileStream(xlsxPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var workbook = new XSSFWorkbook(stream);
-            var sheet = workbook.GetSheet("DinoTable") ?? workbook.GetSheetAt(0);
-            var formatter = new DataFormatter(CultureInfo.InvariantCulture);
-            var headerMap = ReadHeaderMap(sheet, formatter);
-            var records = new List<DinoDataRecord>();
-
-            for (var rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
-            {
-                var row = sheet.GetRow(rowIndex);
-                if (row == null || IsRowEmpty(row, formatter))
-                {
-                    continue;
-                }
-
-                var record = new DinoDataRecord
-                {
-                    id = ReadString(row, headerMap, "id", formatter),
-                    displayName = ReadString(row, headerMap, "displayName", formatter),
-                    level = ReadInt(row, headerMap, "level", formatter, 1),
-                    exp = ReadInt(row, headerMap, "exp", formatter, 10),
-                    speed = ReadFloat(row, headerMap, "speed", formatter, 1f),
-                    size = ReadFloat(row, headerMap, "size", formatter, 1f),
-                    aiType = ReadString(row, headerMap, "aiType", formatter),
-                    colorType = ReadString(row, headerMap, "colorType", formatter),
-                    prefab = ReadString(row, headerMap, "prefab", formatter)
-                };
-
-                if (!string.IsNullOrWhiteSpace(record.id))
-                {
-                    records.Add(record);
-                }
-            }
-
-            return records;
         }
 
-        public void CreateDinoTemplate(string xlsxPath)
+        public T LoadData<T>(string key) where T : class
         {
-            if (string.IsNullOrWhiteSpace(xlsxPath))
+            if (_dataCache.TryGetValue(key, out var cached))
             {
-                throw new ArgumentException("Excel path is empty.", nameof(xlsxPath));
+                return cached as T;
             }
 
-            var directory = Path.GetDirectoryName(xlsxPath);
-            if (!string.IsNullOrEmpty(directory))
+            var filePath = Path.Combine(_dataPath, $"{key}.json");
+            if (!File.Exists(filePath))
             {
-                Directory.CreateDirectory(directory);
+                Debug.LogWarning($"Data file not found: {filePath}");
+                return null;
             }
 
-            var workbook = new XSSFWorkbook();
-            var sheet = workbook.CreateSheet("DinoTable");
-            var headerStyle = CreateHeaderStyle(workbook);
-            var headerRow = sheet.CreateRow(0);
-
-            for (var i = 0; i < DinoHeaders.Length; i++)
-            {
-                var cell = headerRow.CreateCell(i);
-                cell.SetCellValue(DinoHeaders[i]);
-                cell.CellStyle = headerStyle;
-            }
-
-            WriteSampleRow(sheet.CreateRow(1), "dino_001", "Egg", 1, 10, 0f, 0.8f, "Idle", "Food", "EggPrefab");
-            WriteSampleRow(sheet.CreateRow(2), "dino_002", "Small Raptor", 2, 20, 2.5f, 1.0f, "Wander", "Danger", "SmallRaptorPrefab");
-            WriteSampleRow(sheet.CreateRow(3), "dino_003", "Young Raptor", 3, 30, 3.2f, 1.2f, "Wander", "Danger", "YoungRaptorPrefab");
-
-            for (var i = 0; i < DinoHeaders.Length; i++)
-            {
-                sheet.AutoSizeColumn(i);
-            }
-
-            using var output = new FileStream(xlsxPath, FileMode.Create, FileAccess.Write);
-            workbook.Write(output);
+            var json = File.ReadAllText(filePath);
+            var data = JsonUtility.FromJson<T>(json);
+            _dataCache[key] = data;
+            return data;
         }
 
-        private static Dictionary<string, int> ReadHeaderMap(ISheet sheet, DataFormatter formatter)
+        public void SaveData<T>(string key, T data) where T : class
         {
-            var headerRow = sheet.GetRow(0) ?? throw new InvalidDataException("DinoTable needs a header row.");
-            var map = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
-            for (var i = 0; i < headerRow.LastCellNum; i++)
-            {
-                var header = formatter.FormatCellValue(headerRow.GetCell(i)).Trim();
-                if (!string.IsNullOrEmpty(header) && !map.ContainsKey(header))
-                {
-                    map.Add(header, i);
-                }
-            }
-
-            return map;
+            _dataCache[key] = data;
+            var filePath = Path.Combine(_dataPath, $"{key}.json");
+            var json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(filePath, json);
         }
 
-        private static bool IsRowEmpty(IRow row, DataFormatter formatter)
+        public bool HasData(string key)
         {
-            for (var i = row.FirstCellNum; i < row.LastCellNum; i++)
+            if (_dataCache.ContainsKey(key))
+                return true;
+
+            var filePath = Path.Combine(_dataPath, $"{key}.json");
+            return File.Exists(filePath);
+        }
+
+        public void ClearData(string key)
+        {
+            _dataCache.Remove(key);
+            var filePath = Path.Combine(_dataPath, $"{key}.json");
+            if (File.Exists(filePath))
             {
-                if (!string.IsNullOrWhiteSpace(formatter.FormatCellValue(row.GetCell(i))))
+                File.Delete(filePath);
+            }
+        }
+
+        public void ClearAll()
+        {
+            _dataCache.Clear();
+        }
+
+        public List<T> ReadExcel<T>(string filePath, string sheetName = null) where T : class, new()
+        {
+            var result = new List<T>();
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    return false;
+                    var workbook = new NPOI.XSSF.UserModel.XSSFWorkbook(stream);
+                    var sheet = sheetName != null 
+                        ? workbook.GetSheet(sheetName) 
+                        : workbook.GetSheetAt(0);
+
+                    if (sheet == null)
+                    {
+                        Debug.LogError($"Sheet not found: {sheetName}");
+                        return result;
+                    }
+
+                    var headerRow = sheet.GetRow(0);
+                    if (headerRow == null) return result;
+
+                    var properties = typeof(T).GetProperties();
+                    var headerMap = new Dictionary<int, string>();
+
+                    for (int i = 0; i < headerRow.LastCellNum; i++)
+                    {
+                        var cell = headerRow.GetCell(i);
+                        if (cell != null)
+                        {
+                            headerMap[i] = cell.StringCellValue;
+                        }
+                    }
+
+                    for (int row = 1; row <= sheet.LastRowNum; row++)
+                    {
+                        var dataRow = sheet.GetRow(row);
+                        if (dataRow == null) continue;
+
+                        var item = new T();
+                        foreach (var kvp in headerMap)
+                        {
+                            var prop = typeof(T).GetProperty(kvp.Value);
+                            if (prop == null) continue;
+
+                            var cell = dataRow.GetCell(kvp.Key);
+                            if (cell == null) continue;
+
+                            var value = GetCellValue(cell, prop.PropertyType);
+                            prop.SetValue(item, value);
+                        }
+                        result.Add(item);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error reading Excel file: {e.Message}");
+            }
 
-            return true;
+            return result;
         }
 
-        private static string ReadString(IRow row, IReadOnlyDictionary<string, int> headerMap, string header, DataFormatter formatter)
+        public void WriteExcel<T>(string filePath, string sheetName, List<T> data) where T : class
         {
-            return headerMap.TryGetValue(header, out var index)
-                ? formatter.FormatCellValue(row.GetCell(index)).Trim()
-                : "";
+            try
+            {
+                var workbook = new NPOI.XSSF.UserModel.XSSFWorkbook();
+                var sheet = workbook.CreateSheet(sheetName);
+
+                var properties = typeof(T).GetProperties();
+
+                var headerRow = sheet.CreateRow(0);
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    headerRow.CreateCell(i).SetCellValue(properties[i].Name);
+                }
+
+                for (int row = 0; row < data.Count; row++)
+                {
+                    var dataRow = sheet.CreateRow(row + 1);
+                    for (int col = 0; col < properties.Length; col++)
+                    {
+                        var value = properties[col].GetValue(data[row]);
+                        SetCellValue(dataRow.CreateCell(col), value);
+                    }
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(stream);
+                }
+
+                Debug.Log($"Excel file created: {filePath}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error writing Excel file: {e.Message}");
+            }
         }
 
-        private static int ReadInt(IRow row, IReadOnlyDictionary<string, int> headerMap, string header, DataFormatter formatter, int fallback)
+        public void CreateTemplate<T>(string filePath, string sheetName) where T : class
         {
-            var value = ReadString(row, headerMap, header, formatter);
-            return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
-                ? parsed
-                : fallback;
+            try
+            {
+                var workbook = new NPOI.XSSF.UserModel.XSSFWorkbook();
+                var sheet = workbook.CreateSheet(sheetName);
+
+                var properties = typeof(T).GetProperties();
+                var headerRow = sheet.CreateRow(0);
+
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    var cell = headerRow.CreateCell(i);
+                    cell.SetCellValue(properties[i].Name);
+
+                    var cellStyle = workbook.CreateCellStyle();
+                    var font = workbook.CreateFont();
+                    font.IsBold = true;
+                    cellStyle.SetFont(font);
+                    cell.CellStyle = cellStyle;
+                }
+
+                var exampleRow = sheet.CreateRow(1);
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    var propType = properties[i].PropertyType;
+                    var cell = exampleRow.CreateCell(i);
+
+                    if (propType == typeof(int))
+                        cell.SetCellValue(0);
+                    else if (propType == typeof(float))
+                        cell.SetCellValue(0.0);
+                    else if (propType == typeof(bool))
+                        cell.SetCellValue(false);
+                    else
+                        cell.SetCellValue($"Sample {properties[i].Name}");
+                }
+
+                var dir = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(stream);
+                }
+
+                Debug.Log($"Template created: {filePath}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error creating template: {e.Message}");
+            }
         }
 
-        private static float ReadFloat(IRow row, IReadOnlyDictionary<string, int> headerMap, string header, DataFormatter formatter, float fallback)
+        private object GetCellValue(NPOI.SS.UserModel.ICell cell, Type targetType)
         {
-            var value = ReadString(row, headerMap, header, formatter);
-            return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
-                ? parsed
-                : fallback;
+            if (cell == null) return null;
+
+            switch (cell.CellType)
+            {
+                case NPOI.SS.UserModel.CellType.Numeric:
+                    if (targetType == typeof(int))
+                        return (int)cell.NumericCellValue;
+                    if (targetType == typeof(float))
+                        return (float)cell.NumericCellValue;
+                    if (targetType == typeof(double))
+                        return cell.NumericCellValue;
+                    return cell.NumericCellValue;
+
+                case NPOI.SS.UserModel.CellType.String:
+                    return cell.StringCellValue;
+
+                case NPOI.SS.UserModel.CellType.Boolean:
+                    return cell.BooleanCellValue;
+
+                default:
+                    return null;
+            }
         }
 
-        private static ICellStyle CreateHeaderStyle(IWorkbook workbook)
+        private void SetCellValue(NPOI.SS.UserModel.ICell cell, object value)
         {
-            var style = workbook.CreateCellStyle();
-            var font = workbook.CreateFont();
-            font.IsBold = true;
-            style.SetFont(font);
-            return style;
-        }
+            if (value == null)
+            {
+                cell.SetCellValue("");
+                return;
+            }
 
-        private static void WriteSampleRow(IRow row, string id, string displayName, int level, int exp, float speed, float size, string aiType, string colorType, string prefab)
-        {
-            row.CreateCell(0).SetCellValue(id);
-            row.CreateCell(1).SetCellValue(displayName);
-            row.CreateCell(2).SetCellValue(level);
-            row.CreateCell(3).SetCellValue(exp);
-            row.CreateCell(4).SetCellValue(speed);
-            row.CreateCell(5).SetCellValue(size);
-            row.CreateCell(6).SetCellValue(aiType);
-            row.CreateCell(7).SetCellValue(colorType);
-            row.CreateCell(8).SetCellValue(prefab);
+            if (value is int intVal)
+                cell.SetCellValue(intVal);
+            else if (value is float floatVal)
+                cell.SetCellValue(floatVal);
+            else if (value is double doubleVal)
+                cell.SetCellValue(doubleVal);
+            else if (value is bool boolVal)
+                cell.SetCellValue(boolVal);
+            else
+                cell.SetCellValue(value.ToString());
         }
     }
 }

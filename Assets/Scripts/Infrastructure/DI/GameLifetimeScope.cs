@@ -1,38 +1,28 @@
-using VContainer;
-using VContainer.Unity;
 using DinoGrow.Core.Combat;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
-using DinoGrow.Gameplay.Player;
-using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
-using DinoGrow.UI;
-using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
-public class GameLifetimeScope : LifetimeScope
+namespace Dino.Infrastructure.DI
 {
-    [Header("Scene Components")]
-    [SerializeField] private PlayerDinoController player;
-    [SerializeField] private GameHud gameHud;
-
-    protected override void Configure(IContainerBuilder builder)
+    public class GameLifetimeScope : LifetimeScope
     {
-        builder.Register<GameEventBus>(Lifetime.Singleton);
-        builder.Register<EatResolver>(Lifetime.Singleton);
-        builder.Register<GrowthSystem>(Lifetime.Singleton);
-        builder.RegisterInstance(new PlayerProgress());
-        builder.Register<GameStateController>(Lifetime.Singleton);
-        builder.Register<StageRule>(Lifetime.Singleton);
-        builder.Register<IDataService, ExcelDataService>(Lifetime.Singleton);
-
-        if (player != null)
+        protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponent(player);
-        }
+            base.Configure(builder);
 
-        if (gameHud != null)
-        {
-            builder.RegisterComponent(gameHud);
+            // Core Services
+            builder.Register<GameEventBus>(Lifetime.Singleton);
+            builder.Register<EatResolver>(Lifetime.Singleton);
+            builder.Register<GrowthSystem>(Lifetime.Singleton);
+            builder.Register<PlayerProgress>(Lifetime.Singleton);
+            builder.Register<StageRule>(Lifetime.Singleton);
+            builder.Register<GameStateController>(Lifetime.Singleton);
+
+            // Feature 2 test subscriber. If the object does not exist, VContainer just ignores it.
+            builder.RegisterComponentInHierarchy<EventBusSubscriberExample>();
         }
     }
 }
