@@ -42,6 +42,7 @@ namespace DinoGrow.Infrastructure.Data
             "\ucd5c\uc18c\ub808\ubca8",
             "\ucd5c\ub300\ub808\ubca8",
             "\uc0dd\uc131\uc218",
+            "\ucc98\uce58\uacbd\ud5d8\uce58",
             "\uac00\uc911\uce58",
             "\ucd5c\uc18c\ubc30\ud68c\uc18d\ub3c4",
             "\ucd5c\ub300\ubc30\ud68c\uc18d\ub3c4"
@@ -158,6 +159,7 @@ namespace DinoGrow.Infrastructure.Data
                     minWanderSpeed = ReadFloat(row, headerMap, "minWanderSpeed", formatter, 2.4f),
                     maxWanderSpeed = ReadFloat(row, headerMap, "maxWanderSpeed", formatter, 4.2f)
                 };
+                record.defeatExp = ReadInt(row, headerMap, "defeatExp", formatter, Math.Max(1, record.maxLevel) * 10);
 
                 if (record.stageId > 0 && !string.IsNullOrWhiteSpace(record.dinoId))
                 {
@@ -280,11 +282,11 @@ namespace DinoGrow.Infrastructure.Data
         {
             var sheet = workbook.CreateSheet("SpawnTable");
             WriteHeaders(workbook, sheet, SpawnHeaders);
-            WriteSpawnSampleRow(sheet.CreateRow(1), 1, "dino_001", 1, 1, 10, 60, 0f, 0f);
-            WriteSpawnSampleRow(sheet.CreateRow(2), 1, "dino_002", 1, 2, 8, 30, 2.4f, 3.4f);
-            WriteSpawnSampleRow(sheet.CreateRow(3), 1, "dino_003", 2, 3, 6, 10, 3.0f, 4.2f);
-            WriteSpawnSampleRow(sheet.CreateRow(4), 2, "dino_002", 2, 4, 12, 50, 2.6f, 3.8f);
-            WriteSpawnSampleRow(sheet.CreateRow(5), 2, "dino_003", 3, 5, 10, 50, 3.2f, 4.4f);
+            WriteSpawnSampleRow(sheet.CreateRow(1), 1, "dino_001", 1, 1, 10, 10, 60, 0f, 0f);
+            WriteSpawnSampleRow(sheet.CreateRow(2), 1, "dino_002", 1, 2, 8, 20, 30, 2.4f, 3.4f);
+            WriteSpawnSampleRow(sheet.CreateRow(3), 1, "dino_003", 2, 3, 6, 30, 10, 3.0f, 4.2f);
+            WriteSpawnSampleRow(sheet.CreateRow(4), 2, "dino_002", 2, 4, 12, 40, 50, 2.6f, 3.8f);
+            WriteSpawnSampleRow(sheet.CreateRow(5), 2, "dino_003", 3, 5, 10, 50, 50, 3.2f, 4.4f);
             AutoSizeColumns(sheet, SpawnHeaders.Length);
         }
 
@@ -423,6 +425,7 @@ namespace DinoGrow.Infrastructure.Data
                 "\ucd5c\uc18c\ub808\ubca8" => new[] { "minLevel" },
                 "\ucd5c\ub300\ub808\ubca8" => new[] { "maxLevel" },
                 "\uc0dd\uc131\uc218" => new[] { "count" },
+                "\ucc98\uce58\uacbd\ud5d8\uce58" => new[] { "defeatExp" },
                 "\uac00\uc911\uce58" => new[] { "weight" },
                 "\ucd5c\uc18c\ubc30\ud68c\uc18d\ub3c4" => new[] { "minWanderSpeed" },
                 "\ucd5c\ub300\ubc30\ud68c\uc18d\ub3c4" => new[] { "maxWanderSpeed" },
@@ -504,16 +507,17 @@ namespace DinoGrow.Infrastructure.Data
             row.CreateCell(7).SetCellValue(minDistanceFromPlayer);
         }
 
-        private static void WriteSpawnSampleRow(IRow row, int stageId, string dinoId, int minLevel, int maxLevel, int count, int weight, float minWanderSpeed, float maxWanderSpeed)
+        private static void WriteSpawnSampleRow(IRow row, int stageId, string dinoId, int minLevel, int maxLevel, int count, int defeatExp, int weight, float minWanderSpeed, float maxWanderSpeed)
         {
             row.CreateCell(0).SetCellValue(stageId);
             row.CreateCell(1).SetCellValue(dinoId);
             row.CreateCell(2).SetCellValue(minLevel);
             row.CreateCell(3).SetCellValue(maxLevel);
             row.CreateCell(4).SetCellValue(count);
-            row.CreateCell(5).SetCellValue(weight);
-            row.CreateCell(6).SetCellValue(minWanderSpeed);
-            row.CreateCell(7).SetCellValue(maxWanderSpeed);
+            row.CreateCell(5).SetCellValue(defeatExp);
+            row.CreateCell(6).SetCellValue(weight);
+            row.CreateCell(7).SetCellValue(minWanderSpeed);
+            row.CreateCell(8).SetCellValue(maxWanderSpeed);
         }
 
         private static void WritePlayerGrowthSampleRow(IRow row, int level, int requiredExp, float scaleMultiplier, float cameraDistance, float cameraHeight)

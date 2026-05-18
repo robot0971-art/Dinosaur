@@ -18,6 +18,7 @@ MonoBehaviour:
     minLevel: 1
     maxLevel: 1
     count: 10
+    defeatExp: 10
     weight: 60
     minWanderSpeed: 0
     maxWanderSpeed: 0
@@ -26,6 +27,7 @@ MonoBehaviour:
     minLevel: 1
     maxLevel: 2
     count: 8
+    defeatExp: 20
     weight: 30
     minWanderSpeed: 2.4
     maxWanderSpeed: 3.4
@@ -34,6 +36,7 @@ MonoBehaviour:
     minLevel: 2
     maxLevel: 3
     count: 6
+    defeatExp: 30
     weight: 10
     minWanderSpeed: 3
     maxWanderSpeed: 4.2
@@ -42,6 +45,7 @@ MonoBehaviour:
     minLevel: 2
     maxLevel: 4
     count: 12
+    defeatExp: 40
     weight: 50
     minWanderSpeed: 2.6
     maxWanderSpeed: 3.8
@@ -50,6 +54,7 @@ MonoBehaviour:
     minLevel: 3
     maxLevel: 5
     count: 10
+    defeatExp: 50
     weight: 50
     minWanderSpeed: 3.2
     maxWanderSpeed: 4.4

@@ -10,6 +10,7 @@ namespace DinoGrow.Core.Data
         public int minLevel;
         public int maxLevel;
         public int count;
+        public int defeatExp;
         public int weight;
         public float minWanderSpeed;
         public float maxWanderSpeed;
