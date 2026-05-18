@@ -1,4 +1,5 @@
 using UnityEngine;
+using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Player;
 
 namespace DinoGrow.Gameplay.Enemy
@@ -10,6 +11,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float directionChangeInterval = 1.6f;
         [SerializeField] private float fleeDetectDistance = 18f;
         [SerializeField] private float fleeSpeedMultiplier = 1.65f;
+        [SerializeField] private DinoAnimatorView animatorView;
         [SerializeField] private Vector3 areaCenter;
         [SerializeField] private Vector2 areaSize = new(80f, 80f);
 
@@ -31,6 +33,10 @@ namespace DinoGrow.Gameplay.Enemy
         private void Awake()
         {
             enemy = GetComponent<DinoEnemy>();
+            if (animatorView == null)
+            {
+                animatorView = GetComponentInChildren<DinoAnimatorView>();
+            }
         }
 
         private void Start()
@@ -43,6 +49,7 @@ namespace DinoGrow.Gameplay.Enemy
             if (TryGetFleeDirection(out var fleeDirection))
             {
                 Move(fleeDirection, moveSpeed * fleeSpeedMultiplier);
+                animatorView?.SetMove(1f, true);
                 return;
             }
 
@@ -52,6 +59,7 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             Move(moveDirection, moveSpeed);
+            animatorView?.SetMove(0.5f, false);
         }
 
         private void SetPlayer(Transform playerTransform)

@@ -117,6 +117,7 @@ GameObject:
   - component: {fileID: 2647852289620133313}
   - component: {fileID: 3720605261178673559}
   - component: {fileID: 7070585412536512311}
+  - component: {fileID: 3867667320155658297}
   m_Layer: 0
   m_Name: Enemy_Lv1
   m_TagString: Untagged
@@ -231,3 +232,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.DinoEnemy
   level: 1
+  levelOneColor: {r: 0.25, g: 0.95, b: 0.35, a: 1}
+  levelTwoColor: {r: 0.2, g: 0.65, b: 1, a: 1}
+  levelThreeColor: {r: 1, g: 0.35, b: 0.2, a: 1}
+--- !u!114 &3867667320155658297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043718322182008365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2acbd78b6445c7047b4c6b41c7dee63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Animation.DinoAnimatorView
+  animator: {fileID: 0}

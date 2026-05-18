@@ -1,6 +1,7 @@
 using DinoGrow.Core.Combat;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
+using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Infrastructure.Events;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private Rigidbody body;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Transform cameraTransform;
+        [SerializeField] private DinoAnimatorView animatorView;
         [SerializeField] private TextMesh levelText;
         [SerializeField] private Vector3 levelTextOffset = new Vector3(0f, 1.55f, 0f);
         [SerializeField] private float levelTextCharacterSize = 0.045f;
@@ -72,6 +74,11 @@ namespace DinoGrow.Gameplay.Player
                 visualRoot = transform;
             }
 
+            if (animatorView == null)
+            {
+                animatorView = GetComponentInChildren<DinoAnimatorView>();
+            }
+
             if (cameraTransform == null && UnityEngine.Camera.main != null)
             {
                 cameraTransform = UnityEngine.Camera.main.transform;
@@ -112,6 +119,7 @@ namespace DinoGrow.Gameplay.Player
             if (!gameState.IsPlaying)
             {
                 body.linearVelocity = Vector3.zero;
+                animatorView?.SetMove(0f, false);
                 return;
             }
 
@@ -127,11 +135,13 @@ namespace DinoGrow.Gameplay.Player
                     body.linearVelocity.y,
                     targetDirection.z * GetCurrentMoveSpeed()
                 );
+                animatorView?.SetMove(isSprinting ? 1f : 0.5f, isSprinting);
             }
             else
             {
                 // 입력 없으면 수평 이동 정지
                 body.linearVelocity = new Vector3(0f, body.linearVelocity.y, 0f);
+                animatorView?.SetMove(0f, false);
             }
         }
 
@@ -193,6 +203,7 @@ namespace DinoGrow.Gameplay.Player
         {
             gameState.GameOver();
             body.linearVelocity = Vector3.zero;
+            animatorView?.SetDead(true);
             eventBus.PublishGameStateChanged(gameState.State);
         }
 
