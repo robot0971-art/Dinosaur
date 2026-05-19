@@ -13,15 +13,19 @@ namespace DinoGrow.Camera
         [SerializeField] private float mouseSensitivity = 0.2f;
         [SerializeField] private float minPitch = -15f;
         [SerializeField] private float maxPitch = 55f;
+        [SerializeField] private Vector3 positionDamping = new Vector3(0.12f, 0.12f, 0.12f);
+        [SerializeField] private Vector2 aimDamping = new Vector2(0.08f, 0.08f);
         [SerializeField] private bool lockCursorOnPlay = true;
 
         private CinemachineFollow follow;
+        private CinemachineRotationComposer rotationComposer;
         private float yaw;
         private float pitch = 20f;
 
         private void Awake()
         {
             follow = GetComponent<CinemachineFollow>();
+            rotationComposer = GetComponent<CinemachineRotationComposer>();
             ApplyOffset();
         }
 
@@ -47,7 +51,7 @@ namespace DinoGrow.Camera
             Cursor.visible = true;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             var mouse = Mouse.current;
             if (mouse == null)
@@ -74,10 +78,15 @@ namespace DinoGrow.Camera
 
             var settings = follow.TrackerSettings;
             settings.BindingMode = Unity.Cinemachine.TargetTracking.BindingMode.WorldSpace;
-            settings.PositionDamping = Vector3.zero;
+            settings.PositionDamping = positionDamping;
             settings.RotationDamping = Vector3.zero;
             settings.QuaternionDamping = 0f;
             follow.TrackerSettings = settings;
+
+            if (rotationComposer != null)
+            {
+                rotationComposer.Damping = aimDamping;
+            }
         }
     }
 }

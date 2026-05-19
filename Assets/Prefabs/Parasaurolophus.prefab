@@ -1066,6 +1066,8 @@ GameObject:
   - component: {fileID: 5272534872482404466}
   - component: {fileID: 3000156716055782559}
   - component: {fileID: 8241106129094915247}
+  - component: {fileID: 8452050594103693387}
+  - component: {fileID: 1416947572794892256}
   m_Layer: 0
   m_Name: Parasaurolophus
   m_TagString: Untagged
@@ -1083,11 +1085,12 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -58.79595, y: 0.00002, z: 12.39957}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5834421666113508906}
   - {fileID: 8439329901717403818}
+  - {fileID: 3938534620723880142}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2302459568994244015
@@ -1134,7 +1137,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -1152,9 +1155,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.DinoEnemy
   level: 1
+  usePrototypeLevelMaterial: 0
   levelOneColor: {r: 0.25, g: 0.95, b: 0.35, a: 1}
   levelTwoColor: {r: 0.2, g: 0.65, b: 1, a: 1}
   levelThreeColor: {r: 1, g: 0.35, b: 0.2, a: 1}
+  levelText: {fileID: 6175144237738564575}
+  levelTextHeightPadding: 0.5
+  levelTextCharacterSize: 0.12
+  levelTextFontSize: 75
+  levelTextColor: {r: 1, g: 1, b: 1, a: 1}
+  usePlayerRelativeLevelTextColor: 1
+  lowerLevelTextColor: {r: 0.3, g: 1, b: 0.35, a: 1}
+  sameLevelTextColor: {r: 1, g: 0.9, b: 0.25, a: 1}
+  higherLevelTextColor: {r: 1, g: 0.25, b: 0.2, a: 1}
 --- !u!114 &3000156716055782559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1170,8 +1183,21 @@ MonoBehaviour:
   moveSpeed: 3.2
   turnSpeed: 420
   directionChangeInterval: 1.6
+  runAnimationSpeedThreshold: 3
   fleeDetectDistance: 18
   fleeSpeedMultiplier: 1.65
+  groundColliderRadius: 0.45
+  groundColliderHeight: 1.8
+  triggerWidth: 1.6
+  triggerHeight: 2
+  triggerDepth: 2.4
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  groundRaycastHeight: 50
+  groundRaycastDistance: 120
+  groundOffset: 0
+  ignoreOtherEnemies: 1
   animatorView: {fileID: 8241106129094915247}
   areaCenter: {x: 0, y: 0, z: 0}
   areaSize: {x: 80, y: 80}
@@ -1188,6 +1214,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Animation.DinoAnimatorView
   animator: {fileID: 0}
+--- !u!65 &8452050594103693387
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6754738804917741104}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5191956, y: 4.9609046, z: 11.271009}
+  m_Center: {x: -0.25959778, y: 1.9804528, z: -0.6166086}
+--- !u!95 &1416947572794892256
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6754738804917741104}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 95c52025f1278f745b8e47bb43299948, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7031104837033966821
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1510,110 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5528825692844658121}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8870733185568328483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3938534620723880142}
+  - component: {fileID: 7605665961039709732}
+  - component: {fileID: 6175144237738564575}
+  m_Layer: 0
+  m_Name: EnemyLevelText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3938534620723880142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870733185568328483}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.01856495, y: -0.5857754, z: 0.013423311, w: 0.8101496}
+  m_LocalPosition: {x: -0.16576385, y: 7.185764, z: -1.284874}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747733358695933063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &7605665961039709732
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870733185568328483}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!102 &6175144237738564575
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870733185568328483}
+  m_Text: Lv. 1
+  m_OffsetZ: 0
+  m_CharacterSize: 0.12
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 1
+  m_TabSize: 4
+  m_FontSize: 75
+  m_FontStyle: 1
+  m_RichText: 1
+  m_Font: {fileID: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
 --- !u!1 &9168313024974394942
 GameObject:
   m_ObjectHideFlags: 0

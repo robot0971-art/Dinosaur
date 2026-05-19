@@ -16,12 +16,12 @@ MonoBehaviour:
   - stageId: 1
     dinoId: parasaurolophus
     minLevel: 1
-    maxLevel: 2
-    count: 8
+    maxLevel: 1
+    count: 14
     defeatExp: 10
     weight: 45
-    minWanderSpeed: 2
-    maxWanderSpeed: 2.8
+    minWanderSpeed: 1.8
+    maxWanderSpeed: 2.4
   - stageId: 1
     dinoId: velociraptor
     minLevel: 2
@@ -29,8 +29,8 @@ MonoBehaviour:
     count: 6
     defeatExp: 20
     weight: 30
-    minWanderSpeed: 3.4
-    maxWanderSpeed: 4.2
+    minWanderSpeed: 3
+    maxWanderSpeed: 3.6
   - stageId: 1
     dinoId: stegosaurus
     minLevel: 3
@@ -38,8 +38,8 @@ MonoBehaviour:
     count: 4
     defeatExp: 30
     weight: 20
-    minWanderSpeed: 1.8
-    maxWanderSpeed: 2.4
+    minWanderSpeed: 1.5
+    maxWanderSpeed: 2
   - stageId: 2
     dinoId: triceratops
     minLevel: 5
@@ -47,8 +47,8 @@ MonoBehaviour:
     count: 6
     defeatExp: 50
     weight: 35
-    minWanderSpeed: 2
-    maxWanderSpeed: 2.8
+    minWanderSpeed: 1.7
+    maxWanderSpeed: 2.2
   - stageId: 2
     dinoId: trex
     minLevel: 8
@@ -56,5 +56,5 @@ MonoBehaviour:
     count: 3
     defeatExp: 80
     weight: 15
-    minWanderSpeed: 3
-    maxWanderSpeed: 4
+    minWanderSpeed: 2.8
+    maxWanderSpeed: 3.4

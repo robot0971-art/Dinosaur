@@ -18,6 +18,8 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private float sprintMultiplier = 1.6f;
         [SerializeField] private float turnSpeed = 540f;
         [SerializeField] private string playerDataId = "player";
+        [SerializeField] private bool useDataSize;
+        [SerializeField] private bool applyGrowthScale = true;
         [SerializeField] private Rigidbody body;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Transform cameraTransform;
@@ -33,6 +35,7 @@ namespace DinoGrow.Gameplay.Player
         private PlayerProgress progress;
         private GameStateController gameState;
         private StageRule stageRule;
+        private DeathEffectService deathEffectService;
         private GameEventBus eventBus;
         private DinoDataRepository dinoDataRepository;
         private PlayerGrowthDataRepository playerGrowthDataRepository;
@@ -40,7 +43,8 @@ namespace DinoGrow.Gameplay.Player
         private bool isSprinting;
         private Transform levelTextTransform;
         private bool createdLevelText;
-        private float baseSize = 1f;
+        private Vector3 baseVisualScale = Vector3.one;
+        private bool isDead;
 
         public int Level => progress?.Level ?? 1;
 
@@ -51,6 +55,7 @@ namespace DinoGrow.Gameplay.Player
             PlayerProgress progress,
             GameStateController gameState,
             StageRule stageRule,
+            DeathEffectService deathEffectService,
             GameEventBus eventBus,
             DinoDataRepository dinoDataRepository,
             PlayerGrowthDataRepository playerGrowthDataRepository)
@@ -60,6 +65,7 @@ namespace DinoGrow.Gameplay.Player
             this.progress = progress;
             this.gameState = gameState;
             this.stageRule = stageRule;
+            this.deathEffectService = deathEffectService;
             this.eventBus = eventBus;
             this.dinoDataRepository = dinoDataRepository;
             this.playerGrowthDataRepository = playerGrowthDataRepository;
@@ -78,12 +84,14 @@ namespace DinoGrow.Gameplay.Player
                 body = GetComponent<Rigidbody>();
             }
 
+            body.interpolation = RigidbodyInterpolation.Interpolate;
+
             if (visualRoot == null)
             {
                 visualRoot = transform;
             }
 
-            baseSize = visualRoot.localScale.x;
+            baseVisualScale = visualRoot.localScale;
 
             if (animatorView == null)
             {
@@ -137,7 +145,6 @@ namespace DinoGrow.Gameplay.Player
             if (!gameState.IsPlaying)
             {
                 body.linearVelocity = Vector3.zero;
-                animatorView?.SetMove(0f, false);
                 return;
             }
 
@@ -219,8 +226,15 @@ namespace DinoGrow.Gameplay.Player
 
         private void TriggerGameOver()
         {
+            if (isDead)
+            {
+                return;
+            }
+
+            isDead = true;
             gameState.GameOver();
             body.linearVelocity = Vector3.zero;
+            deathEffectService?.SpawnBlood(transform.position + Vector3.up * 0.75f);
             animatorView?.SetDead(true);
             eventBus.PublishGameStateChanged(gameState.State);
         }
@@ -341,7 +355,6 @@ namespace DinoGrow.Gameplay.Player
             if (cameraTransform != null)
             {
                 var lookDirection = levelTextTransform.position - cameraTransform.position;
-                lookDirection.y = 0f;
 
                 if (lookDirection.sqrMagnitude > 0.001f)
                 {
@@ -352,8 +365,13 @@ namespace DinoGrow.Gameplay.Player
 
         private void ApplyGrowthVisuals()
         {
+            if (!applyGrowthScale)
+            {
+                return;
+            }
+
             var growthScale = GetGrowthScale(progress.Level);
-            visualRoot.localScale = Vector3.one * baseSize * growthScale;
+            visualRoot.localScale = baseVisualScale * growthScale;
         }
 
         private void ApplyPlayerData()
@@ -368,9 +386,9 @@ namespace DinoGrow.Gameplay.Player
                 moveSpeed = playerData.speed;
             }
 
-            if (playerData.size > 0f)
+            if (useDataSize && playerData.size > 0f)
             {
-                baseSize = playerData.size;
+                baseVisualScale = Vector3.one * playerData.size;
             }
         }
 
