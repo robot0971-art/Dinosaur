@@ -153,6 +153,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   player: {fileID: 376135606}
+  enemySpawner: {fileID: 1028698013}
   gameHud: {fileID: 1521132390}
   dinoDatabase: {fileID: 11400000, guid: 1aaa4625c277f7f4cac3fb578a413e93, type: 2}
   stageDatabase: {fileID: 11400000, guid: 8aaa1d1f0bff97b43a0a97d079deddde, type: 2}
@@ -1197,10 +1198,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ee56dc798c46a24fbcd15b636079595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.EnemySpawner
+  stageId: 1
   enemyPrefabs:
-  - {fileID: 7070585412536512311, guid: 692b503d49bd1af4f9289b98b4da6f39, type: 3}
-  - {fileID: 2364197788846562509, guid: 64e52b5c3b7f16941b2dde60f2a364cf, type: 3}
-  - {fileID: 626844991403845606, guid: 6fbbcb4185b0825458ee25b222248504, type: 3}
+  - {fileID: 5272534872482404466, guid: a89539ea0582255469e44eb43aabbdfd, type: 3}
+  - {fileID: 2054191857098185428, guid: 5d978d0ed71a93b40b2d5acffc507263, type: 3}
+  - {fileID: 8667568665158849678, guid: 02c2670d51f7c844083a3f59e7795d37, type: 3}
+  - {fileID: 9094686460186876841, guid: db072cfbb6238cb458e1144751c0bf37, type: 3}
+  - {fileID: 1117800828723671259, guid: c981e40bf4cd8fc4888be328ce1869ec, type: 3}
   spawnParent: {fileID: 849906959}
   spawnCenter: {x: -5.46054, y: 0, z: -33.97773}
   spawnSize: {x: 225, y: 225}
@@ -2064,7 +2068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.25382873, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2163,7 +2167,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_SeparateReverseCurve: 1
+  m_SeparateReverseCurve: 0
   m_ReverseCurve:
     serializedVersion: 2
     m_Curve:
@@ -2191,10 +2195,10 @@ MonoBehaviour:
   m_Delay: 0
   m_Duration: 1
   m_Interval: 0
-  m_PlayOnEnable: 1
+  m_PlayOnEnable: 2
   m_ResetTimeOnEnable: 1
   m_WrapMode: 1
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_OnComplete:
     m_PersistentCalls:
       m_Calls: []
@@ -2213,18 +2217,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
-  m_ToneFilter: 4
-  m_ToneIntensity: 1
-  m_ColorFilter: 6
-  m_ColorIntensity: 1
-  m_Color: {r: 13.928809, g: 0, b: 1.0209602, a: 1}
+  m_ToneFilter: 1
+  m_ToneIntensity: 0.5109652
+  m_ColorFilter: 1
+  m_ColorIntensity: 0.5109652
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_ColorGlow: 1
   m_SamplingFilter: 0
   m_SamplingIntensity: 0.5
   m_SamplingWidth: 1
   m_SamplingScale: 1
-  m_TransitionFilter: 0
-  m_TransitionRate: 0.5
+  m_TransitionFilter: 4
+  m_TransitionRate: 0.5109652
   m_TransitionReverse: 0
   m_TransitionTex: {fileID: 0}
   m_TransitionTexScale: {x: 1, y: 1}
@@ -2276,16 +2280,16 @@ MonoBehaviour:
   m_TargetColor: {r: 1, g: 1, b: 1, a: 1}
   m_TargetRange: 0.1
   m_TargetSoftness: 0.5
-  m_BlendType: 1
-  m_SrcBlendMode: 1
-  m_DstBlendMode: 10
+  m_BlendType: 4
+  m_SrcBlendMode: 4
+  m_DstBlendMode: 1
   m_ShadowMode: 0
-  m_ShadowDistance: {x: 0.5, y: 0}
-  m_ShadowIteration: 4
-  m_ShadowFade: 0.95
+  m_ShadowDistance: {x: 0, y: 10}
+  m_ShadowIteration: 1
+  m_ShadowFade: 0
   m_ShadowMirrorScale: 0.5
   m_ShadowBlurIntensity: 1
-  m_ShadowColorFilter: 2
+  m_ShadowColorFilter: 4
   m_ShadowColor: {r: 1, g: 0.05, b: 0, a: 1}
   m_ShadowColorGlow: 1
   m_GradationMode: 0
@@ -2331,10 +2335,10 @@ MonoBehaviour:
   m_GradationWrapMode: 0
   m_GradationReverse: 0
   m_AllowToModifyMeshShape: 1
-  m_EdgeMode: 0
-  m_EdgeWidth: 0.35
+  m_EdgeMode: 1
+  m_EdgeWidth: 1
   m_EdgeColorFilter: 2
-  m_EdgeColor: {r: 1, g: 0.25, b: 0, a: 1}
+  m_EdgeColor: {r: 1, g: 0.2509804, b: 0, a: 1}
   m_EdgeColorGlow: 1
   m_EdgeShinyRate: 0.5
   m_EdgeShinyWidth: 0.5
@@ -2345,7 +2349,7 @@ MonoBehaviour:
   m_DetailThreshold:
     m_Min: 0
     m_Max: 1
-  m_DetailColor: {r: 1, g: 1, b: 1, a: 1}
+  m_DetailColor: {r: 1, g: 0, b: 0, a: 1}
   m_DetailTex: {fileID: 0}
   m_DetailTexScale: {x: 1, y: 1}
   m_DetailTexOffset: {x: 0, y: 0}

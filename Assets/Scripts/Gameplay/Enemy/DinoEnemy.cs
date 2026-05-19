@@ -5,6 +5,7 @@ namespace DinoGrow.Gameplay.Enemy
     public sealed class DinoEnemy : MonoBehaviour
     {
         [SerializeField] private int level = 1;
+        [SerializeField] private bool usePrototypeLevelMaterial;
         [SerializeField] private Color levelOneColor = new(0.25f, 0.95f, 0.35f);
         [SerializeField] private Color levelTwoColor = new(0.2f, 0.65f, 1f);
         [SerializeField] private Color levelThreeColor = new(1f, 0.35f, 0.2f);
@@ -31,6 +32,11 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void ApplyPrototypeMaterial()
         {
+            if (!usePrototypeLevelMaterial)
+            {
+                return;
+            }
+
             var renderers = GetComponentsInChildren<Renderer>();
             foreach (var targetRenderer in renderers)
             {

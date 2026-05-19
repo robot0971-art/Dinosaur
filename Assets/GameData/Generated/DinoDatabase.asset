@@ -22,3 +22,48 @@ MonoBehaviour:
     aiType: "\uD50C\uB808\uC774\uC5B4"
     colorType: "\uD50C\uB808\uC774\uC5B4"
     prefab: Player
+  - id: parasaurolophus
+    displayName: "\uD30C\uB77C\uC0AC\uC6B0\uB864\uB85C\uD478\uC2A4"
+    level: 1
+    exp: 10
+    speed: 2.6
+    size: 1
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Parasaurolophus
+  - id: velociraptor
+    displayName: "\uBCA8\uB85C\uC2DC\uB7A9\uD130"
+    level: 2
+    exp: 20
+    speed: 4.2
+    size: 0.9
+    aiType: "\uCD94\uACA9\uD615"
+    colorType: "\uC721\uC2DD"
+    prefab: Velociraptor
+  - id: stegosaurus
+    displayName: "\uC2A4\uD14C\uACE0\uC0AC\uC6B0\uB8E8\uC2A4"
+    level: 4
+    exp: 40
+    speed: 2.2
+    size: 1.4
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Stegosaurus
+  - id: triceratops
+    displayName: "\uD2B8\uB9AC\uCF00\uB77C\uD1B1\uC2A4"
+    level: 6
+    exp: 60
+    speed: 2.4
+    size: 1.6
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Triceratops
+  - id: trex
+    displayName: "\uD2F0\uB77C\uB178"
+    level: 10
+    exp: 100
+    speed: 3.4
+    size: 2.2
+    aiType: "\uCD94\uACA9\uD615"
+    colorType: "\uC721\uC2DD"
+    prefab: Trex

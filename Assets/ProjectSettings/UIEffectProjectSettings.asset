@@ -36,17 +36,42 @@ ShaderVariantCollection:
       variants:
       - keywords: COLOR_FILTER
         passType: 0
+      - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_PLAIN TONE_GRAYSCALE
+          TRANSITION_SHINY
+        passType: 0
       - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_SHINY TONE_NEGATIVE
           TRANSITION_MASK
         passType: 0
       - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_SHINY TONE_NEGATIVE
           TRANSITION_SHINY
         passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
       - keywords: COLOR_FILTER EDGE_PLAIN TONE_RETRO
+        passType: 0
+      - keywords: COLOR_FILTER GRADATION_COLOR2 TONE_GRAYSCALE TRANSITION_SHINY
         passType: 0
       - keywords: COLOR_FILTER SAMPLING_BLUR_FAST
         passType: 0
+      - keywords: COLOR_FILTER SAMPLING_BLUR_FAST TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_BLUR_MEDIUM TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_EDGE_LUMINANCE TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_PIXELATION TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE TRANSITION_FADE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER TONE_NEGATIVE
+        passType: 0
       - keywords: COLOR_FILTER TONE_NEGATIVE TRANSITION_CUTOFF
+        passType: 0
+      - keywords: COLOR_FILTER TONE_POSTERIZE
         passType: 0
       - keywords: COLOR_FILTER TONE_RETRO
         passType: 0

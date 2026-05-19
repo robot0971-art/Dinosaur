@@ -4,6 +4,7 @@ using DinoGrow.Core.Combat;
 using DinoGrow.Core.Data;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
+using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Gameplay.Player;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
@@ -14,6 +15,7 @@ public class GameLifetimeScope : LifetimeScope
 {
     [Header("Scene Components")]
     [SerializeField] private PlayerDinoController player;
+    [SerializeField] private EnemySpawner enemySpawner;
     [SerializeField] private GameHud gameHud;
 
     [Header("Generated Data")]
@@ -48,6 +50,11 @@ public class GameLifetimeScope : LifetimeScope
         if (gameHud != null)
         {
             builder.RegisterComponent(gameHud);
+        }
+
+        if (enemySpawner != null)
+        {
+            builder.RegisterComponent(enemySpawner);
         }
     }
 

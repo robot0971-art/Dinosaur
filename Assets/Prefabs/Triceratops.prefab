@@ -331,6 +331,9 @@ GameObject:
   - component: {fileID: 6821992797825172106}
   - component: {fileID: 4145662021970032825}
   - component: {fileID: 5223364518791832845}
+  - component: {fileID: 4365514462183072258}
+  - component: {fileID: 9094686460186876841}
+  - component: {fileID: 2088736401827580174}
   m_Layer: 0
   m_Name: Triceratops
   m_TagString: Untagged
@@ -404,6 +407,55 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4365514462183072258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681561926132968448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2acbd78b6445c7047b4c6b41c7dee63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Animation.DinoAnimatorView
+  animator: {fileID: 0}
+--- !u!114 &9094686460186876841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681561926132968448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d65eebef29f4bbe4ea72fa912bd0fb25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.DinoEnemy
+  level: 1
+  levelOneColor: {r: 0.25, g: 0.95, b: 0.35, a: 1}
+  levelTwoColor: {r: 0.2, g: 0.65, b: 1, a: 1}
+  levelThreeColor: {r: 1, g: 0.35, b: 0.2, a: 1}
+--- !u!114 &2088736401827580174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681561926132968448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70cfa278244b2c148b0cc3985925d240, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.EnemyWanderMovement
+  moveSpeed: 3.2
+  turnSpeed: 420
+  directionChangeInterval: 1.6
+  fleeDetectDistance: 18
+  fleeSpeedMultiplier: 1.65
+  animatorView: {fileID: 4365514462183072258}
+  areaCenter: {x: 0, y: 0, z: 0}
+  areaSize: {x: 80, y: 80}
 --- !u!1 &1977278271587212941
 GameObject:
   m_ObjectHideFlags: 0

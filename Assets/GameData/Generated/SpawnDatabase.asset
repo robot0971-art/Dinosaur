@@ -14,47 +14,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Core.Data.SpawnDatabase
   records:
   - stageId: 1
-    dinoId: dino_001
-    minLevel: 1
-    maxLevel: 1
-    count: 10
-    defeatExp: 10
-    weight: 60
-    minWanderSpeed: 0
-    maxWanderSpeed: 0
-  - stageId: 1
-    dinoId: dino_002
+    dinoId: parasaurolophus
     minLevel: 1
     maxLevel: 2
     count: 8
-    defeatExp: 20
-    weight: 30
-    minWanderSpeed: 2.4
-    maxWanderSpeed: 3.4
+    defeatExp: 10
+    weight: 45
+    minWanderSpeed: 2
+    maxWanderSpeed: 2.8
   - stageId: 1
-    dinoId: dino_003
+    dinoId: velociraptor
     minLevel: 2
     maxLevel: 3
     count: 6
-    defeatExp: 30
-    weight: 10
-    minWanderSpeed: 3
+    defeatExp: 20
+    weight: 30
+    minWanderSpeed: 3.4
     maxWanderSpeed: 4.2
-  - stageId: 2
-    dinoId: dino_002
-    minLevel: 2
-    maxLevel: 4
-    count: 12
-    defeatExp: 40
-    weight: 50
-    minWanderSpeed: 2.6
-    maxWanderSpeed: 3.8
-  - stageId: 2
-    dinoId: dino_003
+  - stageId: 1
+    dinoId: stegosaurus
     minLevel: 3
-    maxLevel: 5
-    count: 10
+    maxLevel: 4
+    count: 4
+    defeatExp: 30
+    weight: 20
+    minWanderSpeed: 1.8
+    maxWanderSpeed: 2.4
+  - stageId: 2
+    dinoId: triceratops
+    minLevel: 5
+    maxLevel: 8
+    count: 6
     defeatExp: 50
-    weight: 50
-    minWanderSpeed: 3.2
-    maxWanderSpeed: 4.4
+    weight: 35
+    minWanderSpeed: 2
+    maxWanderSpeed: 2.8
+  - stageId: 2
+    dinoId: trex
+    minLevel: 8
+    maxLevel: 12
+    count: 3
+    defeatExp: 80
+    weight: 15
+    minWanderSpeed: 3
+    maxWanderSpeed: 4
