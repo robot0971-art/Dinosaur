@@ -43,15 +43,19 @@ namespace DinoGrow.Gameplay.Animation
 
         private AnimationClip deathClip;
         private Coroutine deathClipRoutine;
+        private int idleStateHash;
+        private int walkStateHash;
+        private int runStateHash;
 
         private void Awake()
         {
-            if (animator == null)
-            {
-                animator = GetComponentInChildren<Animator>();
-            }
+            EnsureAnimatorReference();
+        }
 
-            CacheDeathClip();
+        private void OnEnable()
+        {
+            EnsureAnimatorReference();
+            RestoreAnimatorPlayback();
         }
 
         private void Reset()
@@ -61,18 +65,22 @@ namespace DinoGrow.Gameplay.Animation
 
         public void SetMove(float speed, bool isRunning)
         {
+            EnsureAnimatorReference();
             if (animator == null)
             {
                 return;
             }
 
+            EnsureAnimatorActive();
             animator.SetFloat(SpeedHash, Mathf.Clamp01(speed));
             animator.SetBool(IsMovingHash, speed > 0.01f);
             animator.SetBool(IsRunningHash, isRunning);
+            PlayLocomotionState(speed, isRunning);
         }
 
         public void SetDead(bool isDead)
         {
+            EnsureAnimatorReference();
             if (animator == null)
             {
                 return;
@@ -85,9 +93,7 @@ namespace DinoGrow.Gameplay.Animation
             }
 
             StopDeathClipRoutine();
-            animator.enabled = true;
-            animator.SetBool(IsDeadHash, isDead);
-            animator.SetBool(DeadHash, isDead);
+            ResetAnimator();
         }
 
         private void PlayDeath()
@@ -114,17 +120,18 @@ namespace DinoGrow.Gameplay.Animation
         private IEnumerator SampleDeathClip()
         {
             animator.enabled = false;
+            var sampleRoot = animator.gameObject;
 
             var time = 0f;
             var length = Mathf.Max(0.01f, deathClip.length);
             while (time < length)
             {
-                deathClip.SampleAnimation(gameObject, time);
+                deathClip.SampleAnimation(sampleRoot, time);
                 time += Time.deltaTime;
                 yield return null;
             }
 
-            deathClip.SampleAnimation(gameObject, length);
+            deathClip.SampleAnimation(sampleRoot, length);
             deathClipRoutine = null;
         }
 
@@ -148,6 +155,101 @@ namespace DinoGrow.Gameplay.Animation
 
             deathClip = animator.runtimeAnimatorController.animationClips
                 .FirstOrDefault(clip => clip != null && clip.name.ToLowerInvariant().Contains("death"));
+        }
+
+        private void CacheLocomotionStates()
+        {
+            if (animator == null || animator.runtimeAnimatorController == null)
+            {
+                return;
+            }
+
+            if (idleStateHash != 0 && walkStateHash != 0 && runStateHash != 0)
+            {
+                return;
+            }
+
+            idleStateHash = GetStateHash("idle");
+            walkStateHash = GetStateHash("walk");
+            runStateHash = GetStateHash("run");
+        }
+
+        private int GetStateHash(string stateNamePart)
+        {
+            var clip = animator.runtimeAnimatorController.animationClips
+                .FirstOrDefault(candidate =>
+                    candidate != null
+                    && candidate.name.ToLowerInvariant().Contains(stateNamePart));
+
+            return clip == null ? 0 : Animator.StringToHash($"Base Layer.{clip.name}");
+        }
+
+        private void PlayLocomotionState(float speed, bool isRunning)
+        {
+            var targetHash = speed <= 0.01f
+                ? idleStateHash
+                : isRunning
+                    ? runStateHash
+                    : walkStateHash;
+
+            if (targetHash == 0 || !animator.HasState(0, targetHash))
+            {
+                return;
+            }
+
+            if (IsPlayingOrTransitioningTo(targetHash))
+            {
+                return;
+            }
+
+            animator.CrossFade(targetHash, 0.12f, 0);
+        }
+
+        private bool IsPlayingOrTransitioningTo(int stateHash)
+        {
+            var current = animator.GetCurrentAnimatorStateInfo(0);
+            if (current.fullPathHash == stateHash)
+            {
+                return true;
+            }
+
+            if (!animator.IsInTransition(0))
+            {
+                return false;
+            }
+
+            var next = animator.GetNextAnimatorStateInfo(0);
+            return next.fullPathHash == stateHash;
+        }
+
+        private void EnsureAnimatorActive()
+        {
+            RestoreAnimatorPlayback();
+        }
+
+        private void ResetAnimator()
+        {
+            RestoreAnimatorPlayback();
+            animator.Rebind();
+            animator.Update(0f);
+            animator.SetFloat(SpeedHash, 0f);
+            animator.SetBool(IsMovingHash, false);
+            animator.SetBool(IsRunningHash, false);
+            animator.SetBool(IsDeadHash, false);
+            animator.SetBool(DeadHash, false);
+            PlayLocomotionState(0f, false);
+        }
+
+        private void RestoreAnimatorPlayback()
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            animator.enabled = true;
+            animator.speed = 1f;
+            animator.applyRootMotion = false;
         }
 
         private void PlayDeathState()
@@ -187,6 +289,7 @@ namespace DinoGrow.Gameplay.Animation
 
         public void PlayAttack()
         {
+            EnsureAnimatorReference();
             if (animator != null)
             {
                 animator.SetTrigger(AttackHash);
@@ -195,10 +298,22 @@ namespace DinoGrow.Gameplay.Animation
 
         public void PlayJump()
         {
+            EnsureAnimatorReference();
             if (animator != null)
             {
                 animator.SetTrigger(JumpHash);
             }
+        }
+
+        private void EnsureAnimatorReference()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+
+            CacheDeathClip();
+            CacheLocomotionStates();
         }
     }
 }

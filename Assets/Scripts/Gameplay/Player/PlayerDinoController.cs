@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using DinoGrow.Core.Combat;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Infrastructure.Data;
+using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,10 +22,17 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private string playerDataId = "player";
         [SerializeField] private bool useDataSize;
         [SerializeField] private bool applyGrowthScale = true;
+        [SerializeField] private LayerMask groundLayers = ~0;
+        [SerializeField] private float groundRaycastHeight = 20f;
+        [SerializeField] private float groundRaycastDistance = 60f;
+        [SerializeField] private float groundOffset = 0f;
+        [SerializeField] private float maxGroundSnapStep = 0.18f;
         [SerializeField] private Rigidbody body;
         [SerializeField] private Transform visualRoot;
         [SerializeField] private Transform cameraTransform;
         [SerializeField] private DinoAnimatorView animatorView;
+        [SerializeField] private Transform mouthEffectOrigin;
+        [SerializeField] private Vector3 mouthEffectFallbackOffset = new Vector3(0f, 1.05f, 0.75f);
         [SerializeField] private TextMesh levelText;
         [SerializeField] private Vector3 levelTextOffset = new Vector3(0f, 1.55f, 0f);
         [SerializeField] private float levelTextCharacterSize = 0.045f;
@@ -45,6 +54,9 @@ namespace DinoGrow.Gameplay.Player
         private bool createdLevelText;
         private Vector3 baseVisualScale = Vector3.one;
         private bool isDead;
+        private bool dependenciesReady;
+        private float visualBottomOffset;
+        private readonly List<DinoEnemy> attackTargets = new List<DinoEnemy>();
 
         public int Level => progress?.Level ?? 1;
 
@@ -58,7 +70,8 @@ namespace DinoGrow.Gameplay.Player
             DeathEffectService deathEffectService,
             GameEventBus eventBus,
             DinoDataRepository dinoDataRepository,
-            PlayerGrowthDataRepository playerGrowthDataRepository)
+            PlayerGrowthDataRepository playerGrowthDataRepository,
+            CameraReference cameraReference)
         {
             this.eatResolver = eatResolver;
             this.growthSystem = growthSystem;
@@ -69,6 +82,8 @@ namespace DinoGrow.Gameplay.Player
             this.eventBus = eventBus;
             this.dinoDataRepository = dinoDataRepository;
             this.playerGrowthDataRepository = playerGrowthDataRepository;
+            cameraTransform ??= cameraReference?.Transform;
+            dependenciesReady = true;
         }
 
         private void Reset()
@@ -79,6 +94,8 @@ namespace DinoGrow.Gameplay.Player
 
         private void Awake()
         {
+            UseGroundLayerIfAvailable();
+
             if (body == null)
             {
                 body = GetComponent<Rigidbody>();
@@ -92,20 +109,41 @@ namespace DinoGrow.Gameplay.Player
             }
 
             baseVisualScale = visualRoot.localScale;
+            CacheVisualBottomOffset();
 
             if (animatorView == null)
             {
                 animatorView = GetComponentInChildren<DinoAnimatorView>();
             }
 
-            if (cameraTransform == null && UnityEngine.Camera.main != null)
+            if (mouthEffectOrigin == null)
             {
-                cameraTransform = UnityEngine.Camera.main.transform;
+                mouthEffectOrigin = FindChildByName(visualRoot != null ? visualRoot : transform, "Head_end")
+                    ?? FindChildByName(visualRoot != null ? visualRoot : transform, "Head");
             }
+
+        }
+
+        private void UseGroundLayerIfAvailable()
+        {
+            var groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer < 0 || groundLayers.value != ~0)
+            {
+                return;
+            }
+
+            groundLayers = 1 << groundLayer;
         }
 
         private void Start()
         {
+            if (!EnsureDependenciesReady())
+            {
+                enabled = false;
+                return;
+            }
+
+            WarnIfCameraMissing();
             ApplyPlayerData();
             EnsureLevelText();
             RefreshLevelText();
@@ -125,6 +163,12 @@ namespace DinoGrow.Gameplay.Player
 
         private void Update()
         {
+            if (!dependenciesReady || gameState == null)
+            {
+                rotateInput = Vector2.zero;
+                return;
+            }
+
             if (!gameState.IsPlaying)
             {
                 rotateInput = Vector2.zero;
@@ -133,6 +177,12 @@ namespace DinoGrow.Gameplay.Player
 
             rotateInput = ReadRotateInput();
             isSprinting = IsSprintPressed();
+
+            if (IsAttackPressed())
+            {
+                animatorView?.PlayAttack();
+                TryAttackTarget();
+            }
         }
 
         private void LateUpdate()
@@ -142,6 +192,16 @@ namespace DinoGrow.Gameplay.Player
 
         private void FixedUpdate()
         {
+            if (!dependenciesReady || gameState == null)
+            {
+                if (body != null)
+                {
+                    body.linearVelocity = Vector3.zero;
+                }
+
+                return;
+            }
+
             if (!gameState.IsPlaying)
             {
                 body.linearVelocity = Vector3.zero;
@@ -150,22 +210,14 @@ namespace DinoGrow.Gameplay.Player
 
             if (TryGetCameraRelativeDirection(rotateInput, out var targetDirection))
             {
-                // 캐릭터 회전: 이동 방향을 향하도록
                 var targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
                 body.MoveRotation(Quaternion.RotateTowards(body.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
-
-                // 캐릭터 이동: 카메라 기준 방향으로 이동
-                body.linearVelocity = new Vector3(
-                    targetDirection.x * GetCurrentMoveSpeed(),
-                    body.linearVelocity.y,
-                    targetDirection.z * GetCurrentMoveSpeed()
-                );
+                MoveBody(targetDirection * GetCurrentMoveSpeed());
                 animatorView?.SetMove(isSprinting ? 1f : 0.5f, isSprinting);
             }
             else
             {
-                // 입력 없으면 수평 이동 정지
-                body.linearVelocity = new Vector3(0f, body.linearVelocity.y, 0f);
+                MoveBody(Vector3.zero);
                 animatorView?.SetMove(0f, false);
             }
         }
@@ -185,7 +237,41 @@ namespace DinoGrow.Gameplay.Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!gameState.IsPlaying || !other.TryGetComponent(out DinoEnemy enemy))
+            if (!dependenciesReady || gameState == null || !gameState.IsPlaying)
+            {
+                return;
+            }
+
+            if (!other.TryGetComponent(out DinoEnemy enemy))
+            {
+                return;
+            }
+
+            if (!attackTargets.Contains(enemy))
+            {
+                attackTargets.Add(enemy);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!other.TryGetComponent(out DinoEnemy enemy))
+            {
+                return;
+            }
+
+            attackTargets.Remove(enemy);
+        }
+
+        private void TryAttackTarget()
+        {
+            if (!dependenciesReady || eatResolver == null || progress == null)
+            {
+                return;
+            }
+
+            var enemy = GetClosestAttackTarget();
+            if (enemy == null)
             {
                 return;
             }
@@ -201,10 +287,40 @@ namespace DinoGrow.Gameplay.Player
             }
         }
 
+        private DinoEnemy GetClosestAttackTarget()
+        {
+            DinoEnemy closest = null;
+            var closestDistanceSqr = float.PositiveInfinity;
+
+            for (var i = attackTargets.Count - 1; i >= 0; i--)
+            {
+                var enemy = attackTargets[i];
+                if (enemy == null || enemy.IsDying || !enemy.gameObject.activeInHierarchy)
+                {
+                    attackTargets.RemoveAt(i);
+                    continue;
+                }
+
+                var offset = enemy.transform.position - transform.position;
+                var distanceSqr = offset.sqrMagnitude;
+                if (distanceSqr >= closestDistanceSqr)
+                {
+                    continue;
+                }
+
+                closest = enemy;
+                closestDistanceSqr = distanceSqr;
+            }
+
+            return closest;
+        }
+
         private void Eat(DinoEnemy enemy)
         {
+            attackTargets.Remove(enemy);
             var enemyLevel = enemy.Level;
             enemy.Eaten();
+            deathEffectService?.SpawnBlood(GetMouthEffectPosition());
 
             var growthResult = growthSystem.AddEnemyExp(progress, enemyLevel);
             ApplyGrowthVisuals();
@@ -237,6 +353,40 @@ namespace DinoGrow.Gameplay.Player
             deathEffectService?.SpawnBlood(transform.position + Vector3.up * 0.75f);
             animatorView?.SetDead(true);
             eventBus.PublishGameStateChanged(gameState.State);
+        }
+
+        private Vector3 GetMouthEffectPosition()
+        {
+            if (mouthEffectOrigin != null)
+            {
+                return mouthEffectOrigin.position;
+            }
+
+            return transform.TransformPoint(mouthEffectFallbackOffset);
+        }
+
+        private static Transform FindChildByName(Transform root, string targetName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root.name == targetName)
+            {
+                return root;
+            }
+
+            for (var i = 0; i < root.childCount; i++)
+            {
+                var result = FindChildByName(root.GetChild(i), targetName);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
 
         private static Vector2 ReadRotateInput()
@@ -277,6 +427,12 @@ namespace DinoGrow.Gameplay.Player
             return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
         }
 
+        private static bool IsAttackPressed()
+        {
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
+        }
+
         private float GetCurrentMoveSpeed()
         {
             return isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
@@ -310,6 +466,23 @@ namespace DinoGrow.Gameplay.Player
             return true;
         }
 
+        private bool EnsureDependenciesReady()
+        {
+            if (dependenciesReady
+                && eatResolver != null
+                && growthSystem != null
+                && progress != null
+                && gameState != null
+                && stageRule != null
+                && eventBus != null)
+            {
+                return true;
+            }
+
+            Debug.LogError($"{nameof(PlayerDinoController)} was not injected by VContainer. Check GameLifetimeScope scene references.", this);
+            return false;
+        }
+
         private void EnsureLevelText()
         {
             if (levelText == null)
@@ -325,7 +498,26 @@ namespace DinoGrow.Gameplay.Player
             levelText.characterSize = levelTextCharacterSize;
             levelText.fontSize = levelTextFontSize;
             levelText.color = levelTextColor;
+            ConfigureLevelTextMaterial(levelText);
             UpdateLevelTextTransform();
+        }
+
+        private static void ConfigureLevelTextMaterial(TextMesh targetText)
+        {
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
+                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+            if (font == null)
+            {
+                return;
+            }
+
+            targetText.font = font;
+
+            if (targetText.TryGetComponent<MeshRenderer>(out var textRenderer))
+            {
+                textRenderer.sharedMaterial = font.material;
+            }
         }
 
         private void RefreshLevelText()
@@ -343,11 +535,6 @@ namespace DinoGrow.Gameplay.Player
             if (levelTextTransform == null)
             {
                 return;
-            }
-
-            if (cameraTransform == null && UnityEngine.Camera.main != null)
-            {
-                cameraTransform = UnityEngine.Camera.main.transform;
             }
 
             levelTextTransform.position = transform.position + levelTextOffset;
@@ -372,6 +559,116 @@ namespace DinoGrow.Gameplay.Player
 
             var growthScale = GetGrowthScale(progress.Level);
             visualRoot.localScale = baseVisualScale * growthScale;
+            CacheVisualBottomOffset();
+        }
+
+        private void MoveBody(Vector3 horizontalVelocity)
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            var position = body.position + horizontalVelocity * Time.fixedDeltaTime;
+
+            if (TryGetGroundY(position, out var groundY))
+            {
+                var targetY = groundY - visualBottomOffset;
+                position.y = Mathf.MoveTowards(body.position.y, targetY, maxGroundSnapStep);
+            }
+
+            body.MovePosition(position);
+            body.linearVelocity = Vector3.zero;
+        }
+
+        private bool TryGetGroundY(Vector3 position, out float groundY)
+        {
+            groundY = position.y;
+            var origin = new Vector3(position.x, position.y + groundRaycastHeight, position.z);
+            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
+            if (hits.Length == 0)
+            {
+                return false;
+            }
+
+            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+            foreach (var hit in hits)
+            {
+                if (hit.collider.GetComponentInParent<PlayerDinoController>() != null)
+                {
+                    continue;
+                }
+
+                if (hit.collider.GetComponentInParent<DinoEnemy>() != null)
+                {
+                    continue;
+                }
+
+                if (IsWaterCollider(hit.collider))
+                {
+                    continue;
+                }
+
+                groundY = hit.point.y + groundOffset;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void CacheVisualBottomOffset()
+        {
+            var bounds = CalculateWorldVisualBounds();
+            visualBottomOffset = bounds.HasValue
+                ? bounds.Value.min.y - transform.position.y
+                : 0f;
+        }
+
+        private Bounds? CalculateWorldVisualBounds()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            var hasBounds = false;
+            var bounds = new Bounds(transform.position, Vector3.zero);
+
+            foreach (var targetRenderer in renderers)
+            {
+                if (targetRenderer.GetComponent<TextMesh>() != null)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = targetRenderer.bounds;
+                    hasBounds = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(targetRenderer.bounds);
+            }
+
+            return hasBounds ? bounds : null;
+        }
+
+        private static bool IsWaterCollider(Collider targetCollider)
+        {
+            if (targetCollider == null)
+            {
+                return false;
+            }
+
+            var target = targetCollider.transform;
+            while (target != null)
+            {
+                if (target.name == "Water")
+                {
+                    return true;
+                }
+
+                target = target.parent;
+            }
+
+            return false;
         }
 
         private void ApplyPlayerData()
@@ -402,6 +699,16 @@ namespace DinoGrow.Gameplay.Player
             }
 
             return Mathf.Lerp(1f, 4.25f, Mathf.InverseLerp(1f, 20f, level));
+        }
+
+        private void WarnIfCameraMissing()
+        {
+            if (cameraTransform != null)
+            {
+                return;
+            }
+
+            Debug.LogWarning($"{nameof(PlayerDinoController)} needs an explicit camera transform reference.", this);
         }
     }
 }

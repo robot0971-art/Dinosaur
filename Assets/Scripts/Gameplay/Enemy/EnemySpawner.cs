@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DinoGrow.Core.Data;
+using DinoGrow.Core.Growth;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.Infrastructure.Pooling;
@@ -22,16 +23,23 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundOffset = 0f;
         [SerializeField] private int spawnCount = 24;
         [SerializeField] private float minDistanceFromPlayer = 8f;
+        [SerializeField] private float minDistanceBetweenEnemies = 9f;
         [SerializeField] private Transform player;
         [SerializeField] private float minWanderSpeed = 2.4f;
         [SerializeField] private float maxWanderSpeed = 4.2f;
         [SerializeField] private float sizeUnit = 3f;
         [SerializeField] private bool advanceStageOnLevelUpForTest = true;
+        [SerializeField] private bool respawnCurrentStageOnLevelUp = true;
+        [SerializeField] private bool scaleEnemyLevelWithPlayer = true;
+        [SerializeField] private int edibleLevelOffset = 1;
+        [SerializeField] private int threatLevelOffset = 2;
+        [SerializeField, Range(0f, 1f)] private float threatSpawnChance = 0.25f;
 
         private readonly List<DinoEnemy> spawnedEnemies = new();
         private DinoDataRepository dinoDataRepository;
         private SpawnDataRepository spawnDataRepository;
         private StageDataRepository stageDataRepository;
+        private PlayerProgress playerProgress;
         private IObjectPoolService poolService;
         private GameEventBus eventBus;
 
@@ -40,12 +48,14 @@ namespace DinoGrow.Gameplay.Enemy
             DinoDataRepository dinoDataRepository,
             SpawnDataRepository spawnDataRepository,
             StageDataRepository stageDataRepository,
+            PlayerProgress playerProgress,
             IObjectPoolService poolService,
             GameEventBus eventBus)
         {
             this.dinoDataRepository = dinoDataRepository;
             this.spawnDataRepository = spawnDataRepository;
             this.stageDataRepository = stageDataRepository;
+            this.playerProgress = playerProgress;
             this.poolService = poolService;
             this.eventBus = eventBus;
         }
@@ -57,8 +67,20 @@ namespace DinoGrow.Gameplay.Enemy
                 eventBus.PlayerGrowthChanged += OnPlayerGrowthChanged;
             }
 
+            UseGroundLayerIfAvailable();
             ApplyStageData();
             SpawnInitialEnemies();
+        }
+
+        private void UseGroundLayerIfAvailable()
+        {
+            var groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer < 0 || groundLayers.value != ~0)
+            {
+                return;
+            }
+
+            groundLayers = 1 << groundLayer;
         }
 
         private void OnDestroy()
@@ -160,7 +182,7 @@ namespace DinoGrow.Gameplay.Enemy
             var position = PickSpawnPosition();
             var rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
             var enemy = SpawnEnemy(prefab, position, rotation);
-            var level = GetRandomLevel(spawnRecord);
+            var level = GetSpawnLevel(spawnRecord);
             enemy.name = $"{prefab.name}_Lv{level}";
             enemy.SetLevel(level);
             enemy.SetDespawnHandler(DespawnEnemy);
@@ -210,12 +232,16 @@ namespace DinoGrow.Gameplay.Enemy
         {
             RefreshSpawnedEnemyLevelTextColors();
 
-            if (!advanceStageOnLevelUpForTest || !result.LeveledUp)
+            if (!result.LeveledUp)
             {
                 return;
             }
 
-            AdvanceToNextStageForTest();
+            var advancedStage = advanceStageOnLevelUpForTest && AdvanceToNextStageForTest();
+            if (!advancedStage && respawnCurrentStageOnLevelUp)
+            {
+                SpawnInitialEnemies();
+            }
         }
 
         private void RefreshSpawnedEnemyLevelTextColors()
@@ -229,19 +255,18 @@ namespace DinoGrow.Gameplay.Enemy
             }
         }
 
-        private void AdvanceToNextStageForTest()
+        private bool AdvanceToNextStageForTest()
         {
             var nextStageId = stageId + 1;
             if (stageDataRepository == null || !stageDataRepository.TryGetByStageId(nextStageId, out _))
             {
-                Debug.Log($"Next stage data was not found for stage {nextStageId}.", this);
-                return;
+                return false;
             }
 
             stageId = nextStageId;
             ApplyStageData();
             SpawnInitialEnemies();
-            Debug.Log($"Advanced to stage {stageId} for level-up test.", this);
+            return true;
         }
 
         private DinoEnemy FindPrefabByName(string prefabName)
@@ -262,10 +287,32 @@ namespace DinoGrow.Gameplay.Enemy
             return null;
         }
 
-        private static int GetRandomLevel(SpawnDataRecord spawnRecord)
+        private int GetSpawnLevel(SpawnDataRecord spawnRecord)
         {
             var minLevel = Mathf.Max(1, spawnRecord.minLevel);
             var maxLevel = Mathf.Max(minLevel, spawnRecord.maxLevel);
+
+            if (!scaleEnemyLevelWithPlayer || playerProgress == null)
+            {
+                return Random.Range(minLevel, maxLevel + 1);
+            }
+
+            var playerLevel = playerProgress.Level;
+            var maxPossibleLevel = Mathf.Max(1, playerProgress.MaxLevel);
+            var shouldSpawnThreat = playerLevel < maxPossibleLevel && Random.value < threatSpawnChance;
+            if (shouldSpawnThreat)
+            {
+                minLevel = Mathf.Max(minLevel, playerLevel + 1);
+                maxLevel = Mathf.Max(minLevel, playerLevel + threatLevelOffset);
+            }
+            else
+            {
+                minLevel = Mathf.Max(1, playerLevel - edibleLevelOffset);
+                maxLevel = Mathf.Max(minLevel, playerLevel);
+            }
+
+            minLevel = Mathf.Clamp(minLevel, 1, maxPossibleLevel);
+            maxLevel = Mathf.Clamp(maxLevel, minLevel, maxPossibleLevel);
             return Random.Range(minLevel, maxLevel + 1);
         }
 
@@ -331,16 +378,42 @@ namespace DinoGrow.Gameplay.Enemy
 
         private Vector3 PickSpawnPosition()
         {
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 40; i++)
             {
                 var position = RandomPositionInArea();
-                if (player == null || Vector3.Distance(position, player.position) >= minDistanceFromPlayer)
+                if (IsValidSpawnPosition(position))
                 {
                     return position;
                 }
             }
 
             return RandomPositionInArea();
+        }
+
+        private bool IsValidSpawnPosition(Vector3 position)
+        {
+            if (player != null && Vector3.Distance(position, player.position) < minDistanceFromPlayer)
+            {
+                return false;
+            }
+
+            var minEnemyDistanceSqr = minDistanceBetweenEnemies * minDistanceBetweenEnemies;
+            foreach (var enemy in spawnedEnemies)
+            {
+                if (enemy == null || enemy.IsDying)
+                {
+                    continue;
+                }
+
+                var offset = position - enemy.transform.position;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < minEnemyDistanceSqr)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private Vector3 RandomPositionInArea()
@@ -357,12 +430,46 @@ namespace DinoGrow.Gameplay.Enemy
         private Vector3 SnapToGround(Vector3 position)
         {
             var origin = new Vector3(position.x, position.y + groundRaycastHeight, position.z);
-            if (Physics.Raycast(origin, Vector3.down, out var hit, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore))
+            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
+            if (hits.Length == 0)
             {
+                return position;
+            }
+
+            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+            foreach (var hit in hits)
+            {
+                if (IsWaterCollider(hit.collider))
+                {
+                    continue;
+                }
+
                 position.y = hit.point.y + groundOffset;
+                return position;
             }
 
             return position;
+        }
+
+        private static bool IsWaterCollider(Collider targetCollider)
+        {
+            if (targetCollider == null)
+            {
+                return false;
+            }
+
+            var target = targetCollider.transform;
+            while (target != null)
+            {
+                if (target.name == "Water")
+                {
+                    return true;
+                }
+
+                target = target.parent;
+            }
+
+            return false;
         }
 
         private void ClearSpawnedEnemies()

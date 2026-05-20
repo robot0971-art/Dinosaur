@@ -24,6 +24,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundRaycastHeight = 50f;
         [SerializeField] private float groundRaycastDistance = 120f;
         [SerializeField] private float groundOffset = 0f;
+        [SerializeField] private float maxGroundSnapStep = 0.2f;
         [SerializeField] private bool ignoreOtherEnemies = true;
         [SerializeField] private DinoAnimatorView animatorView;
         [SerializeField] private Vector3 areaCenter;
@@ -37,6 +38,7 @@ namespace DinoGrow.Gameplay.Enemy
         private float nextDirectionTime;
         private Vector3 desiredMoveDirection;
         private float desiredMoveSpeed;
+        private float visualBottomOffset;
 
         public void Configure(Vector3 center, Vector2 size, float speed, Transform playerTransform)
         {
@@ -45,6 +47,8 @@ namespace DinoGrow.Gameplay.Enemy
             moveSpeed = speed;
             desiredMoveDirection = Vector3.zero;
             desiredMoveSpeed = 0f;
+            CacheVisualBottomOffset();
+            transform.position = SnapToGroundImmediate(transform.position);
             SetPlayer(playerTransform);
             ConfigureBody();
             IgnorePlayerSolidCollision();
@@ -55,12 +59,24 @@ namespace DinoGrow.Gameplay.Enemy
         {
             enemy = GetComponent<DinoEnemy>();
             body = GetComponent<Rigidbody>();
+            UseGroundLayerIfAvailable();
             if (animatorView == null)
             {
                 animatorView = GetComponentInChildren<DinoAnimatorView>();
             }
 
             ConfigureBody();
+        }
+
+        private void UseGroundLayerIfAvailable()
+        {
+            var groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer < 0 || groundLayers.value != ~0)
+            {
+                return;
+            }
+
+            groundLayers = 1 << groundLayer;
         }
 
         private void Start()
@@ -156,11 +172,7 @@ namespace DinoGrow.Gameplay.Enemy
         {
             if (direction.sqrMagnitude <= 0.001f)
             {
-                if (body != null)
-                {
-                    body.linearVelocity = Vector3.zero;
-                    body.angularVelocity = Vector3.zero;
-                }
+                StopBody();
 
                 return;
             }
@@ -172,14 +184,13 @@ namespace DinoGrow.Gameplay.Enemy
             if (body != null)
             {
                 body.MoveRotation(nextRotation);
-                body.MovePosition(ClampToArea(SnapToGround(body.position + direction * (speed * deltaTime))));
-                body.linearVelocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
+                body.MovePosition(GetSafeMovePosition(body.position, direction, speed * deltaTime));
+                StopBody();
             }
             else
             {
                 transform.rotation = nextRotation;
-                transform.position = ClampToArea(SnapToGround(transform.position + direction * (speed * deltaTime)));
+                transform.position = GetSafeMovePosition(transform.position, direction, speed * deltaTime);
             }
         }
 
@@ -190,15 +201,26 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
+            CacheVisualBottomOffset();
             body.useGravity = false;
             body.isKinematic = true;
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            body.linearVelocity = Vector3.zero;
-            body.angularVelocity = Vector3.zero;
+            StopBody();
             EnsureSolidCollider();
             IgnoreEnemyCollisions();
             IgnorePlayerSolidCollision();
+        }
+
+        private void StopBody()
+        {
+            if (body == null || body.isKinematic)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
         }
 
         private void EnsureSolidCollider()
@@ -399,6 +421,38 @@ namespace DinoGrow.Gameplay.Enemy
             return SnapToGround(position);
         }
 
+        private Vector3 SnapToGroundImmediate(Vector3 position)
+        {
+            if (TryGetGroundY(position, out var targetY))
+            {
+                position.y = targetY - visualBottomOffset;
+            }
+
+            return position;
+        }
+
+        private Vector3 GetSafeMovePosition(Vector3 currentPosition, Vector3 direction, float distance)
+        {
+            var nextPosition = currentPosition + direction * distance;
+            nextPosition = ClampToArea(nextPosition);
+            if (!IsWaterAt(nextPosition))
+            {
+                return nextPosition;
+            }
+
+            if (TryGetInwardDirection(out var inwardDirection))
+            {
+                moveDirection = inwardDirection;
+                nextDirectionTime = Time.time + directionChangeInterval;
+            }
+            else
+            {
+                PickNewDirection();
+            }
+
+            return SnapToGround(currentPosition);
+        }
+
         private Vector3 GetAreaSafeDirection(Vector3 direction)
         {
             if (!IsMovingOutOfArea(direction))
@@ -453,11 +507,92 @@ namespace DinoGrow.Gameplay.Enemy
 
         private Vector3 SnapToGround(Vector3 position)
         {
-            var origin = new Vector3(position.x, position.y + groundRaycastHeight, position.z);
+            if (TryGetGroundY(position, out var targetY))
+            {
+                position.y = Mathf.MoveTowards(position.y, targetY - visualBottomOffset, maxGroundSnapStep);
+            }
+
+            return position;
+        }
+
+        private void CacheVisualBottomOffset()
+        {
+            var bounds = CalculateWorldVisualBounds();
+            visualBottomOffset = bounds.HasValue
+                ? bounds.Value.min.y - transform.position.y
+                : 0f;
+        }
+
+        private Bounds? CalculateWorldVisualBounds()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            var hasBounds = false;
+            var bounds = new Bounds(transform.position, Vector3.zero);
+
+            foreach (var targetRenderer in renderers)
+            {
+                if (targetRenderer.GetComponent<TextMesh>() != null)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = targetRenderer.bounds;
+                    hasBounds = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(targetRenderer.bounds);
+            }
+
+            return hasBounds ? bounds : null;
+        }
+
+        private bool TryGetGroundY(Vector3 position, out float groundY)
+        {
+            groundY = position.y;
+            var originY = Mathf.Max(position.y + groundRaycastHeight, areaCenter.y + groundRaycastHeight);
+            var origin = new Vector3(position.x, originY, position.z);
             var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
             if (hits.Length == 0)
             {
-                return position;
+                return false;
+            }
+
+            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
+            foreach (var hit in hits)
+            {
+                if (IsWaterCollider(hit.collider))
+                {
+                    continue;
+                }
+
+                if (hit.collider.GetComponentInParent<DinoEnemy>() != null)
+                {
+                    continue;
+                }
+
+                if (hit.collider.GetComponentInParent<PlayerDinoController>() != null)
+                {
+                    continue;
+                }
+
+                groundY = hit.point.y + groundOffset;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsWaterAt(Vector3 position)
+        {
+            var originY = Mathf.Max(position.y + groundRaycastHeight, areaCenter.y + groundRaycastHeight);
+            var origin = new Vector3(position.x, originY, position.z);
+            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
+            if (hits.Length == 0)
+            {
+                return false;
             }
 
             System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
@@ -473,11 +608,31 @@ namespace DinoGrow.Gameplay.Enemy
                     continue;
                 }
 
-                position.y = hit.point.y + groundOffset;
-                return position;
+                return IsWaterCollider(hit.collider);
             }
 
-            return position;
+            return false;
+        }
+
+        private static bool IsWaterCollider(Collider targetCollider)
+        {
+            if (targetCollider == null)
+            {
+                return false;
+            }
+
+            var target = targetCollider.transform;
+            while (target != null)
+            {
+                if (target.name == "Water")
+                {
+                    return true;
+                }
+
+                target = target.parent;
+            }
+
+            return false;
         }
     }
 }

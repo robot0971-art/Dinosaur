@@ -45,6 +45,32 @@ ShaderVariantCollection:
       - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_SHINY TONE_NEGATIVE
           TRANSITION_SHINY
         passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_BLUR_FAST TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_BLUR_MEDIUM TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_SEPIA TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_PIXELATION TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_BLAZE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_BURN
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_CUTOFF
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_FADE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_MASK
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_MELT
+        passType: 0
       - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_SHINY
         passType: 0
       - keywords: COLOR_FILTER EDGE_PLAIN TONE_RETRO
@@ -78,6 +104,30 @@ ShaderVariantCollection:
       - keywords: COLOR_FILTER TONE_SEPIA
         passType: 0
       - keywords: DETAIL_MASKING
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_DETAIL TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_FAST TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_MEDIUM TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_SEPIA TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_ALPHA TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_LUMINANCE TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_PIXELATION TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_RGB_SHIFT TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_RGB_SHIFT TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_FADE
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_SHINY
         passType: 0
       - keywords: EDGE_SHINY
         passType: 0

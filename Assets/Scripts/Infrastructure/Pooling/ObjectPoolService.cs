@@ -79,6 +79,11 @@ namespace DinoGrow.Infrastructure.Pooling
         {
             if (instance.TryGetComponent(out Rigidbody body))
             {
+                if (body.isKinematic)
+                {
+                    return;
+                }
+
                 body.linearVelocity = Vector3.zero;
                 body.angularVelocity = Vector3.zero;
             }

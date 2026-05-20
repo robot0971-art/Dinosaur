@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 6cc8bdbc693362c49ab115621f4dbfb2
+timeCreated: 1539615973
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 119111
+  packageName: Little Low Poly World - LITE SRP/URP
+  packageVersion: 1.36
+  assetPath: Assets/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Prefabs/PineTree_E.prefab
+  uploadId: 576017

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using DinoGrow.Core.Growth;
 using DinoGrow.Gameplay.Animation;
+using DinoGrow.Infrastructure.DI;
 using UnityEngine;
 using VContainer;
 
@@ -34,6 +35,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         [Header("Death")]
         [SerializeField] private DinoAnimatorView animatorView;
+        [SerializeField] private bool spawnDeathEffect;
         [SerializeField] private float deathDespawnDelay = 1.2f;
 
         private static Material[] prototypeMaterials;
@@ -46,6 +48,7 @@ namespace DinoGrow.Gameplay.Enemy
         private bool isDying;
         private Coroutine deathRoutine;
         private RigidbodyConstraints constraintsBeforeDeath;
+        private bool isKinematicBeforeDeath;
         private bool hasConstraintsBeforeDeath;
         private Vector3 deathPosition;
         private Quaternion deathRotation;
@@ -55,10 +58,14 @@ namespace DinoGrow.Gameplay.Enemy
         public bool IsDying => isDying;
 
         [Inject]
-        public void Construct(PlayerProgress playerProgress, DeathEffectService deathEffectService)
+        public void Construct(
+            PlayerProgress playerProgress,
+            DeathEffectService deathEffectService,
+            CameraReference cameraReference)
         {
             this.playerProgress = playerProgress;
             this.deathEffectService = deathEffectService;
+            cameraTransform ??= cameraReference.Transform;
             ApplyLevelTextColor();
         }
 
@@ -168,7 +175,11 @@ namespace DinoGrow.Gameplay.Enemy
             SetGameplayActive(false);
             FreezeRootMotion();
             SetLevelTextVisible(false);
-            deathEffectService?.SpawnBlood(GetDeathEffectPosition());
+            if (spawnDeathEffect)
+            {
+                deathEffectService?.SpawnBlood(GetDeathEffectPosition());
+            }
+
             animatorView?.SetDead(true);
 
             var delay = Mathf.Max(0f, deathDespawnDelay);
@@ -221,11 +232,11 @@ namespace DinoGrow.Gameplay.Enemy
             if (!hasConstraintsBeforeDeath)
             {
                 constraintsBeforeDeath = body.constraints;
+                isKinematicBeforeDeath = body.isKinematic;
                 hasConstraintsBeforeDeath = true;
             }
 
-            body.linearVelocity = Vector3.zero;
-            body.angularVelocity = Vector3.zero;
+            StopBody(body);
             body.isKinematic = true;
             body.constraints = RigidbodyConstraints.FreezeAll;
             body.Sleep();
@@ -239,8 +250,8 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             body.constraints = constraintsBeforeDeath;
-            body.linearVelocity = Vector3.zero;
-            body.angularVelocity = Vector3.zero;
+            body.isKinematic = isKinematicBeforeDeath;
+            StopBody(body);
             hasConstraintsBeforeDeath = false;
         }
 
@@ -256,8 +267,7 @@ namespace DinoGrow.Gameplay.Enemy
             {
                 body.position = deathPosition;
                 body.rotation = deathRotation;
-                body.linearVelocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
+                StopBody(body);
             }
         }
 
@@ -329,8 +339,27 @@ namespace DinoGrow.Gameplay.Enemy
             levelText.alignment = TextAlignment.Center;
             levelText.characterSize = levelTextCharacterSize;
             levelText.fontSize = levelTextFontSize;
+            ConfigureLevelTextMaterial(levelText);
             ApplyLevelTextColor();
             UpdateLevelTextTransform();
+        }
+
+        private static void ConfigureLevelTextMaterial(TextMesh targetText)
+        {
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
+                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+            if (font == null)
+            {
+                return;
+            }
+
+            targetText.font = font;
+
+            if (targetText.TryGetComponent<MeshRenderer>(out var textRenderer))
+            {
+                textRenderer.sharedMaterial = font.material;
+            }
         }
 
         private void RefreshLevelText()
@@ -386,11 +415,6 @@ namespace DinoGrow.Gameplay.Enemy
             if (levelTextTransform == null)
             {
                 return;
-            }
-
-            if (cameraTransform == null && UnityEngine.Camera.main != null)
-            {
-                cameraTransform = UnityEngine.Camera.main.transform;
             }
 
             levelTextTransform.position = GetLevelTextPosition();
@@ -484,6 +508,17 @@ namespace DinoGrow.Gameplay.Enemy
             {
                 material.SetColor("_Color", color);
             }
+        }
+
+        private static void StopBody(Rigidbody body)
+        {
+            if (body == null || body.isKinematic)
+            {
+                return;
+            }
+
+            body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
         }
     }
 

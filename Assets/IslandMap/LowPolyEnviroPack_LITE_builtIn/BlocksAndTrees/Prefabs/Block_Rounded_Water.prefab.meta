@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 969cd15c59cf0d044b0afc4e46901eb7
+timeCreated: 1539615951
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 119111
+  packageName: Little Low Poly World - LITE SRP/URP
+  packageVersion: 1.36
+  assetPath: Assets/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Prefabs/Block_Rounded_Water.prefab
+  uploadId: 576017
