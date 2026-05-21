@@ -24,7 +24,7 @@ namespace DinoGrow.Camera
         private CinemachineRotationComposer rotationComposer;
         private Transform stableTarget;
         private float yaw;
-        private float pitch = 20f;
+        private float pitch = 32f;
 
         private void Awake()
         {
@@ -33,6 +33,7 @@ namespace DinoGrow.Camera
             rotationComposer = GetComponent<CinemachineRotationComposer>();
             EnsureStableTarget();
             ApplyOffset();
+            RecenterNow();
         }
 
         private void OnEnable()
@@ -60,16 +61,38 @@ namespace DinoGrow.Camera
         private void LateUpdate()
         {
             var mouse = Mouse.current;
-            if (mouse == null)
+            if (mouse != null)
+            {
+                var delta = mouse.delta.ReadValue();
+                yaw += delta.x * mouseSensitivity;
+                pitch = Mathf.Clamp(pitch - delta.y * mouseSensitivity, minPitch, maxPitch);
+
+                ApplyOffset();
+            }
+        }
+
+        public void RecenterNow()
+        {
+            if (cinemachineCamera == null || follow == null)
             {
                 return;
             }
 
-            var delta = mouse.delta.ReadValue();
-            yaw += delta.x * mouseSensitivity;
-            pitch = Mathf.Clamp(pitch - delta.y * mouseSensitivity, minPitch, maxPitch);
+            var target = cinemachineCamera.Target.TrackingTarget;
+            if (target == null)
+            {
+                return;
+            }
 
-            ApplyOffset();
+            var desiredPosition = target.position + follow.FollowOffset;
+            var lookDirection = target.position - desiredPosition;
+            if (lookDirection.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            var desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+            cinemachineCamera.ForceCameraPosition(desiredPosition, desiredRotation);
         }
 
         private void EnsureStableTarget()

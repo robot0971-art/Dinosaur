@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using DinoGrow.Core.Enemy;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Player;
@@ -15,11 +16,17 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float turnSpeed = 420f;
         [SerializeField] private float directionChangeInterval = 1.6f;
         [SerializeField] private float runAnimationSpeedThreshold = 3f;
+        [SerializeField] private float walkAnimationReferenceSpeed = 3.5f;
+        [SerializeField] private float runAnimationReferenceSpeed = 6f;
         [SerializeField] private float fleeDetectDistance = 18f;
         [SerializeField] private float fleeSpeedMultiplier = 1.65f;
         [SerializeField] private float chaseDetectDistance = 16f;
         [SerializeField] private float chaseStopDistance = 22f;
         [SerializeField] private float chaseSpeedMultiplier = 1.45f;
+        [SerializeField] private bool useNavMeshAgent = true;
+        [SerializeField] private float navDestinationDistance = 8f;
+        [SerializeField] private float navSampleDistance = 4f;
+        [SerializeField] private float navVerticalSampleDistance = 80f;
         [SerializeField] private float groundColliderRadius = 0.45f;
         [SerializeField] private float groundColliderHeight = 1.8f;
         [SerializeField] private float triggerWidth = 1.6f;
@@ -37,6 +44,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private DinoEnemy enemy;
         private Rigidbody body;
+        private NavMeshAgent agent;
         private Transform player;
         private PlayerDinoController playerController;
         private Vector3 moveDirection;
@@ -45,6 +53,7 @@ namespace DinoGrow.Gameplay.Enemy
         private float desiredMoveSpeed;
         private float visualBottomOffset;
         private bool isChasingPlayer;
+        private float suppressPlayerBehaviorUntil;
         private EnemyBehaviorResolver behaviorResolver;
 
         [Inject]
@@ -74,6 +83,7 @@ namespace DinoGrow.Gameplay.Enemy
             transform.position = SnapToGroundImmediate(transform.position);
             SetPlayer(playerTransform);
             ConfigureBody();
+            ConfigureAgent();
             IgnorePlayerSolidCollision();
             PickNewDirection();
         }
@@ -82,6 +92,7 @@ namespace DinoGrow.Gameplay.Enemy
         {
             enemy = GetComponent<DinoEnemy>();
             body = GetComponent<Rigidbody>();
+            agent = GetComponent<NavMeshAgent>();
             UseGroundLayerIfAvailable();
             if (animatorView == null)
             {
@@ -89,6 +100,7 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             ConfigureBody();
+            ConfigureAgent();
         }
 
         private void UseGroundLayerIfAvailable()
@@ -120,16 +132,29 @@ namespace DinoGrow.Gameplay.Enemy
         private void OnDisable()
         {
             ActiveMovements.Remove(this);
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.ResetPath();
+            }
         }
 
         private void Update()
         {
+            if (Time.time < suppressPlayerBehaviorUntil)
+            {
+                SetDesiredMove(Vector3.zero, 0f);
+                animatorView?.SetMove(0f, false);
+                return;
+            }
+
             var behaviorIntent = ResolveBehaviorIntent(out var playerOffset);
             if (behaviorIntent == EnemyBehaviorIntent.Flee)
             {
                 isChasingPlayer = false;
-                SetDesiredMove(GetFleeDirection(playerOffset), moveSpeed * fleeSpeedMultiplier);
+                var fleeSpeed = moveSpeed * fleeSpeedMultiplier;
+                SetDesiredMove(GetFleeDirection(playerOffset), fleeSpeed);
                 animatorView?.SetMove(1f, true);
+                animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(fleeSpeed, true));
                 return;
             }
 
@@ -137,10 +162,13 @@ namespace DinoGrow.Gameplay.Enemy
             {
                 isChasingPlayer = true;
                 var chaseDirection = GetChaseDirection(playerOffset);
+                var chaseSpeed = moveSpeed * chaseSpeedMultiplier;
                 moveDirection = chaseDirection;
                 nextDirectionTime = Time.time + directionChangeInterval;
-                SetDesiredMove(chaseDirection, moveSpeed * chaseSpeedMultiplier);
+                SetDesiredMove(chaseDirection, chaseSpeed);
+                ApplyAgentDestination(player.position, chaseSpeed);
                 animatorView?.SetMove(1f, true);
+                animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(chaseSpeed, true));
                 return;
             }
 
@@ -158,11 +186,47 @@ namespace DinoGrow.Gameplay.Enemy
             SetDesiredMove(moveDirection, moveSpeed);
             var isRunning = moveSpeed >= runAnimationSpeedThreshold;
             animatorView?.SetMove(isRunning ? 1f : 0.5f, isRunning);
+            animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(moveSpeed, isRunning));
         }
 
         private void FixedUpdate()
         {
+            if (CanUseAgent())
+            {
+                if (body != null)
+                {
+                    body.position = transform.position;
+                }
+
+                StopBody();
+                return;
+            }
+
             Move(desiredMoveDirection, desiredMoveSpeed, Time.fixedDeltaTime);
+        }
+
+        private void LateUpdate()
+        {
+            RotateWithAgentVelocity();
+        }
+
+        public void OnPlayerBitten(float idleDuration = 0.75f)
+        {
+            isChasingPlayer = false;
+            suppressPlayerBehaviorUntil = Time.time + Mathf.Max(0f, idleDuration);
+            SetDesiredMove(Vector3.zero, 0f);
+            animatorView?.SetMove(0f, false);
+            animatorView?.SetPlaybackSpeed(1f);
+            nextDirectionTime = suppressPlayerBehaviorUntil;
+            PickNewDirection();
+        }
+
+        private float GetAnimationPlaybackSpeed(float speed, bool isRunning)
+        {
+            var referenceSpeed = isRunning
+                ? Mathf.Max(0.1f, runAnimationReferenceSpeed)
+                : Mathf.Max(0.1f, walkAnimationReferenceSpeed);
+            return Mathf.Clamp(speed / referenceSpeed, 0.75f, 1.6f);
         }
 
         private void SetPlayer(Transform playerTransform)
@@ -222,6 +286,7 @@ namespace DinoGrow.Gameplay.Enemy
         {
             desiredMoveDirection = direction.sqrMagnitude > 0.001f ? direction.normalized : Vector3.zero;
             desiredMoveSpeed = Mathf.Max(0f, speed);
+            ApplyAgentDestination();
         }
 
         private void Move(Vector3 direction, float speed, float deltaTime)
@@ -266,6 +331,132 @@ namespace DinoGrow.Gameplay.Enemy
             EnsureSolidCollider();
             IgnoreEnemyCollisions();
             IgnorePlayerSolidCollision();
+        }
+
+        private void ConfigureAgent()
+        {
+            if (!useNavMeshAgent)
+            {
+                if (agent != null)
+                {
+                    agent.enabled = false;
+                }
+
+                return;
+            }
+
+            var navSearchRadius = Mathf.Max(navSampleDistance, navVerticalSampleDistance);
+            if (!NavMesh.SamplePosition(transform.position, out var navHit, navSearchRadius, NavMesh.AllAreas))
+            {
+                useNavMeshAgent = false;
+                if (agent != null)
+                {
+                    agent.enabled = false;
+                }
+
+                return;
+            }
+
+            transform.position = navHit.position;
+
+            if (agent == null)
+            {
+                agent = GetComponent<NavMeshAgent>();
+                if (agent == null)
+                {
+                    agent = gameObject.AddComponent<NavMeshAgent>();
+                }
+            }
+
+            if (agent == null)
+            {
+                useNavMeshAgent = false;
+                return;
+            }
+
+            agent.speed = Mathf.Max(0.1f, moveSpeed);
+            agent.angularSpeed = turnSpeed;
+            agent.acceleration = Mathf.Max(8f, moveSpeed * 4f);
+            agent.stoppingDistance = 0f;
+            agent.autoBraking = false;
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+            agent.radius = Mathf.Max(0.1f, groundColliderRadius);
+            agent.height = Mathf.Max(agent.radius * 2f, groundColliderHeight);
+            agent.baseOffset = GetAgentBaseOffset();
+            agent.enabled = true;
+            agent.Warp(navHit.position);
+        }
+
+        private float GetAgentBaseOffset()
+        {
+            CacheVisualBottomOffset();
+            return Mathf.Abs(visualBottomOffset) <= 0.001f
+                ? 0f
+                : -visualBottomOffset;
+        }
+
+        private bool CanUseAgent()
+        {
+            return useNavMeshAgent && agent != null && agent.enabled && agent.isOnNavMesh;
+        }
+
+        private void ApplyAgentDestination()
+        {
+            if (!CanUseAgent())
+            {
+                return;
+            }
+
+            agent.speed = Mathf.Max(0.1f, desiredMoveSpeed);
+            if (desiredMoveDirection.sqrMagnitude <= 0.001f || desiredMoveSpeed <= 0.001f)
+            {
+                agent.ResetPath();
+                return;
+            }
+
+            var destination = transform.position + desiredMoveDirection * navDestinationDistance;
+            destination = ClampToArea(destination);
+            if (!NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
+            {
+                PickNewDirection();
+                return;
+            }
+
+            agent.SetDestination(hit.position);
+        }
+
+        private void ApplyAgentDestination(Vector3 destination, float speed)
+        {
+            if (!CanUseAgent())
+            {
+                return;
+            }
+
+            agent.speed = Mathf.Max(0.1f, speed);
+            destination = ClampToArea(destination);
+            if (NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+        }
+
+        private void RotateWithAgentVelocity()
+        {
+            if (!CanUseAgent())
+            {
+                return;
+            }
+
+            var velocity = agent.desiredVelocity;
+            velocity.y = 0f;
+            if (velocity.sqrMagnitude <= 0.001f)
+            {
+                return;
+            }
+
+            var targetRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
 
         private void StopBody()

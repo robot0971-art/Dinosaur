@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DinoGrow.Core.Growth;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Infrastructure.DI;
@@ -35,10 +36,13 @@ namespace DinoGrow.Gameplay.Enemy
 
         [Header("Death")]
         [SerializeField] private DinoAnimatorView animatorView;
+        [SerializeField] private Transform mouthEffectOrigin;
+        [SerializeField] private Vector3 mouthEffectFallbackOffset = new(0f, 1.05f, 0.75f);
         [SerializeField] private bool spawnDeathEffect;
         [SerializeField] private float deathDespawnDelay = 1.2f;
 
         private static Material[] prototypeMaterials;
+        private static readonly List<DinoEnemy> ActiveEnemies = new();
         private Action<DinoEnemy> despawnHandler;
         private DeathEffectService deathEffectService;
         private PlayerProgress playerProgress;
@@ -56,6 +60,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         public int Level => level;
         public bool IsDying => isDying;
+        public static IReadOnlyList<DinoEnemy> Active => ActiveEnemies;
 
         [Inject]
         public void Construct(
@@ -76,6 +81,12 @@ namespace DinoGrow.Gameplay.Enemy
                 animatorView = GetComponentInChildren<DinoAnimatorView>();
             }
 
+            if (mouthEffectOrigin == null)
+            {
+                mouthEffectOrigin = FindChildByName(transform, "Head_end")
+                    ?? FindChildByName(transform, "Head");
+            }
+
             EnsureLevelText();
             RefreshLevelText();
             ApplyPrototypeMaterial();
@@ -85,6 +96,7 @@ namespace DinoGrow.Gameplay.Enemy
         {
             if (Application.isPlaying)
             {
+                RegisterActiveEnemy();
                 ResetRuntimeState();
                 return;
             }
@@ -128,10 +140,16 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void OnDestroy()
         {
+            UnregisterActiveEnemy();
             if (Application.isPlaying && createdLevelText && levelText != null)
             {
                 Destroy(levelText.gameObject);
             }
+        }
+
+        private void OnDisable()
+        {
+            UnregisterActiveEnemy();
         }
 
         public void SetLevel(int value)
@@ -165,6 +183,67 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             deathRoutine = StartCoroutine(PlayDeathThenDespawn());
+        }
+
+        public Vector3 GetMouthEffectPosition()
+        {
+            if (mouthEffectOrigin != null)
+            {
+                return mouthEffectOrigin.position;
+            }
+
+            return transform.TransformPoint(mouthEffectFallbackOffset);
+        }
+
+        public float GetContactRadius()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            var hasBounds = false;
+            var bounds = new Bounds(transform.position, Vector3.zero);
+            foreach (var targetRenderer in renderers)
+            {
+                if (targetRenderer == null || targetRenderer.GetComponent<TextMesh>() != null)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = targetRenderer.bounds;
+                    hasBounds = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(targetRenderer.bounds);
+            }
+
+            if (!hasBounds)
+            {
+                return 1f;
+            }
+
+            return Mathf.Max(0.8f, Mathf.Min(bounds.size.x, bounds.size.z) * 0.45f);
+        }
+
+        private void RegisterActiveEnemy()
+        {
+            if (!ActiveEnemies.Contains(this))
+            {
+                ActiveEnemies.Add(this);
+            }
+        }
+
+        private void UnregisterActiveEnemy()
+        {
+            ActiveEnemies.Remove(this);
+        }
+
+        public void OnPlayerBitten()
+        {
+            if (TryGetComponent(out EnemyWanderMovement wanderMovement))
+            {
+                wanderMovement.OnPlayerBitten();
+            }
         }
 
         private IEnumerator PlayDeathThenDespawn()
@@ -303,6 +382,30 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             return hasBounds ? bounds.center : transform.position;
+        }
+
+        private static Transform FindChildByName(Transform root, string targetName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root.name == targetName)
+            {
+                return root;
+            }
+
+            for (var i = 0; i < root.childCount; i++)
+            {
+                var result = FindChildByName(root.GetChild(i), targetName);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
 
         private void ApplyPrototypeMaterial()

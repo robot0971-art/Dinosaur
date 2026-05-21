@@ -6,22 +6,29 @@ using DinoGrow.Core.Data;
 using DinoGrow.Core.Enemy;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
+using DinoGrow.Camera;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Gameplay.Player;
+using DinoGrow.Gameplay.Stage;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.Infrastructure.Pooling;
 using DinoGrow.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameLifetimeScope : LifetimeScope
 {
     [Header("Scene Components")]
     [SerializeField] private PlayerDinoController player;
     [SerializeField] private EnemySpawner enemySpawner;
+    [SerializeField] private StageMapSceneLoader stageMapSceneLoader;
     [SerializeField] private GameHud gameHud;
     [SerializeField] private Transform gameplayCamera;
+    [SerializeField] private GameObject loadingOverlayPanel;
+    [SerializeField] private Slider loadingSlider;
+    [SerializeField] private CinemachineThirdPersonOrbit cameraOrbit;
 
     [Header("Effects")]
     [SerializeField] private ParticleSystem bloodEffectPrefab;
@@ -69,6 +76,20 @@ public class GameLifetimeScope : LifetimeScope
         {
             builder.RegisterComponent(enemySpawner);
         }
+
+        if (stageMapSceneLoader == null)
+        {
+            stageMapSceneLoader = GetComponent<StageMapSceneLoader>();
+            if (stageMapSceneLoader == null)
+            {
+                stageMapSceneLoader = gameObject.AddComponent<StageMapSceneLoader>();
+            }
+        }
+
+        builder.RegisterComponent(stageMapSceneLoader);
+        stageMapSceneLoader.ConfigureLoadingOverlay(loadingOverlayPanel, loadingSlider);
+        stageMapSceneLoader.ConfigureCameraOrbit(cameraOrbit);
+        stageMapSceneLoader.ConfigureEnemySpawner(enemySpawner);
     }
 
     private static PlayerProgress CreatePlayerProgress(
