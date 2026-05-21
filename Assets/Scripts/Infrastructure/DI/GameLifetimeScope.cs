@@ -3,6 +3,7 @@ using VContainer;
 using VContainer.Unity;
 using DinoGrow.Core.Combat;
 using DinoGrow.Core.Data;
+using DinoGrow.Core.Enemy;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Gameplay.Enemy;
@@ -41,6 +42,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<GameEventBus>(Lifetime.Singleton);
         builder.RegisterInstance(new CameraReference(gameplayCamera));
         builder.Register<EatResolver>(Lifetime.Singleton);
+        builder.Register<EnemyBehaviorResolver>(Lifetime.Singleton);
         builder.Register<GrowthSystem>(Lifetime.Singleton);
         builder.RegisterInstance(CreatePlayerProgress(dinoRepository, playerGrowthRepository));
         builder.Register<GameStateController>(Lifetime.Singleton);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DinoGrow.Core.Data;
+using DinoGrow.Core.Enemy;
 using DinoGrow.Core.Growth;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
@@ -42,6 +43,7 @@ namespace DinoGrow.Gameplay.Enemy
         private PlayerProgress playerProgress;
         private IObjectPoolService poolService;
         private GameEventBus eventBus;
+        private EnemyBehaviorResolver enemyBehaviorResolver;
 
         [Inject]
         public void Construct(
@@ -50,7 +52,8 @@ namespace DinoGrow.Gameplay.Enemy
             StageDataRepository stageDataRepository,
             PlayerProgress playerProgress,
             IObjectPoolService poolService,
-            GameEventBus eventBus)
+            GameEventBus eventBus,
+            EnemyBehaviorResolver enemyBehaviorResolver)
         {
             this.dinoDataRepository = dinoDataRepository;
             this.spawnDataRepository = spawnDataRepository;
@@ -58,6 +61,7 @@ namespace DinoGrow.Gameplay.Enemy
             this.playerProgress = playerProgress;
             this.poolService = poolService;
             this.eventBus = eventBus;
+            this.enemyBehaviorResolver = enemyBehaviorResolver;
         }
 
         private void Start()
@@ -132,7 +136,12 @@ namespace DinoGrow.Gameplay.Enemy
                 wander = enemy.gameObject.AddComponent<EnemyWanderMovement>();
             }
 
-            wander.Configure(spawnCenter, spawnSize, Random.Range(minWanderSpeed, maxWanderSpeed), player);
+            wander.Configure(
+                spawnCenter,
+                spawnSize,
+                Random.Range(minWanderSpeed, maxWanderSpeed),
+                player,
+                enemyBehaviorResolver);
             spawnedEnemies.Add(enemy);
             eventBus?.PublishEnemySpawned(enemy.Level);
         }
@@ -194,7 +203,12 @@ namespace DinoGrow.Gameplay.Enemy
                 wander = enemy.gameObject.AddComponent<EnemyWanderMovement>();
             }
 
-            wander.Configure(spawnCenter, spawnSize, GetMoveSpeed(dinoData, spawnRecord), player);
+            wander.Configure(
+                spawnCenter,
+                spawnSize,
+                GetMoveSpeed(dinoData, spawnRecord),
+                player,
+                enemyBehaviorResolver);
             spawnedEnemies.Add(enemy);
             eventBus?.PublishEnemySpawned(enemy.Level);
         }

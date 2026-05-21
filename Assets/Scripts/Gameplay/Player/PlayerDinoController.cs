@@ -101,7 +101,7 @@ namespace DinoGrow.Gameplay.Player
                 body = GetComponent<Rigidbody>();
             }
 
-            body.interpolation = RigidbodyInterpolation.Interpolate;
+            ConfigureBody();
 
             if (visualRoot == null)
             {
@@ -196,7 +196,7 @@ namespace DinoGrow.Gameplay.Player
             {
                 if (body != null)
                 {
-                    body.linearVelocity = Vector3.zero;
+                    StopBody();
                 }
 
                 return;
@@ -204,7 +204,7 @@ namespace DinoGrow.Gameplay.Player
 
             if (!gameState.IsPlaying)
             {
-                body.linearVelocity = Vector3.zero;
+                StopBody();
                 return;
             }
 
@@ -349,7 +349,7 @@ namespace DinoGrow.Gameplay.Player
 
             isDead = true;
             gameState.GameOver();
-            body.linearVelocity = Vector3.zero;
+            StopBody();
             deathEffectService?.SpawnBlood(transform.position + Vector3.up * 0.75f);
             animatorView?.SetDead(true);
             eventBus.PublishGameStateChanged(gameState.State);
@@ -578,7 +578,32 @@ namespace DinoGrow.Gameplay.Player
             }
 
             body.MovePosition(position);
+            StopBody();
+        }
+
+        private void ConfigureBody()
+        {
+            if (body == null)
+            {
+                return;
+            }
+
+            body.useGravity = false;
+            body.isKinematic = true;
+            body.interpolation = RigidbodyInterpolation.Interpolate;
+            body.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            StopBody();
+        }
+
+        private void StopBody()
+        {
+            if (body == null || body.isKinematic)
+            {
+                return;
+            }
+
             body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
         }
 
         private bool TryGetGroundY(Vector3 position, out float groundY)

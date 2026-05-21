@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DinoGrow.Core.Enemy;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Player;
+using VContainer;
 
 namespace DinoGrow.Gameplay.Enemy
 {
@@ -15,6 +17,9 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float runAnimationSpeedThreshold = 3f;
         [SerializeField] private float fleeDetectDistance = 18f;
         [SerializeField] private float fleeSpeedMultiplier = 1.65f;
+        [SerializeField] private float chaseDetectDistance = 16f;
+        [SerializeField] private float chaseStopDistance = 22f;
+        [SerializeField] private float chaseSpeedMultiplier = 1.45f;
         [SerializeField] private float groundColliderRadius = 0.45f;
         [SerializeField] private float groundColliderHeight = 1.8f;
         [SerializeField] private float triggerWidth = 1.6f;
@@ -39,9 +44,27 @@ namespace DinoGrow.Gameplay.Enemy
         private Vector3 desiredMoveDirection;
         private float desiredMoveSpeed;
         private float visualBottomOffset;
+        private bool isChasingPlayer;
+        private EnemyBehaviorResolver behaviorResolver;
 
-        public void Configure(Vector3 center, Vector2 size, float speed, Transform playerTransform)
+        [Inject]
+        public void Construct(EnemyBehaviorResolver behaviorResolver)
         {
+            this.behaviorResolver = behaviorResolver;
+        }
+
+        public void Configure(
+            Vector3 center,
+            Vector2 size,
+            float speed,
+            Transform playerTransform,
+            EnemyBehaviorResolver behaviorResolver = null)
+        {
+            if (this.behaviorResolver == null)
+            {
+                this.behaviorResolver = behaviorResolver;
+            }
+
             areaCenter = center;
             areaSize = size;
             moveSpeed = speed;
@@ -101,11 +124,30 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void Update()
         {
-            if (TryGetFleeDirection(out var fleeDirection))
+            var behaviorIntent = ResolveBehaviorIntent(out var playerOffset);
+            if (behaviorIntent == EnemyBehaviorIntent.Flee)
             {
-                SetDesiredMove(fleeDirection, moveSpeed * fleeSpeedMultiplier);
+                isChasingPlayer = false;
+                SetDesiredMove(GetFleeDirection(playerOffset), moveSpeed * fleeSpeedMultiplier);
                 animatorView?.SetMove(1f, true);
                 return;
+            }
+
+            if (behaviorIntent == EnemyBehaviorIntent.Chase)
+            {
+                isChasingPlayer = true;
+                var chaseDirection = GetChaseDirection(playerOffset);
+                moveDirection = chaseDirection;
+                nextDirectionTime = Time.time + directionChangeInterval;
+                SetDesiredMove(chaseDirection, moveSpeed * chaseSpeedMultiplier);
+                animatorView?.SetMove(1f, true);
+                return;
+            }
+
+            if (isChasingPlayer)
+            {
+                isChasingPlayer = false;
+                PickNewDirection();
             }
 
             if (Time.time >= nextDirectionTime || IsNearAreaEdge())
@@ -130,36 +172,50 @@ namespace DinoGrow.Gameplay.Enemy
             IgnorePlayerSolidCollision();
         }
 
-        private bool TryGetFleeDirection(out Vector3 fleeDirection)
+        private EnemyBehaviorIntent ResolveBehaviorIntent(out Vector3 playerOffset)
         {
-            fleeDirection = Vector3.zero;
-            if (enemy == null || player == null || playerController == null)
+            playerOffset = Vector3.zero;
+            if (behaviorResolver == null || enemy == null || player == null || playerController == null)
             {
-                return false;
+                return EnemyBehaviorIntent.Wander;
             }
 
-            if (enemy.Level >= playerController.Level)
+            playerOffset = player.position - transform.position;
+            playerOffset.y = 0f;
+
+            return behaviorResolver.Resolve(
+                enemy.Level,
+                playerController.Level,
+                playerOffset.magnitude,
+                fleeDetectDistance,
+                chaseDetectDistance,
+                chaseStopDistance,
+                isChasingPlayer);
+        }
+
+        private Vector3 GetFleeDirection(Vector3 playerOffset)
+        {
+            var fleeDirection = -playerOffset;
+            if (fleeDirection.sqrMagnitude <= 0.001f)
             {
-                return false;
+                fleeDirection = Random.onUnitSphere;
+                fleeDirection.y = 0f;
             }
 
-            var awayFromPlayer = transform.position - player.position;
-            awayFromPlayer.y = 0f;
-            if (awayFromPlayer.sqrMagnitude > fleeDetectDistance * fleeDetectDistance)
-            {
-                return false;
-            }
-
-            if (awayFromPlayer.sqrMagnitude <= 0.001f)
-            {
-                awayFromPlayer = Random.onUnitSphere;
-                awayFromPlayer.y = 0f;
-            }
-
-            fleeDirection = awayFromPlayer.normalized;
+            fleeDirection.Normalize();
             moveDirection = fleeDirection;
             nextDirectionTime = Time.time + directionChangeInterval;
-            return true;
+            return fleeDirection;
+        }
+
+        private Vector3 GetChaseDirection(Vector3 playerOffset)
+        {
+            if (playerOffset.sqrMagnitude <= 0.001f)
+            {
+                return transform.forward;
+            }
+
+            return playerOffset.normalized;
         }
 
         private void SetDesiredMove(Vector3 direction, float speed)

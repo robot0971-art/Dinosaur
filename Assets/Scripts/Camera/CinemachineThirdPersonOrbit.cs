@@ -16,16 +16,22 @@ namespace DinoGrow.Camera
         [SerializeField] private Vector3 positionDamping = new Vector3(0.12f, 0.12f, 0.12f);
         [SerializeField] private Vector2 aimDamping = new Vector2(0.08f, 0.08f);
         [SerializeField] private bool lockCursorOnPlay = true;
+        [SerializeField] private bool createStableTarget = true;
+        [SerializeField] private Vector3 stableTargetLocalPosition = new Vector3(0f, 1.4f, 0f);
 
+        private CinemachineCamera cinemachineCamera;
         private CinemachineFollow follow;
         private CinemachineRotationComposer rotationComposer;
+        private Transform stableTarget;
         private float yaw;
         private float pitch = 20f;
 
         private void Awake()
         {
+            cinemachineCamera = GetComponent<CinemachineCamera>();
             follow = GetComponent<CinemachineFollow>();
             rotationComposer = GetComponent<CinemachineRotationComposer>();
+            EnsureStableTarget();
             ApplyOffset();
         }
 
@@ -64,6 +70,37 @@ namespace DinoGrow.Camera
             pitch = Mathf.Clamp(pitch - delta.y * mouseSensitivity, minPitch, maxPitch);
 
             ApplyOffset();
+        }
+
+        private void EnsureStableTarget()
+        {
+            if (!createStableTarget || cinemachineCamera == null)
+            {
+                return;
+            }
+
+            var target = cinemachineCamera.Target;
+            var currentTrackingTarget = target.TrackingTarget;
+            if (currentTrackingTarget == null || currentTrackingTarget.parent == null)
+            {
+                return;
+            }
+
+            var targetRoot = currentTrackingTarget.parent;
+            stableTarget = targetRoot.Find("PlayerCameraTarget");
+            if (stableTarget == null)
+            {
+                var targetObject = new GameObject("PlayerCameraTarget");
+                stableTarget = targetObject.transform;
+                stableTarget.SetParent(targetRoot, false);
+            }
+
+            stableTarget.localPosition = stableTargetLocalPosition;
+            stableTarget.localRotation = Quaternion.identity;
+
+            target.TrackingTarget = stableTarget;
+            target.LookAtTarget = stableTarget;
+            cinemachineCamera.Target = target;
         }
 
         private void ApplyOffset()
