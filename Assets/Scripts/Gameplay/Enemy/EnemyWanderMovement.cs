@@ -55,6 +55,10 @@ namespace DinoGrow.Gameplay.Enemy
         private bool isChasingPlayer;
         private float suppressPlayerBehaviorUntil;
         private EnemyBehaviorResolver behaviorResolver;
+        private EnemyAnimationMoveRule animationRule;
+        private EnemyAreaMovementRule areaRule;
+        private EnemyWanderDirectionRule wanderDirectionRule;
+        private EnemyBehaviorPlanner behaviorPlanner;
 
         [Inject]
         public void Construct(EnemyBehaviorResolver behaviorResolver)
@@ -79,6 +83,7 @@ namespace DinoGrow.Gameplay.Enemy
             moveSpeed = speed;
             desiredMoveDirection = Vector3.zero;
             desiredMoveSpeed = 0f;
+            ConfigureRules();
             CacheVisualBottomOffset();
             transform.position = SnapToGroundImmediate(transform.position);
             SetPlayer(playerTransform);
@@ -99,8 +104,27 @@ namespace DinoGrow.Gameplay.Enemy
                 animatorView = GetComponentInChildren<DinoAnimatorView>();
             }
 
+            ConfigureRules();
             ConfigureBody();
             ConfigureAgent();
+        }
+
+        private void ConfigureRules()
+        {
+            if (animationRule == null)
+            {
+                animationRule = new EnemyAnimationMoveRule(
+                    runAnimationSpeedThreshold,
+                    walkAnimationReferenceSpeed,
+                    runAnimationReferenceSpeed);
+            }
+
+            areaRule ??= new EnemyAreaMovementRule(areaCenter, areaSize);
+            wanderDirectionRule ??= new EnemyWanderDirectionRule(directionChangeInterval);
+            behaviorPlanner ??= new EnemyBehaviorPlanner(
+                    fleeSpeedMultiplier,
+                    chaseSpeedMultiplier,
+                    animationRule);
         }
 
         private void UseGroundLayerIfAvailable()
@@ -140,6 +164,8 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void Update()
         {
+            ConfigureRules();
+
             if (Time.time < suppressPlayerBehaviorUntil)
             {
                 SetDesiredMove(Vector3.zero, 0f);
@@ -148,27 +174,8 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             var behaviorIntent = ResolveBehaviorIntent(out var playerOffset);
-            if (behaviorIntent == EnemyBehaviorIntent.Flee)
+            if (TryApplyPlayerBehavior(behaviorIntent, playerOffset))
             {
-                isChasingPlayer = false;
-                var fleeSpeed = moveSpeed * fleeSpeedMultiplier;
-                SetDesiredMove(GetFleeDirection(playerOffset), fleeSpeed);
-                animatorView?.SetMove(1f, true);
-                animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(fleeSpeed, true));
-                return;
-            }
-
-            if (behaviorIntent == EnemyBehaviorIntent.Chase)
-            {
-                isChasingPlayer = true;
-                var chaseDirection = GetChaseDirection(playerOffset);
-                var chaseSpeed = moveSpeed * chaseSpeedMultiplier;
-                moveDirection = chaseDirection;
-                nextDirectionTime = Time.time + directionChangeInterval;
-                SetDesiredMove(chaseDirection, chaseSpeed);
-                ApplyAgentDestination(player.position, chaseSpeed);
-                animatorView?.SetMove(1f, true);
-                animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(chaseSpeed, true));
                 return;
             }
 
@@ -183,16 +190,68 @@ namespace DinoGrow.Gameplay.Enemy
                 PickNewDirection();
             }
 
-            SetDesiredMove(moveDirection, moveSpeed);
-            var isRunning = moveSpeed >= runAnimationSpeedThreshold;
-            animatorView?.SetMove(isRunning ? 1f : 0.5f, isRunning);
-            animatorView?.SetPlaybackSpeed(GetAnimationPlaybackSpeed(moveSpeed, isRunning));
+            ApplyMovementPlan(behaviorPlanner.Plan(
+                EnemyBehaviorIntent.Wander,
+                playerOffset,
+                moveDirection,
+                transform.forward,
+                moveSpeed));
+        }
+
+        private bool TryApplyPlayerBehavior(EnemyBehaviorIntent behaviorIntent, Vector3 playerOffset)
+        {
+            if (behaviorIntent == EnemyBehaviorIntent.Wander)
+            {
+                return false;
+            }
+
+            var plan = behaviorPlanner.Plan(
+                behaviorIntent,
+                playerOffset,
+                moveDirection,
+                transform.forward,
+                moveSpeed);
+            if (behaviorIntent == EnemyBehaviorIntent.Flee)
+            {
+                isChasingPlayer = false;
+                moveDirection = plan.Direction;
+                nextDirectionTime = Time.time + directionChangeInterval;
+                ApplyMovementPlan(plan);
+                return true;
+            }
+
+            isChasingPlayer = true;
+            moveDirection = plan.Direction;
+            nextDirectionTime = Time.time + directionChangeInterval;
+            SetDesiredMove(plan.Direction, plan.Speed);
+            ApplyAgentDestination(player.position, plan.Speed);
+            ApplyAnimationPlan(plan);
+            return true;
+        }
+
+        private void ApplyMovementPlan(EnemyMovementPlan plan)
+        {
+            SetDesiredMove(plan.Direction, plan.Speed);
+            ApplyAnimationPlan(plan);
+        }
+
+        private void ApplyAnimationPlan(EnemyMovementPlan plan)
+        {
+            animatorView?.SetMove(animationRule.GetMoveBlend(plan.Speed, plan.IsRunning), plan.IsRunning);
+            animatorView?.SetPlaybackSpeed(animationRule.GetPlaybackSpeed(plan.Speed, plan.IsRunning));
         }
 
         private void FixedUpdate()
         {
             if (CanUseAgent())
             {
+                if (IsAgentStalled())
+                {
+                    DisableAgentForManualMovement();
+                    Move(desiredMoveDirection, desiredMoveSpeed, Time.fixedDeltaTime);
+                    return;
+                }
+
                 if (body != null)
                 {
                     body.position = transform.position;
@@ -221,14 +280,6 @@ namespace DinoGrow.Gameplay.Enemy
             PickNewDirection();
         }
 
-        private float GetAnimationPlaybackSpeed(float speed, bool isRunning)
-        {
-            var referenceSpeed = isRunning
-                ? Mathf.Max(0.1f, runAnimationReferenceSpeed)
-                : Mathf.Max(0.1f, walkAnimationReferenceSpeed);
-            return Mathf.Clamp(speed / referenceSpeed, 0.75f, 1.6f);
-        }
-
         private void SetPlayer(Transform playerTransform)
         {
             player = playerTransform;
@@ -255,31 +306,6 @@ namespace DinoGrow.Gameplay.Enemy
                 chaseDetectDistance,
                 chaseStopDistance,
                 isChasingPlayer);
-        }
-
-        private Vector3 GetFleeDirection(Vector3 playerOffset)
-        {
-            var fleeDirection = -playerOffset;
-            if (fleeDirection.sqrMagnitude <= 0.001f)
-            {
-                fleeDirection = Random.onUnitSphere;
-                fleeDirection.y = 0f;
-            }
-
-            fleeDirection.Normalize();
-            moveDirection = fleeDirection;
-            nextDirectionTime = Time.time + directionChangeInterval;
-            return fleeDirection;
-        }
-
-        private Vector3 GetChaseDirection(Vector3 playerOffset)
-        {
-            if (playerOffset.sqrMagnitude <= 0.001f)
-            {
-                return transform.forward;
-            }
-
-            return playerOffset.normalized;
         }
 
         private void SetDesiredMove(Vector3 direction, float speed)
@@ -419,11 +445,14 @@ namespace DinoGrow.Gameplay.Enemy
             destination = ClampToArea(destination);
             if (!NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
             {
-                PickNewDirection();
+                DisableAgentForManualMovement();
                 return;
             }
 
-            agent.SetDestination(hit.position);
+            if (!agent.SetDestination(hit.position))
+            {
+                DisableAgentForManualMovement();
+            }
         }
 
         private void ApplyAgentDestination(Vector3 destination, float speed)
@@ -437,8 +466,48 @@ namespace DinoGrow.Gameplay.Enemy
             destination = ClampToArea(destination);
             if (NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
             {
-                agent.SetDestination(hit.position);
+                if (!agent.SetDestination(hit.position))
+                {
+                    DisableAgentForManualMovement();
+                }
+                return;
             }
+
+            DisableAgentForManualMovement();
+        }
+
+        private void DisableAgentForManualMovement()
+        {
+            useNavMeshAgent = false;
+            if (agent != null)
+            {
+                agent.ResetPath();
+                agent.enabled = false;
+            }
+        }
+
+        private bool IsAgentStalled()
+        {
+            if (!CanUseAgent() || desiredMoveDirection.sqrMagnitude <= 0.001f || desiredMoveSpeed <= 0.001f)
+            {
+                return false;
+            }
+
+            if (!agent.hasPath && !agent.pathPending)
+            {
+                return true;
+            }
+
+            if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
+            {
+                return true;
+            }
+
+            var velocity = agent.velocity;
+            velocity.y = 0f;
+            return !agent.pathPending
+                && agent.remainingDistance > agent.stoppingDistance + 0.1f
+                && velocity.sqrMagnitude <= 0.0001f;
         }
 
         private void RotateWithAgentVelocity()
@@ -639,33 +708,24 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void PickNewDirection()
         {
-            if (TryGetInwardDirection(out var inwardDirection))
-            {
-                moveDirection = inwardDirection;
-            }
-            else
-            {
-                var random = Random.insideUnitCircle.normalized;
-                moveDirection = new Vector3(random.x, 0f, random.y);
-            }
-
-            nextDirectionTime = Time.time + Random.Range(directionChangeInterval * 0.7f, directionChangeInterval * 1.3f);
+            ConfigureRules();
+            areaRule.Configure(areaCenter, areaSize);
+            moveDirection = wanderDirectionRule.PickDirection(transform.position, areaRule);
+            nextDirectionTime = wanderDirectionRule.GetNextDirectionTime(Time.time);
         }
 
         private bool IsNearAreaEdge()
         {
-            var halfSize = areaSize * 0.5f;
-            var local = transform.position - areaCenter;
-            return Mathf.Abs(local.x) > halfSize.x * 0.9f || Mathf.Abs(local.z) > halfSize.y * 0.9f;
+            ConfigureRules();
+            areaRule.Configure(areaCenter, areaSize);
+            return areaRule.IsNearEdge(transform.position);
         }
 
         private Vector3 ClampToArea(Vector3 position)
         {
-            var halfSize = areaSize * 0.5f;
-            position.x = Mathf.Clamp(position.x, areaCenter.x - halfSize.x, areaCenter.x + halfSize.x);
-            position.z = Mathf.Clamp(position.z, areaCenter.z - halfSize.y, areaCenter.z + halfSize.y);
-
-            return SnapToGround(position);
+            ConfigureRules();
+            areaRule.Configure(areaCenter, areaSize);
+            return SnapToGround(areaRule.Clamp(position));
         }
 
         private Vector3 SnapToGroundImmediate(Vector3 position)
@@ -702,54 +762,29 @@ namespace DinoGrow.Gameplay.Enemy
 
         private Vector3 GetAreaSafeDirection(Vector3 direction)
         {
-            if (!IsMovingOutOfArea(direction))
+            ConfigureRules();
+            areaRule.Configure(areaCenter, areaSize);
+            var safeDirection = areaRule.GetSafeDirection(transform.position, direction);
+            if (safeDirection == direction)
             {
                 return direction;
             }
 
-            if (TryGetInwardDirection(out var inwardDirection))
+            if (safeDirection.sqrMagnitude > 0.001f)
             {
-                moveDirection = inwardDirection;
+                moveDirection = safeDirection;
                 nextDirectionTime = Time.time + directionChangeInterval;
-                return inwardDirection;
+                return safeDirection;
             }
 
-            return -direction;
-        }
-
-        private bool IsMovingOutOfArea(Vector3 direction)
-        {
-            var halfSize = areaSize * 0.5f;
-            var local = transform.position - areaCenter;
-            var nearXEdge = Mathf.Abs(local.x) > halfSize.x * 0.88f;
-            var nearZEdge = Mathf.Abs(local.z) > halfSize.y * 0.88f;
-
-            if (nearXEdge && Mathf.Sign(local.x) == Mathf.Sign(direction.x))
-            {
-                return true;
-            }
-
-            return nearZEdge && Mathf.Sign(local.z) == Mathf.Sign(direction.z);
+            return direction;
         }
 
         private bool TryGetInwardDirection(out Vector3 inwardDirection)
         {
-            if (!IsNearAreaEdge())
-            {
-                inwardDirection = Vector3.zero;
-                return false;
-            }
-
-            inwardDirection = areaCenter - transform.position;
-            inwardDirection.y = 0f;
-            if (inwardDirection.sqrMagnitude <= 0.001f)
-            {
-                inwardDirection = Vector3.zero;
-                return false;
-            }
-
-            inwardDirection.Normalize();
-            return true;
+            ConfigureRules();
+            areaRule.Configure(areaCenter, areaSize);
+            return areaRule.TryGetInwardDirection(transform.position, out inwardDirection);
         }
 
         private Vector3 SnapToGround(Vector3 position)
@@ -810,7 +845,7 @@ namespace DinoGrow.Gameplay.Enemy
             System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
             foreach (var hit in hits)
             {
-                if (IsWaterCollider(hit.collider))
+                if (!IsGroundCollider(hit.collider))
                 {
                     continue;
                 }
@@ -861,6 +896,27 @@ namespace DinoGrow.Gameplay.Enemy
             return false;
         }
 
+        private static bool IsGroundCollider(Collider targetCollider)
+        {
+            if (targetCollider == null)
+            {
+                return false;
+            }
+
+            var target = targetCollider.transform;
+            while (target != null)
+            {
+                if (IsNonGroundSurfaceName(target.name))
+                {
+                    return false;
+                }
+
+                target = target.parent;
+            }
+
+            return true;
+        }
+
         private static bool IsWaterCollider(Collider targetCollider)
         {
             if (targetCollider == null)
@@ -880,6 +936,14 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             return false;
+        }
+
+        private static bool IsNonGroundSurfaceName(string targetName)
+        {
+            return targetName == "Water"
+                || targetName == "MapBoundary"
+                || targetName.StartsWith("Tree_", System.StringComparison.Ordinal)
+                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal);
         }
     }
 }

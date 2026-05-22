@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1673562649559799500
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_Name
+      value: 'Heart root    '
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.0050383
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.035289794
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99302846
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.1178752
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 13.539
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      propertyPath: m_Name
+      value: Heart
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 366496012552569088}
+  m_SourcePrefab: {fileID: 100100000, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+--- !u!1 &2015600032867330973 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 47f9e30bacc1ded49bcb31cd0b9a0733, type: 3}
+  m_PrefabInstance: {fileID: 1673562649559799500}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &366496012552569088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015600032867330973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ac709907f1d38546b2c3f810043a90e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Items.HeartDropMotion
+  groundClearance: 0.05
+  popHeight: 2.5
+  popDuration: 1
+  rotationSpeed: 180

@@ -147,6 +147,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 334072476}
+  - {fileID: 272946962}
   - {fileID: 1820111734}
   m_Father: {fileID: 1182185682}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -278,11 +280,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1820111734}
+  m_Father: {fileID: 131208375}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -286, y: -7}
+  m_AnchoredPosition: {x: -205, y: -166}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &272946963
@@ -398,11 +400,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1820111734}
+  m_Father: {fileID: 131208375}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 240, y: 2}
+  m_AnchoredPosition: {x: 321, y: -157}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &334072477
@@ -749,7 +751,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 7, y: -150}
+  m_AnchoredPosition: {x: 7, y: -402}
   m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1088780157
@@ -889,7 +891,7 @@ MonoBehaviour:
   startButton: {fileID: 1344434634}
   buttonText: {fileID: 1593542187}
   buttonLabel: START
-  gameSceneName: SampleScene
+  gameSceneName: GameScene
   normalColor: {r: 0.4392157, g: 0.8627451, b: 0.79607844, a: 1}
   hoverColor: {r: 0.54901963, g: 0.9490196, b: 0.88235295, a: 1}
   pressedColor: {r: 0.29411766, g: 0.72156864, b: 0.65882355, a: 1}
@@ -1420,7 +1422,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1820111734
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1432,9 +1434,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 334072476}
-  - {fileID: 272946962}
+  m_Children: []
   m_Father: {fileID: 131208375}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

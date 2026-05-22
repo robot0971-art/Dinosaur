@@ -191,7 +191,7 @@ namespace DinoGrow.Infrastructure.Data
                 var record = new PlayerGrowthDataRecord
                 {
                     level = ReadInt(row, headerMap, "level", formatter, 1),
-                    requiredExp = ReadInt(row, headerMap, "requiredExp", formatter, 100),
+                    requiredExp = ReadInt(row, headerMap, "requiredExp", formatter, 50),
                     scaleMultiplier = ReadFloat(row, headerMap, "scaleMultiplier", formatter, 1f),
                     cameraDistance = ReadFloat(row, headerMap, "cameraDistance", formatter, 6f),
                     cameraHeight = ReadFloat(row, headerMap, "cameraHeight", formatter, 4f)
@@ -303,7 +303,7 @@ namespace DinoGrow.Infrastructure.Data
                 var scale = 1f + (level - 1) * 0.08f;
                 var cameraDistance = GetCameraDistance(level);
                 var cameraHeight = GetCameraHeight(level);
-                WritePlayerGrowthSampleRow(row, level, 100, scale, cameraDistance, cameraHeight);
+                WritePlayerGrowthSampleRow(row, level, 50, scale, cameraDistance, cameraHeight);
             }
 
             AutoSizeColumns(sheet, PlayerGrowthHeaders.Length);

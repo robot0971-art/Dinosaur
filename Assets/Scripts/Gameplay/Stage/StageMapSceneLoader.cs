@@ -156,6 +156,7 @@ namespace DinoGrow.Gameplay.Stage
 
             SetLoadingProgress(0.9f, true);
             DisableMapSceneCameras(nextScene);
+            ApplyMapEnvironment(nextScene);
             ApplyMapBoundary(nextScene);
             MovePlayerToStartPoint(nextScene);
             loadedMapScenePath = nextScenePath;
@@ -191,6 +192,7 @@ namespace DinoGrow.Gameplay.Stage
 
             SetLoadingProgress(0.95f, true);
             DisableMapSceneCameras(nextScene);
+            ApplyMapEnvironment(nextScene);
             ApplyMapBoundary(nextScene);
             MovePlayerToStartPoint(nextScene);
             loadedMapScenePath = nextScenePath;
@@ -249,6 +251,26 @@ namespace DinoGrow.Gameplay.Stage
                 {
                     listener.enabled = false;
                 }
+            }
+        }
+
+        private static void ApplyMapEnvironment(Scene mapScene)
+        {
+            if (!mapScene.IsValid() || !mapScene.isLoaded)
+            {
+                return;
+            }
+
+            foreach (var root in mapScene.GetRootGameObjects())
+            {
+                var environment = root.GetComponentInChildren<EnvironmentSettingsController>(true);
+                if (environment == null)
+                {
+                    continue;
+                }
+
+                environment.Apply();
+                return;
             }
         }
 
@@ -372,8 +394,7 @@ namespace DinoGrow.Gameplay.Stage
                 return;
             }
 
-            var boundaryRoot = FindInScene(mapScene, mapBoundaryRootName);
-            if (boundaryRoot == null || !TryGetBoundaryArea(boundaryRoot, out var center, out var size))
+            if (!TryGetBoundaryArea(mapScene, out var center, out var size))
             {
                 return;
             }
@@ -381,26 +402,29 @@ namespace DinoGrow.Gameplay.Stage
             enemySpawner.ConfigureSpawnArea(center, size, true);
         }
 
-        private bool TryGetBoundaryArea(Transform boundaryRoot, out Vector3 center, out Vector2 size)
+        private bool TryGetBoundaryArea(Scene mapScene, out Vector3 center, out Vector2 size)
         {
-            var colliders = boundaryRoot.GetComponentsInChildren<Collider>(true);
             var hasBounds = false;
             var bounds = new Bounds();
-            foreach (var targetCollider in colliders)
+            foreach (var boundaryRoot in FindAllInScene(mapScene, mapBoundaryRootName))
             {
-                if (targetCollider == null || targetCollider.isTrigger || !targetCollider.enabled)
+                var colliders = boundaryRoot.GetComponentsInChildren<Collider>(true);
+                foreach (var targetCollider in colliders)
                 {
-                    continue;
-                }
+                    if (targetCollider == null || targetCollider.isTrigger || !targetCollider.enabled)
+                    {
+                        continue;
+                    }
 
-                if (!hasBounds)
-                {
-                    bounds = targetCollider.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(targetCollider.bounds);
+                    if (!hasBounds)
+                    {
+                        bounds = targetCollider.bounds;
+                        hasBounds = true;
+                    }
+                    else
+                    {
+                        bounds.Encapsulate(targetCollider.bounds);
+                    }
                 }
             }
 
@@ -445,6 +469,17 @@ namespace DinoGrow.Gameplay.Stage
             return null;
         }
 
+        private static System.Collections.Generic.List<Transform> FindAllInScene(Scene scene, string targetName)
+        {
+            var results = new System.Collections.Generic.List<Transform>();
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                FindChildrenByName(root.transform, targetName, results);
+            }
+
+            return results;
+        }
+
         private static Transform FindChildByName(Transform root, string targetName)
         {
             if (root.name == targetName)
@@ -462,6 +497,19 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             return null;
+        }
+
+        private static void FindChildrenByName(Transform root, string targetName, System.Collections.Generic.List<Transform> results)
+        {
+            if (root.name == targetName)
+            {
+                results.Add(root);
+            }
+
+            for (var i = 0; i < root.childCount; i++)
+            {
+                FindChildrenByName(root.GetChild(i), targetName, results);
+            }
         }
 
         private string PickRandomMapScenePath()

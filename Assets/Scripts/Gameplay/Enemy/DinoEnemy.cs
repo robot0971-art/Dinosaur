@@ -43,6 +43,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private static Material[] prototypeMaterials;
         private static readonly List<DinoEnemy> ActiveEnemies = new();
+        private Action<DinoEnemy> eatenHandler;
         private Action<DinoEnemy> despawnHandler;
         private DeathEffectService deathEffectService;
         private PlayerProgress playerProgress;
@@ -164,6 +165,11 @@ namespace DinoGrow.Gameplay.Enemy
             despawnHandler = handler;
         }
 
+        public void SetEatenHandler(Action<DinoEnemy> handler)
+        {
+            eatenHandler = handler;
+        }
+
         public void RefreshLevelTextColor()
         {
             ApplyLevelTextColor();
@@ -177,6 +183,7 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             isDying = true;
+            eatenHandler?.Invoke(this);
             if (deathRoutine != null)
             {
                 StopCoroutine(deathRoutine);

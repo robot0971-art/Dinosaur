@@ -49,7 +49,7 @@ public class GameHudLevelExpPanel : MonoBehaviour
     [SerializeField] private int currentExp = 0;
     
     [Tooltip("레벨업에 필요한 최대 EXP입니다")]
-    [SerializeField] private int maxExp = 100;
+    [SerializeField] private int maxExp = 50;
 
     [Header("EXP 수치 텍스트 설정")]
     [Tooltip("현재 EXP와 최대 EXP를 표시할 텍스트 컴포넌트를 여기에 연결하세요")]

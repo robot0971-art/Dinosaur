@@ -6,7 +6,7 @@ namespace DinoGrow.Core.Growth
     {
         public const int DefaultStartLevel = 1;
         public const int DefaultMaxLevel = 20;
-        public const int DefaultExpToLevelUp = 100;
+        public const int DefaultExpToLevelUp = 50;
 
         public int Level { get; private set; }
         public int CurrentExp { get; private set; }
