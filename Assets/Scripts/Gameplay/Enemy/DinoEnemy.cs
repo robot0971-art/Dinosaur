@@ -17,18 +17,28 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private Color levelTwoColor = new(0.2f, 0.65f, 1f);
         [SerializeField] private Color levelThreeColor = new(1f, 0.35f, 0.2f);
 
-        [Header("Level Text")]
+        [Header("적 레벨 텍스트")]
+        [Tooltip("적 머리 위 레벨 텍스트 표시를 담당하는 스크립트입니다. 비워두면 자동으로 붙습니다")]
+        [SerializeField] private EnemyLevelTextView levelTextView;
+
+        [Tooltip("적 머리 위에 표시할 TextMesh입니다. 비워두면 자동으로 만들어집니다")]
         [SerializeField] private TextMesh levelText;
-        [Tooltip("Vertical padding above the dinosaur render bounds.")]
+
+        [Tooltip("공룡 몸 위에서 텍스트를 얼마나 더 위로 올릴지 정합니다")]
         [SerializeField] private float levelTextHeightPadding = 0.5f;
-        [Tooltip("Visible world-space size of the level text. Change this when the text should look bigger or smaller.")]
+
+        [Tooltip("월드 공간에서 보이는 글자 크기입니다")]
         [SerializeField] private float levelTextCharacterSize = 0.12f;
-        [Tooltip("TextMesh font texture resolution. This mostly affects sharpness, not visible world-space size.")]
+
+        [Tooltip("폰트 해상도입니다. 글자가 흐리면 조금 키워보세요")]
         [SerializeField] private int levelTextFontSize = 48;
+
+        [Tooltip("기능 13에서 사용하는 기본 레벨 텍스트 색상입니다")]
         [SerializeField] private Color levelTextColor = Color.white;
 
-        [Header("Level Text Colors")]
-        [SerializeField] private bool usePlayerRelativeLevelTextColor = true;
+        [Header("적 레벨 텍스트 색상 구분")]
+        [Tooltip("기능 14~16에서 사용할 옵션입니다. 기능 13에서는 꺼둡니다")]
+        [SerializeField] private bool usePlayerRelativeLevelTextColor;
         [SerializeField] private Color lowerLevelTextColor = new(0.3f, 1f, 0.35f);
         [SerializeField] private Color sameLevelTextColor = new(1f, 0.9f, 0.25f);
         [SerializeField] private Color higherLevelTextColor = new(1f, 0.25f, 0.2f);
@@ -273,9 +283,9 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void SetLevelTextVisible(bool visible)
         {
-            if (levelText != null)
+            if (levelTextView != null)
             {
-                levelText.gameObject.SetActive(visible);
+                levelTextView.SetVisible(visible);
             }
         }
 
@@ -326,6 +336,16 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void EnsureLevelText()
         {
+            if (levelTextView == null)
+            {
+                levelTextView = GetComponent<EnemyLevelTextView>();
+            }
+
+            if (levelTextView == null)
+            {
+                levelTextView = gameObject.AddComponent<EnemyLevelTextView>();
+            }
+
             if (levelText == null)
             {
                 var labelObject = new GameObject("EnemyLevelText");
@@ -335,31 +355,15 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             levelTextTransform = levelText.transform;
-            levelText.anchor = TextAnchor.MiddleCenter;
-            levelText.alignment = TextAlignment.Center;
-            levelText.characterSize = levelTextCharacterSize;
-            levelText.fontSize = levelTextFontSize;
-            ConfigureLevelTextMaterial(levelText);
+            levelTextView.Configure(
+                levelText,
+                transform,
+                levelTextHeightPadding,
+                levelTextCharacterSize,
+                levelTextFontSize,
+                levelTextColor);
+            levelTextView.SetCamera(cameraTransform);
             ApplyLevelTextColor();
-            UpdateLevelTextTransform();
-        }
-
-        private static void ConfigureLevelTextMaterial(TextMesh targetText)
-        {
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
-                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
-
-            if (font == null)
-            {
-                return;
-            }
-
-            targetText.font = font;
-
-            if (targetText.TryGetComponent<MeshRenderer>(out var textRenderer))
-            {
-                textRenderer.sharedMaterial = font.material;
-            }
         }
 
         private void RefreshLevelText()
@@ -369,7 +373,7 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
-            levelText.text = $"Lv. {level}";
+            levelTextView?.SetLevel(level);
             ApplyLevelTextColor();
         }
 
@@ -386,11 +390,12 @@ namespace DinoGrow.Gameplay.Enemy
                 higherLevelTextColor,
                 levelTextColor);
             var playerLevel = playerProgress != null ? playerProgress.Level : 0;
-            levelText.color = EnemyLevelTextColorRule.Resolve(
+            var resolvedColor = EnemyLevelTextColorRule.Resolve(
                 level,
                 playerLevel,
                 Application.isPlaying && usePlayerRelativeLevelTextColor,
                 palette);
+            levelTextView?.SetColor(resolvedColor);
         }
 
         private void ScheduleEditorLevelTextRefresh()
@@ -412,54 +417,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void UpdateLevelTextTransform()
         {
-            if (levelTextTransform == null)
-            {
-                return;
-            }
-
-            levelTextTransform.position = GetLevelTextPosition();
-            if (cameraTransform == null)
-            {
-                return;
-            }
-
-            var lookDirection = levelTextTransform.position - cameraTransform.position;
-            if (lookDirection.sqrMagnitude > 0.001f)
-            {
-                levelTextTransform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-            }
-        }
-
-        private Vector3 GetLevelTextPosition()
-        {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(targetRenderer.bounds);
-                }
-            }
-
-            if (!hasBounds)
-            {
-                return transform.position + Vector3.up * levelTextHeightPadding;
-            }
-
-            return new Vector3(bounds.center.x, bounds.max.y + levelTextHeightPadding, bounds.center.z);
+            levelTextView?.SetCamera(cameraTransform);
         }
 
         private Material GetMaterialForLevel(int targetLevel)
