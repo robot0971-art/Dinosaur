@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Library/
 Temp/
 Obj/
@@ -12,3 +13,50 @@ UserSettings/
 .vsconfig
 .DS_Store
 Thumbs.db
+=======
+# Unity generated folders
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# IDE and generated project files
+/.vs/
+/.vscode/
+*.csproj
+*.sln
+*.slnx
+*.user
+*.userprefs
+*.lscache
+*.pidb
+*.booproj
+*.suo
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Unity cache and crash output
+/MemoryCaptures/
+/Recordings/
+/sysinfo.txt
+*.stackdump
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Rider IDE
+/.idea/
+
+# Visual Studio
+*.VC.db
+*.sdf
+*.opensdf
+*.cachefile
+nul
+>>>>>>> edc20c114179619eba4818199cf43359a20eae40

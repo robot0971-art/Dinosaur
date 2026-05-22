@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d43f626d9b5f4d729097092ded48bdb, type: 3}
+  m_Name: UIEffectProjectSettings
+  m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffectProjectSettings
+  m_RuntimePresets: []
+  m_RuntimePresetsV2: []
+  m_UseHDRColorPicker: 1
+  m_ShaderVariantCollection: {fileID: 0}
+  m_ShaderVariantRegistry:
+    m_OptionalShaders:
+    - key: Hidden/UI/Default (SoftMaskable)
+      value: Hidden/UI/Default (UIEffect)
+    m_Asset: {fileID: 6267875612671592024}
+    m_ErrorOnUnregisteredVariant: 0
+    m_UnregisteredVariants: []
+--- !u!200 &6267875612671592024
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ShaderVariants
+  m_Shaders:
+  - first: {fileID: 4800000, guid: 96246b1ead49a4c5a996fd477bc5a117, type: 3}
+    second:
+      variants:
+      - keywords: COLOR_FILTER
+        passType: 0
+      - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_PLAIN TONE_GRAYSCALE
+          TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_SHINY TONE_NEGATIVE
+          TRANSITION_MASK
+        passType: 0
+      - keywords: COLOR_FILTER DETAIL_MULTIPLY_ADDITIVE EDGE_SHINY TONE_NEGATIVE
+          TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_BLUR_FAST TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_BLUR_MEDIUM TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_SEPIA TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_EDGE_ALPHA TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN SAMPLING_PIXELATION TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_BLAZE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_BURN
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_CUTOFF
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_FADE
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_MASK
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_MELT
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER EDGE_PLAIN TONE_RETRO
+        passType: 0
+      - keywords: COLOR_FILTER GRADATION_COLOR2 TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_BLUR_FAST
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_BLUR_FAST TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_BLUR_MEDIUM TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_EDGE_LUMINANCE TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER SAMPLING_PIXELATION TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE TRANSITION_FADE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_GRAYSCALE TRANSITION_SHINY
+        passType: 0
+      - keywords: COLOR_FILTER TONE_NEGATIVE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_NEGATIVE TRANSITION_CUTOFF
+        passType: 0
+      - keywords: COLOR_FILTER TONE_POSTERIZE
+        passType: 0
+      - keywords: COLOR_FILTER TONE_RETRO
+        passType: 0
+      - keywords: COLOR_FILTER TONE_SEPIA
+        passType: 0
+      - keywords: DETAIL_MASKING
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_DETAIL TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_FAST TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_BLUR_MEDIUM TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_ALPHA TONE_SEPIA TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_ALPHA TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_EDGE_LUMINANCE TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_PIXELATION TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_RGB_SHIFT TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: EDGE_PLAIN SAMPLING_RGB_SHIFT TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_DISSOLVE
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_FADE
+        passType: 0
+      - keywords: EDGE_PLAIN TRANSITION_SHINY
+        passType: 0
+      - keywords: EDGE_SHINY
+        passType: 0
+      - keywords: GRADATION_GRADIENT
+        passType: 0
+      - keywords: SAMPLING_EDGE_LUMINANCE
+        passType: 0
+      - keywords: TONE_GRAYSCALE
+        passType: 0
+      - keywords: TONE_SEPIA
+        passType: 0
+      - keywords: TRANSITION_BLAZE
+        passType: 0
+      - keywords: TRANSITION_PATTERN
+        passType: 0
