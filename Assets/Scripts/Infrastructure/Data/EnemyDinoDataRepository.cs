@@ -3,11 +3,11 @@ using DinoGrow.Core.Data;
 
 namespace DinoGrow.Infrastructure.Data
 {
-    public sealed class DinoDataRepository
+    public sealed class EnemyDinoDataRepository
     {
         private readonly Dictionary<string, DinoDataRecord> recordsById = new Dictionary<string, DinoDataRecord>();
 
-        public DinoDataRepository(DinoDatabase database)
+        public EnemyDinoDataRepository(EnemyDinoDatabase database)
         {
             if (database == null)
             {

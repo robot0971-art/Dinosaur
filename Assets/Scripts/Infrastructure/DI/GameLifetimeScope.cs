@@ -34,30 +34,41 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private ParticleSystem bloodEffectPrefab;
 
     [Header("Generated Data")]
-    [SerializeField] private DinoDatabase dinoDatabase;
+    [SerializeField] private PlayerDatabase playerDatabase;
+    [SerializeField] private EnemyDinoDatabase enemyDinoDatabase;
+    [SerializeField] private ItemDatabase itemDatabase;
     [SerializeField] private StageDatabase stageDatabase;
     [SerializeField] private SpawnDatabase spawnDatabase;
     [SerializeField] private PlayerGrowthDatabase playerGrowthDatabase;
 
     protected override void Configure(IContainerBuilder builder)
     {
-        var dinoRepository = new DinoDataRepository(dinoDatabase);
+        var playerRepository = new PlayerDataRepository(playerDatabase);
+        var enemyDinoRepository = new EnemyDinoDataRepository(enemyDinoDatabase);
+        var itemRepository = new ItemDataRepository(itemDatabase);
         var stageRepository = new StageDataRepository(stageDatabase);
         var spawnRepository = new SpawnDataRepository(spawnDatabase);
         var playerGrowthRepository = new PlayerGrowthDataRepository(playerGrowthDatabase);
 
-        builder.Register<GameEventBus>(Lifetime.Singleton);
+        var eventBus = new GameEventBus();
+        var heartsSystem = new HeartsSystem(eventBus);
+        InitializeHeartsSystem(heartsSystem, playerRepository);
+
+        builder.RegisterInstance(eventBus);
         builder.RegisterInstance(new CameraReference(gameplayCamera));
         builder.Register<EatResolver>(Lifetime.Singleton);
         builder.Register<EnemyBehaviorResolver>(Lifetime.Singleton);
         builder.Register<GrowthSystem>(Lifetime.Singleton);
-        builder.RegisterInstance(CreatePlayerProgress(dinoRepository, playerGrowthRepository));
+        builder.RegisterInstance(heartsSystem);
+        builder.RegisterInstance(CreatePlayerProgress(playerRepository, playerGrowthRepository));
         builder.Register<GameStateController>(Lifetime.Singleton);
         builder.Register<StageRule>(Lifetime.Singleton);
         builder.Register<IObjectPoolService, ObjectPoolService>(Lifetime.Singleton);
         builder.RegisterInstance(new DeathEffectSettings(bloodEffectPrefab));
         builder.Register<DeathEffectService>(Lifetime.Singleton);
-        builder.RegisterInstance(dinoRepository);
+        builder.RegisterInstance(playerRepository);
+        builder.RegisterInstance(enemyDinoRepository);
+        builder.RegisterInstance(itemRepository);
         builder.RegisterInstance(stageRepository);
         builder.RegisterInstance(spawnRepository);
         builder.RegisterInstance(playerGrowthRepository);
@@ -92,8 +103,20 @@ public class GameLifetimeScope : LifetimeScope
         stageMapSceneLoader.ConfigureEnemySpawner(enemySpawner);
     }
 
+    private static void InitializeHeartsSystem(HeartsSystem heartsSystem, PlayerDataRepository playerRepository)
+    {
+        if (playerRepository.TryGetById("player", out var playerData))
+        {
+            heartsSystem.Initialize(playerData.maxLives);
+        }
+        else
+        {
+            heartsSystem.Initialize(3);
+        }
+    }
+
     private static PlayerProgress CreatePlayerProgress(
-        DinoDataRepository dinoRepository,
+        PlayerDataRepository playerRepository,
         PlayerGrowthDataRepository playerGrowthRepository)
     {
         var startLevel = PlayerProgress.DefaultStartLevel;
@@ -103,7 +126,7 @@ public class GameLifetimeScope : LifetimeScope
             : PlayerProgress.DefaultMaxLevel;
         var expToLevelUp = PlayerProgress.DefaultExpToLevelUp;
 
-        if (dinoRepository.TryGetById("player", out var playerData))
+        if (playerRepository.TryGetById("player", out var playerData))
         {
             startLevel = playerData.level;
             startExp = playerData.exp;

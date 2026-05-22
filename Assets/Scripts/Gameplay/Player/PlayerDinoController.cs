@@ -1,4 +1,5 @@
 using DinoGrow.Core.Combat;
+using DinoGrow.Core.Data;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Gameplay.Animation;
@@ -57,7 +58,8 @@ namespace DinoGrow.Gameplay.Player
         private StageRule stageRule;
         private DeathEffectService deathEffectService;
         private GameEventBus eventBus;
-        private DinoDataRepository dinoDataRepository;
+        private HeartsSystem heartsSystem;
+        private PlayerDataRepository playerDataRepository;
         private PlayerGrowthDataRepository playerGrowthDataRepository;
         private Vector2 rotateInput;
         private bool isSprinting;
@@ -128,7 +130,8 @@ namespace DinoGrow.Gameplay.Player
             StageRule stageRule,
             DeathEffectService deathEffectService,
             GameEventBus eventBus,
-            DinoDataRepository dinoDataRepository,
+            HeartsSystem heartsSystem,
+            PlayerDataRepository playerDataRepository,
             PlayerGrowthDataRepository playerGrowthDataRepository,
             CameraReference cameraReference)
         {
@@ -139,7 +142,8 @@ namespace DinoGrow.Gameplay.Player
             this.stageRule = stageRule;
             this.deathEffectService = deathEffectService;
             this.eventBus = eventBus;
-            this.dinoDataRepository = dinoDataRepository;
+            this.heartsSystem = heartsSystem;
+            this.playerDataRepository = playerDataRepository;
             this.playerGrowthDataRepository = playerGrowthDataRepository;
             cameraTransform ??= cameraReference?.Transform;
             dependenciesReady = true;
@@ -407,6 +411,18 @@ namespace DinoGrow.Gameplay.Player
             {
                 animatorView?.PlayAttack();
                 Eat(enemy);
+            }
+            else if (heartsSystem != null && heartsSystem.IsAlive)
+            {
+                heartsSystem.LoseLife();
+                animatorView?.SetHit(true);
+                deathEffectService?.SpawnBlood(GetMouthEffectPosition());
+                eventBus.PublishEnemyEaten(enemy.Level, 0);
+
+                if (heartsSystem.IsDead)
+                {
+                    TriggerGameOver(enemy);
+                }
             }
             else
             {
@@ -1119,7 +1135,7 @@ namespace DinoGrow.Gameplay.Player
 
         private void ApplyPlayerData()
         {
-            if (dinoDataRepository == null || !dinoDataRepository.TryGetById(playerDataId, out var playerData))
+            if (playerDataRepository == null || !playerDataRepository.TryGetById(playerDataId, out var playerData))
             {
                 return;
             }

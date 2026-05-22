@@ -15,6 +15,7 @@ namespace DinoGrow.Gameplay.Animation
         private static readonly int DeadHash = Animator.StringToHash("Dead");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int HitHash = Animator.StringToHash("Hit");
         private static readonly string[] AttackStateNames =
         {
             "Armature_Velociraptor_Attack",
@@ -381,6 +382,21 @@ namespace DinoGrow.Gameplay.Animation
             }
 
             animator.Update(0f);
+        }
+
+        public void SetHit(bool isHit)
+        {
+            EnsureAnimatorReference();
+            if (animator == null || isDead)
+            {
+                return;
+            }
+
+            if (isHit)
+            {
+                EnsureAnimatorActive();
+                animator.SetTrigger(HitHash);
+            }
         }
 
         public void PlayJump()

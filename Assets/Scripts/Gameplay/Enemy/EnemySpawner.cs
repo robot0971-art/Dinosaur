@@ -46,7 +46,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float obstacleSpawnClearance = 3f;
 
         private readonly List<DinoEnemy> spawnedEnemies = new();
-        private DinoDataRepository dinoDataRepository;
+        private EnemyDinoDataRepository enemyDinoDataRepository;
         private SpawnDataRepository spawnDataRepository;
         private StageDataRepository stageDataRepository;
         private PlayerProgress playerProgress;
@@ -70,7 +70,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         [Inject]
         public void Construct(
-            DinoDataRepository dinoDataRepository,
+            EnemyDinoDataRepository enemyDinoDataRepository,
             SpawnDataRepository spawnDataRepository,
             StageDataRepository stageDataRepository,
             PlayerProgress playerProgress,
@@ -78,7 +78,7 @@ namespace DinoGrow.Gameplay.Enemy
             GameEventBus eventBus,
             EnemyBehaviorResolver enemyBehaviorResolver)
         {
-            this.dinoDataRepository = dinoDataRepository;
+            this.enemyDinoDataRepository = enemyDinoDataRepository;
             this.spawnDataRepository = spawnDataRepository;
             this.stageDataRepository = stageDataRepository;
             this.playerProgress = playerProgress;
@@ -219,7 +219,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private bool TrySpawnFromGameData()
         {
-            if (dinoDataRepository == null || spawnDataRepository == null)
+            if (enemyDinoDataRepository == null || spawnDataRepository == null)
             {
                 return false;
             }
@@ -233,7 +233,7 @@ namespace DinoGrow.Gameplay.Enemy
             var spawnedAny = false;
             foreach (var spawnRecord in spawnRecords)
             {
-                if (!dinoDataRepository.TryGetById(spawnRecord.dinoId, out var dinoData))
+                if (!enemyDinoDataRepository.TryGetById(spawnRecord.dinoId, out var dinoData))
                 {
                     Debug.LogWarning($"Dino data was not found for spawn id '{spawnRecord.dinoId}'.", this);
                     continue;

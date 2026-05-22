@@ -5,7 +5,9 @@ namespace DinoGrow.Infrastructure.Data
 {
     public interface IDataService
     {
-        IReadOnlyList<DinoDataRecord> LoadDinoRows(string xlsxPath);
+        IReadOnlyList<PlayerDataRecord> LoadPlayerRows(string xlsxPath);
+        IReadOnlyList<DinoDataRecord> LoadEnemyDinoRows(string xlsxPath);
+        IReadOnlyList<ItemDataRecord> LoadItemRows(string xlsxPath);
         IReadOnlyList<StageDataRecord> LoadStageRows(string xlsxPath);
         IReadOnlyList<SpawnDataRecord> LoadSpawnRows(string xlsxPath);
         IReadOnlyList<PlayerGrowthDataRecord> LoadPlayerGrowthRows(string xlsxPath);

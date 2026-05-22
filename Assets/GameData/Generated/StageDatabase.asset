@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Core.Data.StageDatabase
   records:
   - stageId: 1
-    displayName: Map4 Grassland
+    displayName: "\uCD08\uC6D0"
     spawnCenterX: 0
     spawnCenterZ: 0
-    spawnSizeX: 120
-    spawnSizeZ: 120
-    spawnY: 20
-    minDistanceFromPlayer: 14
+    spawnSizeX: 80
+    spawnSizeZ: 80
+    spawnY: 0.75
+    minDistanceFromPlayer: 8
     timeLimit: 60
   - stageId: 2
-    displayName: "Map4 Grassland \uD655\uC7A5"
+    displayName: "\uB113\uC740 \uCD08\uC6D0"
     spawnCenterX: 0
     spawnCenterZ: 0
-    spawnSizeX: 160
-    spawnSizeZ: 160
-    spawnY: 20
-    minDistanceFromPlayer: 16
+    spawnSizeX: 100
+    spawnSizeZ: 100
+    spawnY: 0.75
+    minDistanceFromPlayer: 10
     timeLimit: 90
