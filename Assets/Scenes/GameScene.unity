@@ -386,7 +386,7 @@ MonoBehaviour:
   useDataSize: 0
   applyGrowthScale: 1
   body: {fileID: 376135607}
-  visualRoot: {fileID: 1482318636}
+  visualRoot: {fileID: 0}
   cameraTransform: {fileID: 330585546}
   animatorView: {fileID: 376135612}
   levelText: {fileID: 0}
@@ -441,8 +441,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.6425748, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1482318636}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &376135612
@@ -457,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2acbd78b6445c7047b4c6b41c7dee63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Animation.DinoAnimatorView
-  animator: {fileID: 1482318637}
+  animator: {fileID: 0}
 --- !u!65 &376135613
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -805,8 +804,8 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 1482318636}
-    LookAtTarget: {fileID: 1482318636}
+    TrackingTarget: {fileID: 376135611}
+    LookAtTarget: {fileID: 376135611}
     CustomLookAtTarget: 1
   Lens:
     FieldOfView: 61.5
@@ -911,82 +910,6 @@ MonoBehaviour:
   positionDamping: {x: 0.12, y: 0.12, z: 0.12}
   aimDamping: {x: 0.08, y: 0.08}
   lockCursorOnPlay: 1
---- !u!1001 &1012854586
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 376135611}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_Name
-      value: Trex
-      objectReference: {fileID: 0}
-    - target: {fileID: 9015691154623859518, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1482318637}
-  m_SourcePrefab: {fileID: 100100000, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
 --- !u!1 &1016962274
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,11 +1092,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1144841842 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-  m_PrefabInstance: {fileID: 1012854586}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1184142856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1663,33 +1581,6 @@ MonoBehaviour:
   m_DetailTexSpeed: {x: 0, y: 0}
   m_CustomRoot: {fileID: 0}
   m_Flip: 0
---- !u!4 &1482318636 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
-  m_PrefabInstance: {fileID: 1012854586}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1482318637
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1144841842}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 37e2ca17c2beb1a45808e6920b85c410, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1521132389
 GameObject:
   m_ObjectHideFlags: 0
