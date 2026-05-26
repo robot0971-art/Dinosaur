@@ -13,6 +13,7 @@ namespace DinoGrow.UI
     {
         [SerializeField] private Text levelText;
         [SerializeField] private Text expText;
+        [SerializeField] private global::GameHudLevelExpPanel levelExpPanel;
         [SerializeField] private Text statusText;
         [SerializeField] private StatusTextView statusTextView;
         [SerializeField] private GameObject gameOverPanel;
@@ -125,6 +126,11 @@ namespace DinoGrow.UI
             if (expText != null)
             {
                 expText.text = progress.IsMaxLevel ? "EXP MAX" : $"EXP {progress.CurrentExp} / {progress.ExpToLevelUp}";
+            }
+
+            if (levelExpPanel != null)
+            {
+                levelExpPanel.SetProgress(progress.Level, progress.CurrentExp, progress.ExpToLevelUp, progress.IsMaxLevel);
             }
         }
 

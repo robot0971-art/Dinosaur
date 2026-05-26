@@ -3,6 +3,7 @@ using DinoGrow.Core.Growth;
 using DinoGrow.Camera;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Gameplay.Player;
+using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,6 +41,7 @@ namespace DinoGrow.Gameplay.Stage
 
         private GameEventBus eventBus;
         private PlayerDinoController player;
+        private CameraReference cameraReference;
         private string loadedMapScenePath;
         private bool isSwitching;
 
@@ -50,10 +52,11 @@ namespace DinoGrow.Gameplay.Stage
         }
 
         [Inject]
-        public void Construct(GameEventBus eventBus, PlayerDinoController player)
+        public void Construct(GameEventBus eventBus, PlayerDinoController player, CameraReference cameraReference)
         {
             this.eventBus = eventBus;
             this.player = player;
+            this.cameraReference = cameraReference;
         }
 
         public void ConfigureLoadingOverlay(GameObject panel, Slider slider)
@@ -156,6 +159,7 @@ namespace DinoGrow.Gameplay.Stage
 
             SetLoadingProgress(0.9f, true);
             DisableMapSceneCameras(nextScene);
+            ConfigureMapBillboards(nextScene);
             ApplyMapEnvironment(nextScene);
             ApplyMapBoundary(nextScene);
             MovePlayerToStartPoint(nextScene);
@@ -192,6 +196,7 @@ namespace DinoGrow.Gameplay.Stage
 
             SetLoadingProgress(0.95f, true);
             DisableMapSceneCameras(nextScene);
+            ConfigureMapBillboards(nextScene);
             ApplyMapEnvironment(nextScene);
             ApplyMapBoundary(nextScene);
             MovePlayerToStartPoint(nextScene);
@@ -271,6 +276,22 @@ namespace DinoGrow.Gameplay.Stage
 
                 environment.Apply();
                 return;
+            }
+        }
+
+        private void ConfigureMapBillboards(Scene mapScene)
+        {
+            if (cameraReference?.Transform == null || !mapScene.IsValid() || !mapScene.isLoaded)
+            {
+                return;
+            }
+
+            foreach (var root in mapScene.GetRootGameObjects())
+            {
+                foreach (var billboard in root.GetComponentsInChildren<BillboardToCamera>(true))
+                {
+                    billboard.SetTarget(cameraReference.Transform);
+                }
             }
         }
 
