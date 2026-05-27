@@ -1,13 +1,13 @@
 using DinoGrow.Core.Combat;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
+using DinoGrow.Gameplay;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using VContainer;
 
 namespace DinoGrow.Gameplay.Player
@@ -171,8 +171,8 @@ namespace DinoGrow.Gameplay.Player
 
             if (mouthEffectOrigin == null)
             {
-                mouthEffectOrigin = FindChildByName(visualRoot != null ? visualRoot : transform, "Head_end")
-                    ?? FindChildByName(visualRoot != null ? visualRoot : transform, "Head");
+                mouthEffectOrigin = TransformSearchUtility.FindChildByName(visualRoot != null ? visualRoot : transform, "Head_end")
+                    ?? TransformSearchUtility.FindChildByName(visualRoot != null ? visualRoot : transform, "Head");
             }
 
         }
@@ -253,8 +253,8 @@ namespace DinoGrow.Gameplay.Player
                 return;
             }
 
-            rotateInput = ReadRotateInput();
-            isSprinting = IsSprintPressed();
+            rotateInput = PlayerInputReader.ReadMoveInput();
+            isSprinting = PlayerInputReader.IsSprintPressed();
         }
 
         private void FixedUpdate()
@@ -275,7 +275,7 @@ namespace DinoGrow.Gameplay.Player
                 return;
             }
 
-            if (TryGetCameraRelativeDirection(rotateInput, out var targetDirection))
+            if (PlayerMovementUtility.TryGetCameraRelativeDirection(rotateInput, cameraTransform, out var targetDirection))
             {
                 var targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
                 body.MoveRotation(Quaternion.RotateTowards(body.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
@@ -516,99 +516,9 @@ namespace DinoGrow.Gameplay.Player
             return transform.TransformPoint(mouthEffectFallbackOffset);
         }
 
-        private static Transform FindChildByName(Transform root, string targetName)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            if (root.name == targetName)
-            {
-                return root;
-            }
-
-            for (var i = 0; i < root.childCount; i++)
-            {
-                var result = FindChildByName(root.GetChild(i), targetName);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
-        }
-
-        private static Vector2 ReadRotateInput()
-        {
-            var keyboard = Keyboard.current;
-            if (keyboard == null)
-            {
-                return Vector2.zero;
-            }
-
-            var input = Vector2.zero;
-            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
-            {
-                input.x -= 1f;
-            }
-
-            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
-            {
-                input.x += 1f;
-            }
-
-            if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
-            {
-                input.y -= 1f;
-            }
-
-            if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed)
-            {
-                input.y += 1f;
-            }
-
-            return input.sqrMagnitude > 1f ? input.normalized : input;
-        }
-
-        private static bool IsSprintPressed()
-        {
-            var keyboard = Keyboard.current;
-            return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
-        }
-
         private float GetCurrentMoveSpeed()
         {
             return isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
-        }
-
-        private bool TryGetCameraRelativeDirection(Vector2 input, out Vector3 direction)
-        {
-            direction = Vector3.zero;
-            if (input.sqrMagnitude <= 0.001f || cameraTransform == null)
-            {
-                return false;
-            }
-
-            var cameraForward = cameraTransform.forward;
-            cameraForward.y = 0f;
-            var cameraRight = cameraTransform.right;
-            cameraRight.y = 0f;
-
-            if (cameraForward.sqrMagnitude <= 0.001f || cameraRight.sqrMagnitude <= 0.001f)
-            {
-                return false;
-            }
-
-            direction = cameraForward.normalized * input.y + cameraRight.normalized * input.x;
-            if (direction.sqrMagnitude <= 0.001f)
-            {
-                return false;
-            }
-
-            direction.Normalize();
-            return true;
         }
 
         private bool EnsureDependenciesReady()
@@ -664,7 +574,7 @@ namespace DinoGrow.Gameplay.Player
                 position += ResolveObstaclePenetration(position);
             }
 
-            position = ClampToMovementBounds(position);
+            position = PlayerMovementUtility.ClampToBounds(position, useMovementBounds, movementBoundsCenter, movementBoundsSize);
             if (TryGetGroundY(position, out var groundY))
             {
                 var targetY = groundY - visualBottomOffset;
@@ -675,28 +585,16 @@ namespace DinoGrow.Gameplay.Player
             StopBody();
         }
 
-        private Vector3 ClampToMovementBounds(Vector3 position)
-        {
-            if (!useMovementBounds)
-            {
-                return position;
-            }
-
-            var halfSize = movementBoundsSize * 0.5f;
-            position.x = Mathf.Clamp(
-                position.x,
-                movementBoundsCenter.x - halfSize.x,
-                movementBoundsCenter.x + halfSize.x);
-            position.z = Mathf.Clamp(
-                position.z,
-                movementBoundsCenter.z - halfSize.y,
-                movementBoundsCenter.z + halfSize.y);
-            return position;
-        }
-
         private Vector3 ResolveObstaclePenetration(Vector3 rootPosition)
         {
-            GetObstacleCapsule(rootPosition, out var point1, out var point2, out var radius);
+            PlayerMovementUtility.GetObstacleCapsule(
+                rootPosition,
+                obstacleRadius,
+                obstacleHeight,
+                obstacleCenterOffset,
+                out var point1,
+                out var point2,
+                out var radius);
             var overlaps = Physics.OverlapCapsule(
                 point1,
                 point2,
@@ -708,7 +606,7 @@ namespace DinoGrow.Gameplay.Player
             var capsuleCenter = (point1 + point2) * 0.5f;
             foreach (var overlap in overlaps)
             {
-                if (ShouldIgnoreObstacle(overlap))
+                if (PlayerMovementUtility.ShouldIgnoreObstacle(overlap, groundLayers))
                 {
                     continue;
                 }
@@ -773,7 +671,14 @@ namespace DinoGrow.Gameplay.Player
             }
 
             var direction = moveDelta / distance;
-            GetObstacleCapsule(body.position, out var point1, out var point2, out var radius);
+            PlayerMovementUtility.GetObstacleCapsule(
+                body.position,
+                obstacleRadius,
+                obstacleHeight,
+                obstacleCenterOffset,
+                out var point1,
+                out var point2,
+                out var radius);
             var castDistance = distance + obstacleSkinWidth;
             var hits = Physics.CapsuleCastAll(
                 point1,
@@ -787,7 +692,7 @@ namespace DinoGrow.Gameplay.Player
             System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
             foreach (var candidate in hits)
             {
-                if (ShouldIgnoreObstacle(candidate.collider))
+                if (PlayerMovementUtility.ShouldIgnoreObstacle(candidate.collider, groundLayers))
                 {
                     continue;
                 }
@@ -798,42 +703,6 @@ namespace DinoGrow.Gameplay.Player
 
             hit = default;
             return false;
-        }
-
-        private void GetObstacleCapsule(Vector3 rootPosition, out Vector3 point1, out Vector3 point2, out float radius)
-        {
-            radius = Mathf.Max(0.05f, obstacleRadius);
-            var height = Mathf.Max(obstacleHeight, radius * 2f);
-            var center = rootPosition + obstacleCenterOffset;
-
-            var halfSegment = Mathf.Max(0f, (height * 0.5f) - radius);
-            point1 = center + Vector3.up * halfSegment;
-            point2 = center - Vector3.up * halfSegment;
-        }
-
-        private bool ShouldIgnoreObstacle(Collider targetCollider)
-        {
-            if (targetCollider == null || targetCollider.isTrigger)
-            {
-                return true;
-            }
-
-            if (targetCollider.GetComponentInParent<PlayerDinoController>() != null)
-            {
-                return true;
-            }
-
-            if (targetCollider.GetComponentInParent<DinoEnemy>() != null)
-            {
-                return true;
-            }
-
-            if ((groundLayers.value & (1 << targetCollider.gameObject.layer)) != 0)
-            {
-                return true;
-            }
-
-            return IsWaterCollider(targetCollider);
         }
 
         private void ConfigureBody()
@@ -884,7 +753,7 @@ namespace DinoGrow.Gameplay.Player
                     continue;
                 }
 
-                if (IsWaterCollider(hit.collider))
+                if (PlayerMovementUtility.IsWaterCollider(hit.collider))
                 {
                     continue;
                 }
@@ -938,49 +807,7 @@ namespace DinoGrow.Gameplay.Player
 
         private Bounds? CalculateWorldVisualBounds()
         {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                    continue;
-                }
-
-                bounds.Encapsulate(targetRenderer.bounds);
-            }
-
-            return hasBounds ? bounds : null;
-        }
-
-        private static bool IsWaterCollider(Collider targetCollider)
-        {
-            if (targetCollider == null)
-            {
-                return false;
-            }
-
-            var target = targetCollider.transform;
-            while (target != null)
-            {
-                if (target.name == "Water")
-                {
-                    return true;
-                }
-
-                target = target.parent;
-            }
-
-            return false;
+            return RendererBoundsUtility.TryCalculateVisibleBounds(transform, out var bounds) ? bounds : null;
         }
 
         private void ApplyPlayerData()

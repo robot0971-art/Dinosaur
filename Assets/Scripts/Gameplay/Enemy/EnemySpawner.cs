@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DinoGrow.Core.Data;
 using DinoGrow.Core.Enemy;
 using DinoGrow.Core.Growth;
+using DinoGrow.Core.Stage;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.Infrastructure.Pooling;
@@ -44,6 +45,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float navMeshSampleDistance = 8f;
         [SerializeField] private float navMeshVerticalSampleDistance = 80f;
         [SerializeField] private int maxSpawnAttemptsPerEnemy = 80;
+        [SerializeField] private int spawnBatchSize = 4;
         [SerializeField] private LayerMask obstacleLayers = 0;
         [SerializeField] private float obstacleSpawnClearance = 3f;
         [Header("Drops")]
@@ -61,10 +63,12 @@ namespace DinoGrow.Gameplay.Enemy
         private IObjectPoolService poolService;
         private GameEventBus eventBus;
         private EnemyBehaviorResolver enemyBehaviorResolver;
+        private GameStateController gameState;
         private Coroutine spawnRoutine;
         private PlayerDinoController playerController;
         private Vector3 playerStartExclusionCenter;
         private bool hasPlayerStartExclusion;
+        private bool mapTransitionInProgress;
 
         public void ConfigureSpawnArea(Vector3 center, Vector2 size, bool respawn)
         {
@@ -86,7 +90,8 @@ namespace DinoGrow.Gameplay.Enemy
             PlayerProgress playerProgress,
             IObjectPoolService poolService,
             GameEventBus eventBus,
-            EnemyBehaviorResolver enemyBehaviorResolver)
+            EnemyBehaviorResolver enemyBehaviorResolver,
+            GameStateController gameState)
         {
             this.dinoDataRepository = dinoDataRepository;
             this.spawnDataRepository = spawnDataRepository;
@@ -95,6 +100,7 @@ namespace DinoGrow.Gameplay.Enemy
             this.poolService = poolService;
             this.eventBus = eventBus;
             this.enemyBehaviorResolver = enemyBehaviorResolver;
+            this.gameState = gameState;
         }
 
         private void Start()
@@ -107,7 +113,15 @@ namespace DinoGrow.Gameplay.Enemy
             UseGroundLayerIfAvailable();
             UseObstacleLayerIfAvailable();
             ApplyStageData();
-            RequestSpawnInitialEnemies();
+            if (!mapTransitionInProgress)
+            {
+                RequestSpawnInitialEnemies();
+            }
+        }
+
+        public void SetMapTransitionInProgress(bool inProgress)
+        {
+            mapTransitionInProgress = inProgress;
         }
 
         private void UseGroundLayerIfAvailable()
@@ -160,8 +174,8 @@ namespace DinoGrow.Gameplay.Enemy
                 yield return null;
             }
 
+            yield return SpawnInitialEnemiesRoutine();
             spawnRoutine = null;
-            SpawnInitialEnemies();
         }
 
         private bool HasNavMeshNearSpawnArea()
@@ -171,26 +185,49 @@ namespace DinoGrow.Gameplay.Enemy
                 || NavMesh.SamplePosition(spawnCenter, out _, navMeshSampleDistance, NavMesh.AllAreas);
         }
 
-        private void SpawnInitialEnemies()
+        private IEnumerator SpawnInitialEnemiesRoutine()
         {
-            try
-            {
-                ClearSpawnedEnemies();
+            ClearSpawnedEnemies();
 
-                if (TrySpawnFromGameData())
+            if (TryGetGameDataSpawnRequests(out var gameDataSpawnRequests))
+            {
+                var spawnedInBatch = 0;
+                foreach (var request in gameDataSpawnRequests)
                 {
-                    return;
+                    for (var i = 0; i < request.Count; i++)
+                    {
+                        TrySpawnFromData(request.Prefab, request.DinoData, request.SpawnRecord);
+                        spawnedInBatch++;
+                        if (ShouldYieldSpawnBatch(spawnedInBatch))
+                        {
+                            spawnedInBatch = 0;
+                            yield return null;
+                        }
+                    }
                 }
 
+                hasPlayerStartExclusion = false;
+                yield break;
+            }
+
+            try
+            {
                 if (enemyPrefabs == null || enemyPrefabs.Length == 0)
                 {
                     Debug.LogWarning("EnemySpawner needs at least one enemy prefab.", this);
-                    return;
+                    yield break;
                 }
 
+                var spawnedInBatch = 0;
                 for (var i = 0; i < spawnCount; i++)
                 {
                     TrySpawnOne();
+                    spawnedInBatch++;
+                    if (ShouldYieldSpawnBatch(spawnedInBatch))
+                    {
+                        spawnedInBatch = 0;
+                        yield return null;
+                    }
                 }
             }
             finally
@@ -236,8 +273,9 @@ namespace DinoGrow.Gameplay.Enemy
             return true;
         }
 
-        private bool TrySpawnFromGameData()
+        private bool TryGetGameDataSpawnRequests(out List<GameDataSpawnRequest> requests)
         {
+            requests = new List<GameDataSpawnRequest>();
             if (dinoDataRepository == null || spawnDataRepository == null)
             {
                 return false;
@@ -249,7 +287,6 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
-            var spawnedAny = false;
             foreach (var spawnRecord in spawnRecords)
             {
                 if (!dinoDataRepository.TryGetById(spawnRecord.dinoId, out var dinoData))
@@ -266,13 +303,15 @@ namespace DinoGrow.Gameplay.Enemy
                 }
 
                 var count = Mathf.Max(0, spawnRecord.count);
-                for (var i = 0; i < count; i++)
+                if (count <= 0)
                 {
-                    spawnedAny |= TrySpawnFromData(prefab, dinoData, spawnRecord);
+                    continue;
                 }
+
+                requests.Add(new GameDataSpawnRequest(prefab, dinoData, spawnRecord, count));
             }
 
-            return spawnedAny;
+            return requests.Count > 0;
         }
 
         private bool TrySpawnFromData(DinoEnemy prefab, DinoDataRecord dinoData, SpawnDataRecord spawnRecord)
@@ -303,7 +342,8 @@ namespace DinoGrow.Gameplay.Enemy
                 spawnSize,
                 GetMoveSpeed(dinoData, spawnRecord),
                 player,
-                enemyBehaviorResolver);
+                enemyBehaviorResolver,
+                gameState);
             spawnedEnemies.Add(enemy);
             eventBus?.PublishEnemySpawned(enemy.Level);
             return true;
@@ -407,6 +447,11 @@ namespace DinoGrow.Gameplay.Enemy
             RefreshSpawnedEnemyLevelTextColors();
 
             if (!result.LeveledUp)
+            {
+                return;
+            }
+
+            if (mapTransitionInProgress)
             {
                 return;
             }
@@ -868,6 +913,31 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             spawnedHeartDrops.Clear();
+        }
+
+        private bool ShouldYieldSpawnBatch(int spawnedInBatch)
+        {
+            return Application.isPlaying && spawnedInBatch >= Mathf.Max(1, spawnBatchSize);
+        }
+
+        private readonly struct GameDataSpawnRequest
+        {
+            public GameDataSpawnRequest(
+                DinoEnemy prefab,
+                DinoDataRecord dinoData,
+                SpawnDataRecord spawnRecord,
+                int count)
+            {
+                Prefab = prefab;
+                DinoData = dinoData;
+                SpawnRecord = spawnRecord;
+                Count = count;
+            }
+
+            public DinoEnemy Prefab { get; }
+            public DinoDataRecord DinoData { get; }
+            public SpawnDataRecord SpawnRecord { get; }
+            public int Count { get; }
         }
     }
 }

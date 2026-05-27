@@ -45,11 +45,25 @@ namespace DinoGrow.Gameplay.Stage
         private CameraReference cameraReference;
         private string loadedMapScenePath;
         private bool isSwitching;
+        private bool disabledInitialSceneMaps;
+        private bool initialMapLoaded;
+        private GameObject runtimeLoadingCurtain;
+        private Slider runtimeLoadingSlider;
 
         private void Awake()
         {
             UseGroundLayerIfAvailable();
-            SetLoadingProgress(0f, false);
+            if (loadInitialMap)
+            {
+                EnsureRuntimeLoadingCurtain();
+                DisableExistingSceneMapRoots();
+                disabledInitialSceneMaps = true;
+                SetLoadingProgress(0f, true);
+            }
+            else
+            {
+                SetLoadingProgress(0f, false);
+            }
         }
 
         [Inject]
@@ -64,7 +78,7 @@ namespace DinoGrow.Gameplay.Stage
         {
             loadingOverlayPanel = panel;
             loadingSlider = slider;
-            SetLoadingProgress(0f, false);
+            SetLoadingProgress(0f, loadInitialMap && !initialMapLoaded);
         }
 
         public void ConfigureCameraOrbit(CinemachineThirdPersonOrbit orbit)
@@ -99,7 +113,13 @@ namespace DinoGrow.Gameplay.Stage
 
             if (loadInitialMap)
             {
-                DisableExistingSceneMapRoots();
+                enemySpawner?.SetMapTransitionInProgress(true);
+                if (!disabledInitialSceneMaps)
+                {
+                    DisableExistingSceneMapRoots();
+                    disabledInitialSceneMaps = true;
+                }
+
                 StartCoroutine(LoadInitialRandomMapRoutine());
             }
         }
@@ -109,6 +129,11 @@ namespace DinoGrow.Gameplay.Stage
             if (eventBus != null)
             {
                 eventBus.PlayerGrowthChanged -= OnPlayerGrowthChanged;
+            }
+
+            if (runtimeLoadingCurtain != null)
+            {
+                Destroy(runtimeLoadingCurtain);
             }
         }
 
@@ -136,6 +161,7 @@ namespace DinoGrow.Gameplay.Stage
                 isSwitching = false;
             }
 
+            enemySpawner?.SetMapTransitionInProgress(true);
             StartCoroutine(SwitchMapRoutine(nextScenePath));
         }
 
@@ -144,6 +170,7 @@ namespace DinoGrow.Gameplay.Stage
             var nextScenePath = PickRandomMapScenePath();
             if (string.IsNullOrWhiteSpace(nextScenePath))
             {
+                enemySpawner?.SetMapTransitionInProgress(false);
                 yield break;
             }
 
@@ -171,7 +198,10 @@ namespace DinoGrow.Gameplay.Stage
             yield return null;
             SetLoadingProgress(1f, true);
             yield return null;
+            initialMapLoaded = true;
             SetLoadingProgress(0f, false);
+            DestroyRuntimeLoadingCurtain();
+            enemySpawner?.SetMapTransitionInProgress(false);
             eventBus?.PublishInitialMapLoaded();
         }
 
@@ -213,6 +243,7 @@ namespace DinoGrow.Gameplay.Stage
             SetLoadingProgress(1f, true);
             yield return null;
             SetLoadingProgress(0f, false);
+            enemySpawner?.SetMapTransitionInProgress(false);
             isSwitching = false;
         }
 
@@ -235,6 +266,16 @@ namespace DinoGrow.Gameplay.Stage
 
         private void SetLoadingProgress(float progress, bool visible)
         {
+            if (runtimeLoadingCurtain != null)
+            {
+                runtimeLoadingCurtain.SetActive(visible && !initialMapLoaded);
+            }
+
+            if (runtimeLoadingSlider != null)
+            {
+                runtimeLoadingSlider.value = Mathf.Clamp01(progress);
+            }
+
             if (loadingOverlayPanel != null)
             {
                 loadingOverlayPanel.SetActive(visible);
@@ -320,14 +361,15 @@ namespace DinoGrow.Gameplay.Stage
             {
                 DisableExistingNavMeshSurfaces(root);
 
-                if (ShouldKeepMainSceneRoot(root))
-                {
-                    continue;
-                }
-
                 if (LooksLikeMapRoot(root))
                 {
                     root.SetActive(false);
+                    continue;
+                }
+
+                if (ShouldKeepMainSceneRoot(root))
+                {
+                    continue;
                 }
             }
         }
@@ -365,7 +407,22 @@ namespace DinoGrow.Gameplay.Stage
                 return false;
             }
 
+            if (root.GetComponentInChildren<PlayerDinoController>(true) != null
+                || root.GetComponentInChildren<Canvas>(true) != null
+                || root.GetComponentInChildren<EventSystem>(true) != null)
+            {
+                return false;
+            }
+
             if (root.name.Contains("Map") || root.name.Contains("Ground") || root.name.Contains("Environment"))
+            {
+                return true;
+            }
+
+            if (root.GetComponentInChildren<EnvironmentSettingsController>(true) != null
+                || root.GetComponentInChildren<Unity.AI.Navigation.NavMeshSurface>(true) != null
+                || FindChildByName(root.transform, "PlayerStartPoint") != null
+                || FindChildByName(root.transform, mapBoundaryRootName) != null)
             {
                 return true;
             }
@@ -392,6 +449,74 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             return false;
+        }
+
+        private void EnsureRuntimeLoadingCurtain()
+        {
+            if (runtimeLoadingCurtain != null)
+            {
+                return;
+            }
+
+            var curtain = new GameObject("Runtime Loading Curtain", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var canvas = curtain.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = short.MaxValue;
+
+            var scaler = curtain.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+
+            var backgroundObject = new GameObject("Background", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            backgroundObject.transform.SetParent(curtain.transform, false);
+            var backgroundRect = backgroundObject.GetComponent<RectTransform>();
+            backgroundRect.anchorMin = Vector2.zero;
+            backgroundRect.anchorMax = Vector2.one;
+            backgroundRect.offsetMin = Vector2.zero;
+            backgroundRect.offsetMax = Vector2.zero;
+            var background = backgroundObject.GetComponent<Image>();
+            background.color = Color.black;
+            background.raycastTarget = false;
+
+            var sliderObject = new GameObject("Progress", typeof(RectTransform), typeof(Slider));
+            sliderObject.transform.SetParent(curtain.transform, false);
+            var sliderRect = sliderObject.GetComponent<RectTransform>();
+            sliderRect.anchorMin = new Vector2(0.5f, 0.5f);
+            sliderRect.anchorMax = new Vector2(0.5f, 0.5f);
+            sliderRect.pivot = new Vector2(0.5f, 0.5f);
+            sliderRect.anchoredPosition = new Vector2(0f, -120f);
+            sliderRect.sizeDelta = new Vector2(420f, 18f);
+
+            var fillObject = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            fillObject.transform.SetParent(sliderObject.transform, false);
+            var fillRect = fillObject.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            fillObject.GetComponent<Image>().color = Color.white;
+
+            runtimeLoadingSlider = sliderObject.GetComponent<Slider>();
+            runtimeLoadingSlider.minValue = 0f;
+            runtimeLoadingSlider.maxValue = 1f;
+            runtimeLoadingSlider.value = 0f;
+            runtimeLoadingSlider.transition = Selectable.Transition.None;
+            runtimeLoadingSlider.fillRect = fillRect;
+            runtimeLoadingSlider.targetGraphic = fillObject.GetComponent<Image>();
+
+            runtimeLoadingCurtain = curtain;
+        }
+
+        private void DestroyRuntimeLoadingCurtain()
+        {
+            if (runtimeLoadingCurtain == null)
+            {
+                return;
+            }
+
+            Destroy(runtimeLoadingCurtain);
+            runtimeLoadingCurtain = null;
+            runtimeLoadingSlider = null;
         }
 
         private void MovePlayerToStartPoint(Scene mapScene)

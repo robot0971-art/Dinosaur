@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DinoGrow.Core.Stage;
 using UnityEngine;
 using UnityEngine.AI;
 using DinoGrow.Core.Enemy;
@@ -55,15 +56,17 @@ namespace DinoGrow.Gameplay.Enemy
         private bool isChasingPlayer;
         private float suppressPlayerBehaviorUntil;
         private EnemyBehaviorResolver behaviorResolver;
+        private GameStateController gameState;
         private EnemyAnimationMoveRule animationRule;
         private EnemyAreaMovementRule areaRule;
         private EnemyWanderDirectionRule wanderDirectionRule;
         private EnemyBehaviorPlanner behaviorPlanner;
 
         [Inject]
-        public void Construct(EnemyBehaviorResolver behaviorResolver)
+        public void Construct(EnemyBehaviorResolver behaviorResolver, GameStateController gameState)
         {
             this.behaviorResolver = behaviorResolver;
+            this.gameState = gameState;
         }
 
         public void Configure(
@@ -71,11 +74,17 @@ namespace DinoGrow.Gameplay.Enemy
             Vector2 size,
             float speed,
             Transform playerTransform,
-            EnemyBehaviorResolver behaviorResolver = null)
+            EnemyBehaviorResolver behaviorResolver = null,
+            GameStateController gameState = null)
         {
             if (this.behaviorResolver == null)
             {
                 this.behaviorResolver = behaviorResolver;
+            }
+
+            if (this.gameState == null)
+            {
+                this.gameState = gameState;
             }
 
             areaCenter = center;
@@ -164,6 +173,14 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void Update()
         {
+            if (gameState == null || !gameState.IsPlaying)
+            {
+                SetDesiredMove(Vector3.zero, 0f);
+                animatorView?.SetMove(0f, false);
+                animatorView?.SetPlaybackSpeed(1f);
+                return;
+            }
+
             ConfigureRules();
 
             if (Time.time < suppressPlayerBehaviorUntil)
@@ -243,6 +260,17 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void FixedUpdate()
         {
+            if (gameState == null || !gameState.IsPlaying)
+            {
+                StopBody();
+                if (agent != null && agent.enabled && agent.isOnNavMesh)
+                {
+                    agent.ResetPath();
+                }
+
+                return;
+            }
+
             if (CanUseAgent())
             {
                 if (IsAgentStalled())

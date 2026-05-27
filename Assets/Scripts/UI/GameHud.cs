@@ -1,3 +1,4 @@
+using DinoGrow.Gameplay;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Infrastructure.Events;
@@ -21,6 +22,8 @@ namespace DinoGrow.UI
         [Header("Game Over Panel")]
         [SerializeField] private bool showGameOverPreviewInEditMode = true;
         [SerializeField] private string gameOverMessage = "GAME OVER";
+        [SerializeField] private GameObject gameOverImage;
+        [SerializeField] private string gameOverImageChildName = "Game over Image";
         [SerializeField] private string clearMessage = "LEVEL 20 CLEAR";
 
         private PlayerProgress progress;
@@ -96,7 +99,8 @@ namespace DinoGrow.UI
         {
             if (state == GameState.GameOver)
             {
-                SetStatus(gameOverMessage);
+                EnsureGameOverImage();
+                SetStatus(gameOverImage != null ? string.Empty : gameOverMessage);
                 SetGameOverPanelVisible(true);
             }
             else if (state == GameState.Clear)
@@ -165,7 +169,8 @@ namespace DinoGrow.UI
             }
 
             var previewVisible = showGameOverPreviewInEditMode;
-            SetStatus(previewVisible ? gameOverMessage : string.Empty);
+            EnsureGameOverImage();
+            SetStatus(previewVisible && gameOverImage == null ? gameOverMessage : string.Empty);
             SetGameOverPanelActiveOnly(previewVisible);
         }
 
@@ -205,7 +210,10 @@ namespace DinoGrow.UI
         {
             if (gameOverPanel != null)
             {
+                EnsureGameOverImage();
                 gameOverPanel.SetActive(visible);
+                SetGameOverImageVisible(visible);
+                PlayGameOverAnimations(visible);
                 return;
             }
 
@@ -213,6 +221,51 @@ namespace DinoGrow.UI
             {
                 restartButton.gameObject.SetActive(visible);
             }
+        }
+
+        private void EnsureGameOverImage()
+        {
+            if (gameOverImage != null || gameOverPanel == null || string.IsNullOrWhiteSpace(gameOverImageChildName))
+            {
+                return;
+            }
+
+            var imageTransform = TransformSearchUtility.FindChildByName(gameOverPanel.transform, gameOverImageChildName);
+            if (imageTransform != null)
+            {
+                gameOverImage = imageTransform.gameObject;
+            }
+        }
+
+        private void SetGameOverImageVisible(bool visible)
+        {
+            if (gameOverImage != null)
+            {
+                gameOverImage.SetActive(visible);
+            }
+        }
+
+        private void PlayGameOverAnimations(bool visible)
+        {
+            if (!visible)
+            {
+                return;
+            }
+
+            PlayAnimatorFromStart(gameOverImage != null ? gameOverImage.GetComponent<Animator>() : null);
+            PlayAnimatorFromStart(restartButton != null ? restartButton.GetComponent<Animator>() : null);
+        }
+
+        private static void PlayAnimatorFromStart(Animator animator)
+        {
+            if (animator == null || animator.runtimeAnimatorController == null)
+            {
+                return;
+            }
+
+            animator.Rebind();
+            animator.Update(0f);
+            animator.Play(0, 0, 0f);
         }
 
         private static void RestartCurrentScene()
