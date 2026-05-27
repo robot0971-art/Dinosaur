@@ -2,14 +2,10 @@
 // GameHudLevelUpPopup.cs
 // ============================================================
 // 이 스크립트가 하는 일:
-// 레벨업이 발생했을 때 화면 전체를 덮는 반투명 검정 배경을 표시합니다.
-// 배경 중앙에 "LEVEL UP!" 텍스트도 같이 표시합니다.
-// LEVEL UP 아래에 "Lv. 1 → Lv. 2" 레벨 변화 텍스트도 같이 표시합니다.
+// 레벨업이 발생했을 때 "LEVEL UP!" 텍스트를 표시합니다.
 // 2초 후 투명화 효과와 함께 팝업이 자동으로 사라집니다.
-// CanvasGroup을 Inspector에서 연결하지 않아도 자동으로 동작합니다.
-// 기능 21: 레벨업 팝업 배경 표시
+// CanvasGroup은 Inspector 연결 없이 자동으로 준비합니다.
 // 기능 22: LEVEL UP 텍스트 표시
-// 기능 23: 레벨 변화 텍스트 표시
 // 기능 24: 레벨업 팝업 자동 닫기
 // ============================================================
 
@@ -23,16 +19,13 @@ using VContainer;
 ///
 /// [이 스크립트가 필요한 이유]
 /// 레벨업이 발생했을 때 플레이어에게 "레벨업 했다!"는 것을
-/// 화면 전체를 덮는 반투명 배경으로 알려주기 위해 필요합니다.
+/// 텍스트로 알려주기 위해 필요합니다.
 ///
 /// [어디에 붙이나요?]
 /// - GameSceneUI 씬의 UI Canvas 오브젝트에 붙입니다.
 ///
 /// [Inspector에서 연결할 것]
-/// - levelUpPanel: 레벨업 팝업 배경 GameObject
-/// - levelUpText: LEVEL UP 텍스트 (선택)
-/// - levelChangeText: 레벨 변화 텍스트 (선택)
-/// - canvasGroup: 투명화 효과용 CanvasGroup (선택, 없으면 자동으로 붙임)
+/// - levelUpText: LEVEL UP 텍스트
 /// </summary>
 public class GameHudLevelUpPopup : MonoBehaviour
 {
@@ -40,17 +33,9 @@ public class GameHudLevelUpPopup : MonoBehaviour
     // Inspector에서 설정할 변수들
     // ============================================================
 
-    [Header("레벨업 팝업 배경 연결")]
-    [Tooltip("레벨업 시 표시할 팝업 배경 GameObject를 연결하세요")]
-    [SerializeField] private GameObject levelUpPanel;
-
     [Header("LEVEL UP 텍스트 연결")]
     [Tooltip("레벨업 시 표시할 LEVEL UP 텍스트를 연결하세요")]
     [SerializeField] private TMPro.TextMeshProUGUI levelUpText;
-
-    [Header("레벨 변화 텍스트 연결")]
-    [Tooltip("레벨업 시 표시할 레벨 변화 텍스트를 연결하세요")]
-    [SerializeField] private TMPro.TextMeshProUGUI levelChangeText;
 
     [Header("자동 닫기 설정")]
     [Tooltip("팝업이 자동으로 사라지기까지의 시간입니다. 기본 2초")]
@@ -58,9 +43,6 @@ public class GameHudLevelUpPopup : MonoBehaviour
 
     [Tooltip("투명화 효과가 걸리는 시간입니다. 기본 0.5초")]
     [SerializeField] private float fadeDuration = 0.5f;
-
-    [Tooltip("투명화 효과용 CanvasGroup입니다. 연결하지 않으면 LevelUpPanel에 자동으로 붙입니다")]
-    [SerializeField] private CanvasGroup canvasGroup;
 
     [Header("에디터 테스트")]
     [Tooltip("Play를 누르지 않아도 팝업 배경이 보이는지 확인할 수 있습니다")]
@@ -93,6 +75,10 @@ public class GameHudLevelUpPopup : MonoBehaviour
 
     // 투명화가 시작된 후 얼마나 시간이 지났는지 저장합니다.
     private float fadeTimer;
+
+    // 투명화 효과에 사용하는 CanvasGroup입니다.
+    // Inspector에 보이지 않고, LevelUpPanel에서 자동으로 찾거나 붙입니다.
+    private CanvasGroup canvasGroup;
 
     // ============================================================
     // DI 주입 함수
@@ -130,7 +116,7 @@ public class GameHudLevelUpPopup : MonoBehaviour
 
     /// <summary>
     /// Start()는 Play를 누른 뒤 한 번 호출됩니다.
-    /// CanvasGroup을 자동으로 준비하고 팝업을 숨깁니다.
+    /// CanvasGroup을 자동으로 준비하고 텍스트를 숨깁니다.
     /// </summary>
     private void Start()
     {
@@ -140,7 +126,7 @@ public class GameHudLevelUpPopup : MonoBehaviour
             return;
         }
 
-        // CanvasGroup이 연결되지 않았으면 자동으로 준비합니다.
+        // CanvasGroup이 없으면 LEVEL UP 텍스트에 자동으로 준비합니다.
         EnsureCanvasGroup();
 
         // 기본은 숨겨져 있어야 합니다.
@@ -190,7 +176,7 @@ public class GameHudLevelUpPopup : MonoBehaviour
     // ============================================================
 
     /// <summary>
-    /// ShowLevelUpPopup()은 레벨업 팝업 배경을 보이게 합니다.
+    /// ShowLevelUpPopup()은 LEVEL UP 텍스트를 보이게 합니다.
     /// 레벨업이 발생했을 때 호출됩니다.
     /// 팝업을 표시하고 자동 닫기 타이머를 초기화합니다.
     /// </summary>
@@ -209,7 +195,7 @@ public class GameHudLevelUpPopup : MonoBehaviour
     }
 
     /// <summary>
-    /// HideLevelUpPopup()은 레벨업 팝업 배경을 숨깁니다.
+    /// HideLevelUpPopup()은 LEVEL UP 텍스트를 숨깁니다.
     /// </summary>
     public void HideLevelUpPopup()
     {
@@ -219,26 +205,14 @@ public class GameHudLevelUpPopup : MonoBehaviour
     }
 
     /// <summary>
-    /// SetVisible()은 팝업 배경을 보이거나 숨깁니다.
+    /// SetVisible()은 LEVEL UP 텍스트를 보이거나 숨깁니다.
     /// true면 보이고, false면 숨겨집니다.
     /// </summary>
     public void SetVisible(bool visible)
     {
-        if (levelUpPanel != null)
-        {
-            levelUpPanel.SetActive(visible);
-        }
-
-        // LEVEL UP 텍스트도 같이 보이거나 숨깁니다.
         if (levelUpText != null)
         {
             levelUpText.gameObject.SetActive(visible);
-        }
-
-        // 레벨 변화 텍스트도 같이 보이거나 숨깁니다.
-        if (levelChangeText != null)
-        {
-            levelChangeText.gameObject.SetActive(visible);
         }
     }
 
@@ -247,8 +221,8 @@ public class GameHudLevelUpPopup : MonoBehaviour
     // ============================================================
 
     /// <summary>
-    /// EnsureCanvasGroup()은 CanvasGroup이 없으면 LevelUpPanel에 자동으로 붙입니다.
-    /// Inspector에서 CanvasGroup을 연결하지 않아도 자동으로 동작합니다.
+    /// EnsureCanvasGroup()은 CanvasGroup이 없으면 LevelUpText 오브젝트에 자동으로 붙입니다.
+    /// Inspector에서 따로 연결하지 않아도 자동으로 동작합니다.
     /// </summary>
     private void EnsureCanvasGroup()
     {
@@ -258,21 +232,21 @@ public class GameHudLevelUpPopup : MonoBehaviour
             return;
         }
 
-        // LevelUpPanel이 없으면 아무것도 하지 않습니다.
-        if (levelUpPanel == null)
+        // LevelUpText가 없으면 아무것도 하지 않습니다.
+        if (levelUpText == null)
         {
-            Debug.LogWarning("LevelUpPanel이 연결되지 않아서 CanvasGroup을 자동으로 붙일 수 없습니다.");
+            Debug.LogWarning("LevelUpText가 연결되지 않아서 CanvasGroup을 자동으로 붙일 수 없습니다.");
             return;
         }
 
-        // LevelUpPanel에 CanvasGroup이 이미 있는지 확인합니다.
-        canvasGroup = levelUpPanel.GetComponent<CanvasGroup>();
+        // LevelUpText 오브젝트에 CanvasGroup이 이미 있는지 확인합니다.
+        canvasGroup = levelUpText.GetComponent<CanvasGroup>();
 
         // 없으면 새로 붙입니다.
         if (canvasGroup == null)
         {
-            canvasGroup = levelUpPanel.AddComponent<CanvasGroup>();
-            Debug.Log("LevelUpPanel에 CanvasGroup을 자동으로 붙였습니다.");
+            canvasGroup = levelUpText.gameObject.AddComponent<CanvasGroup>();
+            Debug.Log("LevelUpText에 CanvasGroup을 자동으로 붙였습니다.");
         }
     }
 
@@ -381,35 +355,19 @@ public class GameHudLevelUpPopup : MonoBehaviour
 
     /// <summary>
     /// OnPlayerGrowthChanged()는 플레이어 성장 상태가 바뀔 때 호출됩니다.
-    /// GrowthResult의 LeveledUp이 true이면 팝업을 표시하고 레벨 변화 텍스트를 갱신합니다.
+    /// GrowthResult의 LeveledUp이 true이면 LEVEL UP 텍스트를 표시합니다.
     /// </summary>
     private void OnPlayerGrowthChanged(GrowthResult result)
     {
         // LeveledUp이 true이면 레벨업이 발생한 것입니다.
         if (result.LeveledUp)
         {
-            // 레벨 변화 텍스트를 갱신합니다.
-            UpdateLevelChangeText(result.PreviousLevel, result.CurrentLevel);
-
             // 팝업을 표시합니다.
             ShowLevelUpPopup();
         }
         else
         {
             HideLevelUpPopup();
-        }
-    }
-
-    /// <summary>
-    /// UpdateLevelChangeText()는 레벨 변화 텍스트를 갱신합니다.
-    /// "Lv. 이전레벨 → Lv. 현재레벨" 형태로 표시합니다.
-    /// </summary>
-    private void UpdateLevelChangeText(int previousLevel, int currentLevel)
-    {
-        if (levelChangeText != null)
-        {
-            // 텍스트를 "Lv. 이전레벨 → Lv. 현재레벨" 형태로 설정합니다.
-            levelChangeText.text = $"Lv. {previousLevel} → Lv. {currentLevel}";
         }
     }
 
