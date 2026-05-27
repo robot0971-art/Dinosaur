@@ -44,12 +44,6 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private bool useMovementBounds;
         [SerializeField] private Vector3 movementBoundsCenter;
         [SerializeField] private Vector2 movementBoundsSize = new(80f, 80f);
-        [SerializeField] private TextMesh levelText;
-        [SerializeField] private Vector3 levelTextOffset = new Vector3(0f, 1.55f, 0f);
-        [SerializeField] private float levelTextCharacterSize = 0.045f;
-        [SerializeField] private int levelTextFontSize = 36;
-        [SerializeField] private Color levelTextColor = Color.white;
-
         private EatResolver eatResolver;
         private GrowthSystem growthSystem;
         private PlayerProgress progress;
@@ -61,8 +55,6 @@ namespace DinoGrow.Gameplay.Player
         private PlayerGrowthDataRepository playerGrowthDataRepository;
         private Vector2 rotateInput;
         private bool isSprinting;
-        private Transform levelTextTransform;
-        private bool createdLevelText;
         private Vector3 baseVisualScale = Vector3.one;
         private Vector3 baseVisualLocalPosition;
         private bool isDead;
@@ -235,8 +227,6 @@ namespace DinoGrow.Gameplay.Player
 
             WarnIfCameraMissing();
             ApplyPlayerData();
-            EnsureLevelText();
-            RefreshLevelText();
 
             eventBus.PlayerGrowthChanged += OnPlayerGrowthChanged;
 
@@ -265,11 +255,6 @@ namespace DinoGrow.Gameplay.Player
 
             rotateInput = ReadRotateInput();
             isSprinting = IsSprintPressed();
-        }
-
-        private void LateUpdate()
-        {
-            UpdateLevelTextTransform();
         }
 
         private void FixedUpdate()
@@ -313,10 +298,6 @@ namespace DinoGrow.Gameplay.Player
                 eventBus.PlayerGrowthChanged -= OnPlayerGrowthChanged;
             }
 
-            if (createdLevelText && levelText != null)
-            {
-                Destroy(levelText.gameObject);
-            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -487,7 +468,7 @@ namespace DinoGrow.Gameplay.Player
 
         private void OnPlayerGrowthChanged(GrowthResult result)
         {
-            RefreshLevelText();
+            ApplyGrowthVisuals();
         }
 
         private void TriggerGameOver()
@@ -645,73 +626,6 @@ namespace DinoGrow.Gameplay.Player
 
             Debug.LogError($"{nameof(PlayerDinoController)} was not injected by VContainer. Check GameLifetimeScope scene references.", this);
             return false;
-        }
-
-        private void EnsureLevelText()
-        {
-            if (levelText == null)
-            {
-                var labelObject = new GameObject("PlayerLevelText");
-                levelText = labelObject.AddComponent<TextMesh>();
-                createdLevelText = true;
-            }
-
-            levelTextTransform = levelText.transform;
-            levelText.anchor = TextAnchor.MiddleCenter;
-            levelText.alignment = TextAlignment.Center;
-            levelText.characterSize = levelTextCharacterSize;
-            levelText.fontSize = levelTextFontSize;
-            levelText.color = levelTextColor;
-            ConfigureLevelTextMaterial(levelText);
-            UpdateLevelTextTransform();
-        }
-
-        private static void ConfigureLevelTextMaterial(TextMesh targetText)
-        {
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
-                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
-
-            if (font == null)
-            {
-                return;
-            }
-
-            targetText.font = font;
-
-            if (targetText.TryGetComponent<MeshRenderer>(out var textRenderer))
-            {
-                textRenderer.sharedMaterial = font.material;
-            }
-        }
-
-        private void RefreshLevelText()
-        {
-            if (levelText == null || progress == null)
-            {
-                return;
-            }
-
-            levelText.text = progress.IsMaxLevel ? $"Lv. {progress.Level} MAX" : $"Lv. {progress.Level}";
-        }
-
-        private void UpdateLevelTextTransform()
-        {
-            if (levelTextTransform == null)
-            {
-                return;
-            }
-
-            levelTextTransform.position = transform.position + levelTextOffset;
-
-            if (cameraTransform != null)
-            {
-                var lookDirection = levelTextTransform.position - cameraTransform.position;
-
-                if (lookDirection.sqrMagnitude > 0.001f)
-                {
-                    levelTextTransform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-                }
-            }
         }
 
         private void ApplyGrowthVisuals()

@@ -494,13 +494,18 @@ namespace DinoGrow.Gameplay.Enemy
                 lowerLevelTextColor,
                 sameLevelTextColor,
                 higherLevelTextColor,
-                levelTextColor);
+                IsWhiteFallback(levelTextColor) ? sameLevelTextColor : levelTextColor);
             var playerLevel = playerProgress != null ? playerProgress.Level : 0;
             levelText.color = EnemyLevelTextColorRule.Resolve(
                 level,
                 playerLevel,
                 Application.isPlaying && usePlayerRelativeLevelTextColor,
                 palette);
+        }
+
+        private static bool IsWhiteFallback(Color color)
+        {
+            return color.r > 0.98f && color.g > 0.98f && color.b > 0.98f;
         }
 
         private void ScheduleEditorLevelTextRefresh()

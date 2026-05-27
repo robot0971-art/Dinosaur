@@ -126,7 +126,12 @@ public class GameLifetimeScope : LifetimeScope
             expToLevelUp = growthData.requiredExp;
         }
 
-        return new PlayerProgress(startLevel, startExp, maxLevel, expToLevelUp);
+        return new PlayerProgress(
+            startLevel,
+            startExp,
+            maxLevel,
+            expToLevelUp,
+            playerGrowthRepository.CreateRequiredExpMap());
     }
 }
 
