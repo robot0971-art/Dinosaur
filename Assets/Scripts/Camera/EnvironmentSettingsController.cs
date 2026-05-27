@@ -5,6 +5,9 @@ namespace DinoGrow.Camera
     [ExecuteAlways]
     public sealed class EnvironmentSettingsController : MonoBehaviour
     {
+        [Header("Skybox")]
+        [SerializeField] private Material skyboxMaterial;
+
         [Header("Fog")]
         [SerializeField] private bool fogEnabled = true;
         [SerializeField] private FogMode fogMode = FogMode.ExponentialSquared;
@@ -28,6 +31,12 @@ namespace DinoGrow.Camera
 
         public void Apply()
         {
+            if (skyboxMaterial != null)
+            {
+                RenderSettings.skybox = skyboxMaterial;
+                DynamicGI.UpdateEnvironment();
+            }
+
             RenderSettings.fog = fogEnabled;
             RenderSettings.fogMode = fogMode;
             RenderSettings.fogColor = fogColor;

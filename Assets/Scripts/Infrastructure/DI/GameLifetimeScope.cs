@@ -24,6 +24,7 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private PlayerDinoController player;
     [SerializeField] private EnemySpawner enemySpawner;
     [SerializeField] private StageMapSceneLoader stageMapSceneLoader;
+    [SerializeField] private GameIntroSequence gameIntroSequence;
     [SerializeField] private GameHud gameHud;
     [SerializeField] private Transform gameplayCamera;
     [SerializeField] private GameObject loadingOverlayPanel;
@@ -90,6 +91,17 @@ public class GameLifetimeScope : LifetimeScope
         stageMapSceneLoader.ConfigureLoadingOverlay(loadingOverlayPanel, loadingSlider);
         stageMapSceneLoader.ConfigureCameraOrbit(cameraOrbit);
         stageMapSceneLoader.ConfigureEnemySpawner(enemySpawner);
+
+        if (gameIntroSequence == null && player != null)
+        {
+            gameIntroSequence = player.GetComponent<GameIntroSequence>();
+        }
+
+        if (gameIntroSequence != null)
+        {
+            gameIntroSequence.ConfigurePlayerCameraOrbit(cameraOrbit);
+            builder.RegisterComponent(gameIntroSequence);
+        }
     }
 
     private static PlayerProgress CreatePlayerProgress(

@@ -27,6 +27,8 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundOffset = 0f;
         [SerializeField] private int spawnCount = 24;
         [SerializeField] private float minDistanceFromPlayer = 8f;
+        [SerializeField] private bool avoidPlayerStartArea = true;
+        [SerializeField] private float playerStartExclusionRadius = 32f;
         [SerializeField] private float minDistanceBetweenEnemies = 9f;
         [SerializeField] private Transform player;
         [SerializeField] private float minWanderSpeed = 4.2f;
@@ -61,6 +63,8 @@ namespace DinoGrow.Gameplay.Enemy
         private EnemyBehaviorResolver enemyBehaviorResolver;
         private Coroutine spawnRoutine;
         private PlayerDinoController playerController;
+        private Vector3 playerStartExclusionCenter;
+        private bool hasPlayerStartExclusion;
 
         public void ConfigureSpawnArea(Vector3 center, Vector2 size, bool respawn)
         {
@@ -169,22 +173,29 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void SpawnInitialEnemies()
         {
-            ClearSpawnedEnemies();
-
-            if (TrySpawnFromGameData())
+            try
             {
-                return;
+                ClearSpawnedEnemies();
+
+                if (TrySpawnFromGameData())
+                {
+                    return;
+                }
+
+                if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+                {
+                    Debug.LogWarning("EnemySpawner needs at least one enemy prefab.", this);
+                    return;
+                }
+
+                for (var i = 0; i < spawnCount; i++)
+                {
+                    TrySpawnOne();
+                }
             }
-
-            if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+            finally
             {
-                Debug.LogWarning("EnemySpawner needs at least one enemy prefab.", this);
-                return;
-            }
-
-            for (var i = 0; i < spawnCount; i++)
-            {
-                TrySpawnOne();
+                hasPlayerStartExclusion = false;
             }
         }
 
@@ -368,6 +379,12 @@ namespace DinoGrow.Gameplay.Enemy
             {
                 spawnedHeartDrops.Add(heartDrop);
             }
+        }
+
+        public void ConfigurePlayerStartExclusion(Vector3 center, bool enabled)
+        {
+            playerStartExclusionCenter = center;
+            hasPlayerStartExclusion = enabled;
         }
 
         private void DropHeartForEnemy(DinoEnemy enemy)
@@ -578,7 +595,7 @@ namespace DinoGrow.Gameplay.Enemy
                     continue;
                 }
 
-                if (player != null && Vector3.Distance(position, player.position) < minDistanceFromPlayer)
+                if (IsTooCloseToPlayerArea(position))
                 {
                     continue;
                 }
@@ -641,7 +658,7 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
-            if (player != null && Vector3.Distance(position, player.position) < minDistanceFromPlayer)
+            if (IsTooCloseToPlayerArea(position))
             {
                 return false;
             }
@@ -663,6 +680,35 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             return true;
+        }
+
+        private bool IsTooCloseToPlayerArea(Vector3 position)
+        {
+            var minDistance = Mathf.Max(0f, minDistanceFromPlayer);
+            var minDistanceSqr = minDistance * minDistance;
+            if (player != null)
+            {
+                var offset = position - player.position;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < minDistanceSqr)
+                {
+                    return true;
+                }
+            }
+
+            if (avoidPlayerStartArea && hasPlayerStartExclusion)
+            {
+                minDistance = Mathf.Max(minDistance, playerStartExclusionRadius);
+                minDistanceSqr = minDistance * minDistance;
+                var offset = position - playerStartExclusionCenter;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < minDistanceSqr)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool IsInsideSpawnArea(Vector3 position)

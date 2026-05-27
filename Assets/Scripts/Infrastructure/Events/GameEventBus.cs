@@ -11,6 +11,7 @@ namespace DinoGrow.Infrastructure.Events
         public event Action<int, int> EnemyEaten;
         public event Action<GrowthResult> PlayerGrowthChanged;
         public event Action<GameState> GameStateChanged;
+        public event Action InitialMapLoaded;
 
         public void PublishEnemySpawned(int enemyLevel)
         {
@@ -35,6 +36,11 @@ namespace DinoGrow.Infrastructure.Events
         public void PublishGameStateChanged(GameState state)
         {
             GameStateChanged?.Invoke(state);
+        }
+
+        public void PublishInitialMapLoaded()
+        {
+            InitialMapLoaded?.Invoke();
         }
     }
 }

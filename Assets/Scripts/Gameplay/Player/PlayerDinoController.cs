@@ -71,8 +71,6 @@ namespace DinoGrow.Gameplay.Player
         private float obstacleRadius = 0.45f;
         private float obstacleHeight = 1.8f;
         private Vector3 obstacleCenterOffset = new Vector3(0f, 0.9f, 0f);
-        private Collider obstacleProbeCollider;
-        private CapsuleCollider obstacleProbeCapsule;
         private DinoEnemy resolvingEnemy;
         private float nextEatContactTime;
 
@@ -173,7 +171,6 @@ namespace DinoGrow.Gameplay.Player
             baseVisualScale = visualRoot.localScale;
             CacheVisualBottomOffset();
             CacheObstacleShape();
-            CacheObstacleProbeCollider();
 
             if (animatorView == null)
             {
@@ -243,8 +240,6 @@ namespace DinoGrow.Gameplay.Player
 
             eventBus.PlayerGrowthChanged += OnPlayerGrowthChanged;
 
-            gameState.StartGame();
-            eventBus.PublishGameStateChanged(gameState.State);
             ApplyGrowthVisuals();
             eventBus.PublishPlayerGrowthChanged(new GrowthResult(
                 0,
@@ -796,6 +791,7 @@ namespace DinoGrow.Gameplay.Player
                 QueryTriggerInteraction.Ignore);
 
             var correction = Vector3.zero;
+            var capsuleCenter = (point1 + point2) * 0.5f;
             foreach (var overlap in overlaps)
             {
                 if (ShouldIgnoreObstacle(overlap))
@@ -803,27 +799,21 @@ namespace DinoGrow.Gameplay.Player
                     continue;
                 }
 
-                if (obstacleProbeCollider == null
-                    || !Physics.ComputePenetration(
-                        obstacleProbeCollider,
-                        rootPosition,
-                        transform.rotation,
-                        overlap,
-                        overlap.transform.position,
-                        overlap.transform.rotation,
-                        out var direction,
-                        out var distance))
-                {
-                    continue;
-                }
-
+                var closestPoint = overlap.ClosestPoint(capsuleCenter);
+                var direction = capsuleCenter - closestPoint;
                 direction.y = 0f;
-                if (direction.sqrMagnitude <= 0.000001f)
+                var distance = direction.magnitude;
+                if (distance >= radius)
                 {
                     continue;
                 }
 
-                correction += direction.normalized * (distance + obstacleSkinWidth);
+                if (distance <= 0.000001f)
+                {
+                    continue;
+                }
+
+                correction += direction.normalized * (radius - distance + obstacleSkinWidth);
             }
 
             correction.y = 0f;
@@ -901,16 +891,6 @@ namespace DinoGrow.Gameplay.Player
             radius = Mathf.Max(0.05f, obstacleRadius);
             var height = Mathf.Max(obstacleHeight, radius * 2f);
             var center = rootPosition + obstacleCenterOffset;
-            if (obstacleProbeCapsule != null)
-            {
-                radius = Mathf.Max(0.05f, obstacleProbeCapsule.radius * GetMaxHorizontalScale(obstacleProbeCapsule.transform));
-                var capsuleHeight = Mathf.Max(obstacleProbeCapsule.height * Mathf.Abs(obstacleProbeCapsule.transform.lossyScale.y), radius * 2f);
-                center = rootPosition + transform.TransformVector(obstacleProbeCapsule.center);
-                var capsuleHalfSegment = Mathf.Max(0f, (capsuleHeight * 0.5f) - radius);
-                point1 = center + Vector3.up * capsuleHalfSegment;
-                point2 = center - Vector3.up * capsuleHalfSegment;
-                return;
-            }
 
             var halfSegment = Mathf.Max(0f, (height * 0.5f) - radius);
             point1 = center + Vector3.up * halfSegment;
@@ -930,6 +910,11 @@ namespace DinoGrow.Gameplay.Player
             }
 
             if (targetCollider.GetComponentInParent<DinoEnemy>() != null)
+            {
+                return true;
+            }
+
+            if ((groundLayers.value & (1 << targetCollider.gameObject.layer)) != 0)
             {
                 return true;
             }
@@ -1035,39 +1020,6 @@ namespace DinoGrow.Gameplay.Player
             var center = value.center;
             center.y = value.min.y + obstacleHeight * 0.5f;
             obstacleCenterOffset = center - transform.position;
-        }
-
-        private void CacheObstacleProbeCollider()
-        {
-            var colliders = GetComponents<Collider>();
-            foreach (var targetCollider in colliders)
-            {
-                if (targetCollider is CapsuleCollider capsule && !capsule.isTrigger)
-                {
-                    obstacleProbeCollider = capsule;
-                    obstacleProbeCapsule = capsule;
-                    return;
-                }
-            }
-
-            foreach (var targetCollider in colliders)
-            {
-                if (targetCollider != null && !targetCollider.isTrigger)
-                {
-                    obstacleProbeCollider = targetCollider;
-                    obstacleProbeCapsule = targetCollider as CapsuleCollider;
-                    return;
-                }
-            }
-
-            obstacleProbeCollider = null;
-            obstacleProbeCapsule = null;
-        }
-
-        private static float GetMaxHorizontalScale(Transform target)
-        {
-            var scale = target.lossyScale;
-            return Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
         }
 
         private Bounds? CalculateWorldVisualBounds()

@@ -232,7 +232,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 842b0174ca86e7b47a3d0077bb8594c4, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -641,6 +641,7 @@ MonoBehaviour:
   player: {fileID: 376135606}
   enemySpawner: {fileID: 1028698013}
   stageMapSceneLoader: {fileID: 0}
+  gameIntroSequence: {fileID: 0}
   gameHud: {fileID: 1521132390}
   gameplayCamera: {fileID: 330585546}
   loadingOverlayPanel: {fileID: 131921418}
@@ -752,7 +753,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 500
-  field of view: 35
+  field of view: 61.5
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -778,8 +779,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0050976407, y: -0.9512942, z: 0.29032087, w: -0.10357199}
-  m_LocalPosition: {x: 2.98, y: -3.9, z: 14.2}
+  m_LocalRotation: {x: 0.1350734, y: -0.0011457007, z: 0.00015618508, w: 0.99083495}
+  m_LocalPosition: {x: 0, y: 8.352574, z: -1.8899999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -890,6 +891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebb5ac6051bfa4244a6fe8f7b4af613a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Camera.EnvironmentSettingsController
+  skyboxMaterial: {fileID: 0}
   fogEnabled: 1
   fogMode: 3
   fogColor: {r: 0.4669811, g: 0.98956126, b: 1, a: 1}
@@ -928,6 +930,7 @@ GameObject:
   - component: {fileID: 376135614}
   - component: {fileID: 376135616}
   - component: {fileID: 376135615}
+  - component: {fileID: 376135617}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1058,7 +1061,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376135605}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 1210851599}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1079,7 +1082,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376135605}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 750940092}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1127,7 +1130,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 0d795366ea78b604f9c910239ee93500, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -1143,6 +1146,24 @@ PlayableDirector:
   m_ExposedReferences:
     m_References:
     - 88cd34a99eb02924aa575a88e9fd5946: {fileID: 1173982145}
+--- !u!114 &376135617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376135605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01cf94f9d4657ab49bd939f064bf05c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Stage.GameIntroSequence
+  introDirector: {fileID: 0}
+  playerCamera: {fileID: 882312406}
+  introCamera: {fileID: 1173982145}
+  playerCameraOrbit: {fileID: 0}
+  playAfterInitialMapLoaded: 1
+  startGameIfTimelineMissing: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1466,6 +1487,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600950122}
   m_CullTransparentMesh: 1
+--- !u!134 &750940092
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &758440332
 GameObject:
   m_ObjectHideFlags: 0
@@ -1904,8 +1938,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882312405}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1326847, y: -0.006820935, z: 0.000913129, w: 0.99113446}
-  m_LocalPosition: {x: 0, y: 8.352574, z: -0.4499998}
+  m_LocalRotation: {x: 0.13507336, y: -0.0011457005, z: 0.00015618508, w: 0.99083495}
+  m_LocalPosition: {x: 0, y: 8.352574, z: -1.8899999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2243,6 +2277,7 @@ MonoBehaviour:
   groundOffset: 0
   spawnCount: 30
   minDistanceFromPlayer: 14
+  avoidPlayerStartArea: 1
   minDistanceBetweenEnemies: 9
   player: {fileID: 376135611}
   minWanderSpeed: 2.4
@@ -2334,7 +2369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &1173982143
 Animator:
   serializedVersion: 7
@@ -2586,6 +2621,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184142856}
   m_CullTransparentMesh: 1
+--- !u!134 &1210851599
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &1214121525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5779028839223428391, guid: be687d3b533df4d45ba2feae3c0eb324, type: 3}
@@ -3375,7 +3423,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1707585335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3856,7 +3904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2048515828
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,7 +19,8 @@ namespace DinoGrow.Gameplay.Stage
         [SerializeField] private string[] mapScenePaths =
         {
             "Assets/Scenes/map4.unity",
-            "Assets/Scenes/map7.unity"
+            "Assets/Scenes/map7.unity",
+            "Assets/Scenes/map10.unity"
         };
 
         [SerializeField] private bool loadInitialMap = true;
@@ -161,13 +162,17 @@ namespace DinoGrow.Gameplay.Stage
             DisableMapSceneCameras(nextScene);
             ConfigureMapBillboards(nextScene);
             ApplyMapEnvironment(nextScene);
-            ApplyMapBoundary(nextScene);
+            ConfigurePlayerStartExclusion(nextScene);
             MovePlayerToStartPoint(nextScene);
+            ApplyMapBoundary(nextScene);
+            yield return null;
+            ApplyMapEnvironment(nextScene);
             loadedMapScenePath = nextScenePath;
             yield return null;
             SetLoadingProgress(1f, true);
             yield return null;
             SetLoadingProgress(0f, false);
+            eventBus?.PublishInitialMapLoaded();
         }
 
         private IEnumerator SwitchMapRoutine(string nextScenePath)
@@ -198,8 +203,11 @@ namespace DinoGrow.Gameplay.Stage
             DisableMapSceneCameras(nextScene);
             ConfigureMapBillboards(nextScene);
             ApplyMapEnvironment(nextScene);
-            ApplyMapBoundary(nextScene);
+            ConfigurePlayerStartExclusion(nextScene);
             MovePlayerToStartPoint(nextScene);
+            ApplyMapBoundary(nextScene);
+            yield return null;
+            ApplyMapEnvironment(nextScene);
             loadedMapScenePath = nextScenePath;
             yield return null;
             SetLoadingProgress(1f, true);
@@ -408,6 +416,24 @@ namespace DinoGrow.Gameplay.Stage
             cameraOrbit?.RecenterNow();
         }
 
+        private void ConfigurePlayerStartExclusion(Scene mapScene)
+        {
+            if (enemySpawner == null || !mapScene.IsValid() || !mapScene.isLoaded)
+            {
+                return;
+            }
+
+            var startPoint = FindInScene(mapScene, "PlayerStartPoint");
+            if (startPoint == null)
+            {
+                enemySpawner.ConfigurePlayerStartExclusion(Vector3.zero, false);
+                return;
+            }
+
+            var startPosition = SnapToMapGround(startPoint.position);
+            enemySpawner.ConfigurePlayerStartExclusion(startPosition, true);
+        }
+
         private void ApplyMapBoundary(Scene mapScene)
         {
             if (enemySpawner == null || !mapScene.IsValid() || !mapScene.isLoaded)
@@ -522,7 +548,7 @@ namespace DinoGrow.Gameplay.Stage
 
         private static void FindChildrenByName(Transform root, string targetName, System.Collections.Generic.List<Transform> results)
         {
-            if (root.name == targetName)
+            if (IsMatchingSceneObjectName(root.name, targetName))
             {
                 results.Add(root);
             }
@@ -531,6 +557,12 @@ namespace DinoGrow.Gameplay.Stage
             {
                 FindChildrenByName(root.GetChild(i), targetName, results);
             }
+        }
+
+        private static bool IsMatchingSceneObjectName(string objectName, string targetName)
+        {
+            return objectName == targetName
+                || objectName.StartsWith(targetName + " (", System.StringComparison.Ordinal);
         }
 
         private string PickRandomMapScenePath()
