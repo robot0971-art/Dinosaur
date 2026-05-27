@@ -15,7 +15,7 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.5019608, g: 0.78039217, b: 0.71052235, a: 1}
+  m_FogColor: {r: 0.7329566, g: 0.8584906, b: 0.8203537, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.005
   m_LinearFogStart: 0
@@ -94044,9 +94044,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebb5ac6051bfa4244a6fe8f7b4af613a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Camera.EnvironmentSettingsController
+  skyboxMaterial: {fileID: 0}
   fogEnabled: 1
   fogMode: 3
-  fogColor: {r: 0.5019608, g: 0.78039217, b: 0.71052235, a: 1}
+  fogColor: {r: 0.7329566, g: 0.8584906, b: 0.8203537, a: 1}
   fogDensity: 0.005
   fogStartDistance: 0
   fogEndDistance: 300
