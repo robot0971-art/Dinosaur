@@ -322,6 +322,12 @@ namespace DinoGrow.Gameplay.Player
             enemy.Eaten();
             deathEffectService?.SpawnBlood(GetMouthEffectPosition());
 
+            // 먹기 성공 효과음을 재생합니다.
+            EatSuccessSfx.Instance?.PlayEatSound();
+
+            // EXP 획득 효과음을 재생합니다.
+            ExpGainSfx.Instance?.PlayExpGainSound();
+
             var growthResult = growthSystem.AddEnemyExp(progress, enemyLevel);
             ApplyGrowthVisuals();
 
@@ -338,6 +344,12 @@ namespace DinoGrow.Gameplay.Player
         private void OnPlayerGrowthChanged(GrowthResult result)
         {
             RefreshLevelText();
+
+            // 레벨업했으면 레벨업 효과음을 재생합니다.
+            if (result.LeveledUp)
+            {
+                LevelUpSfx.Instance?.PlayLevelUpSound();
+            }
         }
 
         private void TriggerGameOver()
