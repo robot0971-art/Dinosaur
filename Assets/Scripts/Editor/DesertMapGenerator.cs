@@ -487,7 +487,7 @@ public static class DesertMapGenerator
         levelMarker.GetComponent<Renderer>().material = markerMat;
         levelMarker.GetComponent<Collider>().enabled = false;
 
-        spawnPoint.AddComponent<DesertEnemySpawnData>().level = level;
+        spawnPoint.AddComponent<DesertEnemySpawnData>().SetLevel(level);
     }
 
     private static Color GetLevelColor(int level)
@@ -495,9 +495,4 @@ public static class DesertMapGenerator
         float t = (float)level / 20f;
         return Color.Lerp(new Color(0.85f, 0.72f, 0.45f), Color.red, t);
     }
-}
-
-public class DesertEnemySpawnData : MonoBehaviour
-{
-    public int level;
 }

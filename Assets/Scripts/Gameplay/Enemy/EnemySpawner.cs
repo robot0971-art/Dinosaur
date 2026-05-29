@@ -8,6 +8,8 @@ using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.Infrastructure.Pooling;
 using DinoGrow.Gameplay.Player;
+using DinoGrow.Gameplay.Items;
+using DinoGrow.Gameplay.VFX;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -48,10 +50,22 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private int spawnBatchSize = 4;
         [SerializeField] private LayerMask obstacleLayers = 0;
         [SerializeField] private float obstacleSpawnClearance = 3f;
+        [SerializeField, Range(0f, 1f)] private float centerWeightedSpawnChance = 0.65f;
+        [SerializeField, Range(0.1f, 1f)] private float centerWeightedSpawnScale = 0.65f;
+        [SerializeField, Range(0f, 0.45f)] private float spawnEdgePaddingRatio = 0.12f;
         [Header("Drops")]
         [SerializeField] private GameObject heartDropPrefab;
-        [SerializeField, Range(0f, 1f)] private float heartDropChance = 0.2f;
+        [SerializeField] private GameObject heartDropIdleEffectPrefab;
+        [SerializeField] private bool enableHeartDropSpawnEffect = true;
+        [SerializeField] private GameObject heartPickupEffectPrefab;
+        [SerializeField] private AudioClip heartPickupSoundClip;
+        [SerializeField, Range(0f, 1f)] private float heartPickupSoundVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float heartDropChance = 0.3f;
+        [SerializeField, Min(0)] private int maxSpawnedHeartDrops = 8;
+        [SerializeField] private bool enableHeartDropIdleEffects;
         [SerializeField] private float heartDropHeightOffset = 0.35f;
+        [SerializeField] private float heartDropKnockbackDistance = 4.5f;
+        [SerializeField] private bool logHeartDrops;
 
         private readonly List<DinoEnemy> spawnedEnemies = new();
         private readonly List<Transform> spawnedHeartDrops = new();
@@ -122,6 +136,17 @@ namespace DinoGrow.Gameplay.Enemy
         public void SetMapTransitionInProgress(bool inProgress)
         {
             mapTransitionInProgress = inProgress;
+        }
+
+        public IEnumerator RebuildSpawnedEnemiesForMapTransition()
+        {
+            if (spawnRoutine != null)
+            {
+                StopCoroutine(spawnRoutine);
+                spawnRoutine = null;
+            }
+
+            yield return SpawnInitialEnemiesWhenReady();
         }
 
         private void UseGroundLayerIfAvailable()
@@ -389,36 +414,169 @@ namespace DinoGrow.Gameplay.Enemy
             Destroy(enemy.gameObject);
         }
 
-        private void TryDropHeart(Vector3 position)
+        private void TryDropHeart(Vector3 spawnPosition, Vector3 landingOrigin, Vector3 awayDirection)
         {
             if (heartDropPrefab == null || heartDropChance <= 0f || Random.value > heartDropChance)
             {
-                Debug.Log($"Heart drop skipped. Prefab assigned: {heartDropPrefab != null}, chance: {heartDropChance}", this);
+                if (logHeartDrops)
+                {
+                    Debug.Log($"Heart drop skipped. Prefab assigned: {heartDropPrefab != null}, chance: {heartDropChance}", this);
+                }
+
                 return;
             }
 
-            var dropPosition = SnapToGround(position);
-            dropPosition.y += heartDropHeightOffset;
-            SpawnHeartDrop(dropPosition);
-            Debug.Log($"Heart dropped at {dropPosition}.", this);
+            var landingPosition = GetHeartDropLandingPosition(landingOrigin, awayDirection);
+            SpawnHeartDrop(spawnPosition, landingPosition);
+            if (logHeartDrops)
+            {
+                Debug.Log($"Heart dropped from {spawnPosition} to {landingPosition}.", this);
+            }
         }
 
-        private void SpawnHeartDrop(Vector3 position)
+        private void SpawnHeartDrop(Vector3 position, Vector3 landingPosition)
         {
+            TrimHeartDropsToLimit();
+            if (maxSpawnedHeartDrops == 0)
+            {
+                return;
+            }
+
+            if (enableHeartDropIdleEffects)
+            {
+                EnsureHeartDropIdleEffectPrefab();
+            }
+
             Transform heartDrop;
             if (poolService != null)
             {
-                heartDrop = poolService.Spawn(heartDropPrefab.transform, position, Quaternion.identity, spawnParent);
+                heartDrop = poolService.Spawn(heartDropPrefab.transform, landingPosition, Quaternion.identity, spawnParent);
             }
             else
             {
-                heartDrop = Instantiate(heartDropPrefab, position, Quaternion.identity, spawnParent).transform;
+                heartDrop = Instantiate(heartDropPrefab, landingPosition, Quaternion.identity, spawnParent).transform;
             }
 
-            if (heartDrop != null && !spawnedHeartDrops.Contains(heartDrop))
+            if (heartDrop != null)
             {
-                spawnedHeartDrops.Add(heartDrop);
+                SpawnHeartDropEffect(landingPosition);
+
+                if (!heartDrop.TryGetComponent(out HeartPickup pickup))
+                {
+                    pickup = heartDrop.gameObject.AddComponent<HeartPickup>();
+                }
+
+                pickup.ConfigurePickupFeedback(
+                    poolService,
+                    heartPickupEffectPrefab,
+                    heartPickupSoundClip,
+                    heartPickupSoundVolume);
+
+                if (heartDrop.TryGetComponent(out HeartDropMotion motion))
+                {
+                    motion.ConfigureIdleEffect(enableHeartDropIdleEffects ? heartDropIdleEffectPrefab : null);
+                    motion.PopTo(landingPosition);
+                }
+
+                if (!spawnedHeartDrops.Contains(heartDrop))
+                {
+                    spawnedHeartDrops.Add(heartDrop);
+                }
             }
+        }
+
+        private void SpawnHeartDropEffect(Vector3 position)
+        {
+            if (!enableHeartDropSpawnEffect)
+            {
+                return;
+            }
+
+            EnsureHeartDropIdleEffectPrefab();
+            if (heartDropIdleEffectPrefab == null)
+            {
+                return;
+            }
+
+            var prefabTransform = heartDropIdleEffectPrefab.transform;
+            if (prefabTransform == null)
+            {
+                return;
+            }
+
+            if (poolService == null)
+            {
+                var effect = Instantiate(heartDropIdleEffectPrefab, position, Quaternion.identity);
+                var returner = effect.GetComponent<PooledOneShotVfx>() ?? effect.AddComponent<PooledOneShotVfx>();
+                returner.Play(null, effect.transform);
+                return;
+            }
+
+            var effectRoot = poolService.Spawn(prefabTransform, position, Quaternion.identity, spawnParent);
+            if (effectRoot == null)
+            {
+                return;
+            }
+
+            var pooledVfx = effectRoot.GetComponent<PooledOneShotVfx>() ?? effectRoot.gameObject.AddComponent<PooledOneShotVfx>();
+            pooledVfx.Play(poolService, effectRoot);
+        }
+
+        private void TrimHeartDropsToLimit()
+        {
+            spawnedHeartDrops.RemoveAll(drop => drop == null || !drop.gameObject.activeInHierarchy);
+            var limit = Mathf.Max(0, maxSpawnedHeartDrops);
+            while (spawnedHeartDrops.Count >= limit && spawnedHeartDrops.Count > 0)
+            {
+                var oldestDrop = spawnedHeartDrops[0];
+                spawnedHeartDrops.RemoveAt(0);
+                if (oldestDrop == null)
+                {
+                    continue;
+                }
+
+                if (poolService != null)
+                {
+                    poolService.Despawn(oldestDrop);
+                }
+                else
+                {
+                    Destroy(oldestDrop.gameObject);
+                }
+            }
+        }
+
+        private Vector3 GetHeartDropLandingPosition(Vector3 landingOrigin, Vector3 awayDirection)
+        {
+            awayDirection.y = 0f;
+            if (awayDirection.sqrMagnitude < 0.001f)
+            {
+                awayDirection = Random.insideUnitSphere;
+                awayDirection.y = 0f;
+            }
+
+            if (awayDirection.sqrMagnitude < 0.001f)
+            {
+                awayDirection = Vector3.forward;
+            }
+
+            var groundedOrigin = SnapToGround(landingOrigin);
+            groundedOrigin.y += heartDropHeightOffset;
+            var landingPosition = groundedOrigin + awayDirection.normalized * Mathf.Max(0f, heartDropKnockbackDistance);
+            landingPosition = ClampToSpawnArea(landingPosition);
+            landingPosition = SnapToGround(landingPosition);
+            landingPosition.y += heartDropHeightOffset;
+            return landingPosition;
+        }
+
+        private void EnsureHeartDropIdleEffectPrefab()
+        {
+            if (heartDropIdleEffectPrefab != null)
+            {
+                return;
+            }
+
+            heartDropIdleEffectPrefab = Resources.Load<GameObject>("Area_star_ellow");
         }
 
         public void ConfigurePlayerStartExclusion(Vector3 center, bool enabled)
@@ -439,7 +597,10 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
-            TryDropHeart(enemy.transform.position);
+            var awayFromPlayer = player != null
+                ? enemy.transform.position - player.position
+                : enemy.transform.forward;
+            TryDropHeart(enemy.GetMouthEffectPosition(), enemy.transform.position, awayFromPlayer);
         }
 
         private void OnPlayerGrowthChanged(Core.Growth.GrowthResult result)
@@ -645,6 +806,21 @@ namespace DinoGrow.Gameplay.Enemy
                     continue;
                 }
 
+                if (IsNearSpawnAreaEdge(position))
+                {
+                    continue;
+                }
+
+                if (IsNearObstacle(position))
+                {
+                    continue;
+                }
+
+                if (IsTooCloseToSpawnedEnemy(position))
+                {
+                    continue;
+                }
+
                 spawnPosition = position;
                 return true;
             }
@@ -698,6 +874,11 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
+            if (IsNearSpawnAreaEdge(position))
+            {
+                return false;
+            }
+
             if (IsNearObstacle(position))
             {
                 return false;
@@ -708,6 +889,11 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
+            return !IsTooCloseToSpawnedEnemy(position);
+        }
+
+        private bool IsTooCloseToSpawnedEnemy(Vector3 position)
+        {
             var minEnemyDistanceSqr = minDistanceBetweenEnemies * minDistanceBetweenEnemies;
             foreach (var enemy in spawnedEnemies)
             {
@@ -720,11 +906,11 @@ namespace DinoGrow.Gameplay.Enemy
                 offset.y = 0f;
                 if (offset.sqrMagnitude < minEnemyDistanceSqr)
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         private bool IsTooCloseToPlayerArea(Vector3 position)
@@ -765,6 +951,16 @@ namespace DinoGrow.Gameplay.Enemy
                 && position.z <= spawnCenter.z + halfSize.y;
         }
 
+        private bool IsNearSpawnAreaEdge(Vector3 position)
+        {
+            var halfSize = spawnSize * 0.5f;
+            var padding = new Vector2(halfSize.x * spawnEdgePaddingRatio, halfSize.y * spawnEdgePaddingRatio);
+            return position.x <= spawnCenter.x - halfSize.x + padding.x
+                || position.x >= spawnCenter.x + halfSize.x - padding.x
+                || position.z <= spawnCenter.z - halfSize.y + padding.y
+                || position.z >= spawnCenter.z + halfSize.y - padding.y;
+        }
+
         private Vector3 ClampToSpawnArea(Vector3 position)
         {
             var halfSize = spawnSize * 0.5f;
@@ -791,6 +987,16 @@ namespace DinoGrow.Gameplay.Enemy
         private Vector3 RandomPositionInArea()
         {
             var halfSize = spawnSize * 0.5f;
+            if (Random.value < centerWeightedSpawnChance)
+            {
+                halfSize *= centerWeightedSpawnScale;
+            }
+
+            var edgePadding = spawnSize * (0.5f * spawnEdgePaddingRatio);
+            halfSize = new Vector2(
+                Mathf.Max(1f, halfSize.x - edgePadding.x),
+                Mathf.Max(1f, halfSize.y - edgePadding.y));
+
             var position = new Vector3(
                 Random.Range(spawnCenter.x - halfSize.x, spawnCenter.x + halfSize.x),
                 spawnY,

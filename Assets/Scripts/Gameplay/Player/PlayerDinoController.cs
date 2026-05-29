@@ -15,6 +15,8 @@ namespace DinoGrow.Gameplay.Player
     [RequireComponent(typeof(Rigidbody))]
     public sealed class PlayerDinoController : MonoBehaviour
     {
+        private static readonly Collider[] EnemyContactColliders = new Collider[32];
+
         [SerializeField] private float moveSpeed = 9f;
         [SerializeField] private float sprintMultiplier = 1.6f;
         [SerializeField] private float turnSpeed = 540f;
@@ -41,6 +43,21 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField] private float enemyContactRadius = 1.35f;
         [SerializeField] private LayerMask enemyContactLayers = ~0;
         [SerializeField] private float eatContactCooldown = 0.18f;
+        [SerializeField] private float damageContactCooldown = 1f;
+        [SerializeField] private GameHudHeartUI heartUI;
+        [SerializeField] private AudioClip hitSoundClip;
+        [SerializeField] private AudioSource hitSoundSource;
+        [SerializeField, Range(0f, 1f)] private float hitSoundVolume = 1f;
+        [SerializeField] private AudioClip sprintStepClip;
+        [SerializeField] private AudioSource sprintStepSource;
+        [SerializeField, Range(0f, 1f)] private float sprintStepVolume = 0.65f;
+        [SerializeField, Range(0.1f, 3f)] private float sprintStepPitch = 1f;
+        [SerializeField, Min(0f)] private float sprintStepLoopDelay = 0.2f;
+        [SerializeField] private AudioClip walkStepClip;
+        [SerializeField] private AudioSource walkStepSource;
+        [SerializeField, Range(0f, 1f)] private float walkStepVolume = 0.8f;
+        [SerializeField, Range(0.1f, 3f)] private float walkStepPitch = 1f;
+        [SerializeField, Min(0f)] private float walkStepLoopDelay = 0.2f;
         [SerializeField] private bool useMovementBounds;
         [SerializeField] private Vector3 movementBoundsCenter;
         [SerializeField] private Vector2 movementBoundsSize = new(80f, 80f);
@@ -50,11 +67,14 @@ namespace DinoGrow.Gameplay.Player
         private GameStateController gameState;
         private StageRule stageRule;
         private DeathEffectService deathEffectService;
+        private EatingSoundService eatingSoundService;
         private GameEventBus eventBus;
         private DinoDataRepository dinoDataRepository;
         private PlayerGrowthDataRepository playerGrowthDataRepository;
         private Vector2 rotateInput;
         private bool isSprinting;
+        private float nextSprintStepPlayTime;
+        private float nextWalkStepPlayTime;
         private Vector3 baseVisualScale = Vector3.one;
         private Vector3 baseVisualLocalPosition;
         private bool isDead;
@@ -67,6 +87,22 @@ namespace DinoGrow.Gameplay.Player
         private float nextEatContactTime;
 
         public int Level => progress?.Level ?? 1;
+
+        public void ConfigureHeartUI(GameHudHeartUI ui)
+        {
+            heartUI = ui;
+        }
+
+        public bool TryAddHeart()
+        {
+            if (heartUI == null || heartUI.GetCurrentHearts() >= heartUI.GetMaxHearts())
+            {
+                return false;
+            }
+
+            heartUI.AddHeart();
+            return true;
+        }
 
         public void SetMovementBounds(Vector3 center, Vector2 size)
         {
@@ -93,6 +129,8 @@ namespace DinoGrow.Gameplay.Player
             rotateInput = Vector2.zero;
             isSprinting = false;
             animatorView?.SetMove(0f, false);
+            UpdateSprintStepLoop(false);
+            UpdateWalkStepLoop(false);
         }
 
         public void SnapToGroundImmediate()
@@ -117,6 +155,7 @@ namespace DinoGrow.Gameplay.Player
             GameStateController gameState,
             StageRule stageRule,
             DeathEffectService deathEffectService,
+            EatingSoundService eatingSoundService,
             GameEventBus eventBus,
             DinoDataRepository dinoDataRepository,
             PlayerGrowthDataRepository playerGrowthDataRepository,
@@ -128,6 +167,7 @@ namespace DinoGrow.Gameplay.Player
             this.gameState = gameState;
             this.stageRule = stageRule;
             this.deathEffectService = deathEffectService;
+            this.eatingSoundService = eatingSoundService;
             this.eventBus = eventBus;
             this.dinoDataRepository = dinoDataRepository;
             this.playerGrowthDataRepository = playerGrowthDataRepository;
@@ -175,6 +215,8 @@ namespace DinoGrow.Gameplay.Player
                     ?? TransformSearchUtility.FindChildByName(visualRoot != null ? visualRoot : transform, "Head");
             }
 
+            ConfigureSprintStepSource();
+            ConfigureWalkStepSource();
         }
 
         private void UseGroundLayerIfAvailable()
@@ -244,12 +286,16 @@ namespace DinoGrow.Gameplay.Player
             if (!dependenciesReady || gameState == null)
             {
                 rotateInput = Vector2.zero;
+                UpdateSprintStepLoop(false);
+                UpdateWalkStepLoop(false);
                 return;
             }
 
             if (!gameState.IsPlaying)
             {
                 rotateInput = Vector2.zero;
+                UpdateSprintStepLoop(false);
+                UpdateWalkStepLoop(false);
                 return;
             }
 
@@ -266,12 +312,16 @@ namespace DinoGrow.Gameplay.Player
                     StopBody();
                 }
 
+                UpdateSprintStepLoop(false);
+                UpdateWalkStepLoop(false);
                 return;
             }
 
             if (!gameState.IsPlaying)
             {
                 StopBody();
+                UpdateSprintStepLoop(false);
+                UpdateWalkStepLoop(false);
                 return;
             }
 
@@ -281,11 +331,15 @@ namespace DinoGrow.Gameplay.Player
                 body.MoveRotation(Quaternion.RotateTowards(body.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
                 MoveBody(targetDirection * GetCurrentMoveSpeed());
                 animatorView?.SetMove(isSprinting ? 1f : 0.5f, isSprinting);
+                UpdateSprintStepLoop(isSprinting);
+                UpdateWalkStepLoop(!isSprinting);
             }
             else
             {
                 MoveBody(Vector3.zero);
                 animatorView?.SetMove(0f, false);
+                UpdateSprintStepLoop(false);
+                UpdateWalkStepLoop(false);
             }
 
             ResolveNearbyEnemyContact();
@@ -298,6 +352,8 @@ namespace DinoGrow.Gameplay.Player
                 eventBus.PlayerGrowthChanged -= OnPlayerGrowthChanged;
             }
 
+            UpdateSprintStepLoop(false);
+            UpdateWalkStepLoop(false);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -386,7 +442,8 @@ namespace DinoGrow.Gameplay.Player
             }
             else
             {
-                TriggerGameOver(enemy);
+                nextEatContactTime = Time.time + Mathf.Max(0f, damageContactCooldown);
+                TakeHit(enemy);
             }
 
             resolvingEnemy = null;
@@ -400,9 +457,16 @@ namespace DinoGrow.Gameplay.Player
             }
 
             var radius = Mathf.Max(0.1f, enemyContactRadius * Mathf.Max(1f, transform.lossyScale.x));
-            var overlaps = Physics.OverlapSphere(transform.position, radius, enemyContactLayers, QueryTriggerInteraction.Collide);
-            foreach (var overlap in overlaps)
+            var overlapCount = Physics.OverlapSphereNonAlloc(
+                transform.position,
+                radius,
+                EnemyContactColliders,
+                enemyContactLayers,
+                QueryTriggerInteraction.Collide);
+
+            for (var i = 0; i < overlapCount; i++)
             {
+                var overlap = EnemyContactColliders[i];
                 var enemy = overlap.GetComponentInParent<DinoEnemy>();
                 if (enemy == null || enemy.IsDying)
                 {
@@ -451,7 +515,9 @@ namespace DinoGrow.Gameplay.Player
         {
             var enemyLevel = enemy.Level;
             enemy.Eaten();
-            deathEffectService?.SpawnBlood(GetMouthEffectPosition());
+            var eatEffectPosition = GetMouthEffectPosition();
+            deathEffectService?.SpawnBlood(eatEffectPosition);
+            eatingSoundService?.PlayAt(eatEffectPosition);
 
             var growthResult = growthSystem.AddEnemyExp(progress, enemyLevel);
             ApplyGrowthVisuals();
@@ -488,6 +554,28 @@ namespace DinoGrow.Gameplay.Player
             TriggerGameOver(attacker.GetMouthEffectPosition());
         }
 
+        private void TakeHit(DinoEnemy attacker)
+        {
+            if (attacker == null)
+            {
+                TriggerGameOver();
+                return;
+            }
+
+            attacker.OnPlayerBitten();
+            var hitEffectPosition = GetHitEffectPosition();
+
+            if (heartUI == null || !heartUI.TryRemoveHeart())
+            {
+                PlayHitSound();
+                TriggerGameOver(hitEffectPosition);
+                return;
+            }
+
+            deathEffectService?.SpawnBlood(hitEffectPosition);
+            PlayHitSound();
+        }
+
         private void TriggerGameOver(Vector3 bloodEffectPosition)
         {
             if (isDead)
@@ -501,6 +589,8 @@ namespace DinoGrow.Gameplay.Player
             isSprinting = false;
             StopBody();
             animatorView?.SetMove(0f, false);
+            UpdateSprintStepLoop(false);
+            UpdateWalkStepLoop(false);
             deathEffectService?.SpawnBlood(bloodEffectPosition);
             animatorView?.SetDead(true);
             eventBus.PublishGameStateChanged(gameState.State);
@@ -516,9 +606,109 @@ namespace DinoGrow.Gameplay.Player
             return transform.TransformPoint(mouthEffectFallbackOffset);
         }
 
+        private Vector3 GetHitEffectPosition()
+        {
+            return transform.position + Vector3.up * 0.75f;
+        }
+
+        private void PlayHitSound()
+        {
+            if (hitSoundClip == null)
+            {
+                return;
+            }
+
+            if (hitSoundSource == null)
+            {
+                hitSoundSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            hitSoundSource.playOnAwake = false;
+            hitSoundSource.loop = false;
+            hitSoundSource.spatialBlend = 0f;
+            hitSoundSource.volume = hitSoundVolume;
+            hitSoundSource.PlayOneShot(hitSoundClip, hitSoundVolume);
+        }
+
         private float GetCurrentMoveSpeed()
         {
             return isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
+        }
+
+        private void ConfigureSprintStepSource()
+        {
+            ConfigureStepSource(ref sprintStepSource, sprintStepClip, sprintStepVolume, sprintStepPitch);
+        }
+
+        private void ConfigureWalkStepSource()
+        {
+            ConfigureStepSource(ref walkStepSource, walkStepClip, walkStepVolume, walkStepPitch);
+        }
+
+        private void ConfigureStepSource(ref AudioSource source, AudioClip clip, float volume, float pitch)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            if (source == null)
+            {
+                source = gameObject.AddComponent<AudioSource>();
+            }
+
+            source.clip = clip;
+            source.loop = false;
+            source.playOnAwake = false;
+            source.volume = volume;
+            source.pitch = pitch;
+            source.spatialBlend = 0f;
+        }
+
+        private void UpdateSprintStepLoop(bool shouldPlay)
+        {
+            ConfigureSprintStepSource();
+            UpdateStepLoop(sprintStepSource, shouldPlay, sprintStepVolume, sprintStepPitch, sprintStepLoopDelay, ref nextSprintStepPlayTime);
+        }
+
+        private void UpdateWalkStepLoop(bool shouldPlay)
+        {
+            ConfigureWalkStepSource();
+            UpdateStepLoop(walkStepSource, shouldPlay, walkStepVolume, walkStepPitch, walkStepLoopDelay, ref nextWalkStepPlayTime);
+        }
+
+        private static void UpdateStepLoop(
+            AudioSource source,
+            bool shouldPlay,
+            float volume,
+            float pitch,
+            float loopDelay,
+            ref float nextPlayTime)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            if (shouldPlay)
+            {
+                source.volume = volume;
+                source.pitch = pitch;
+                if (!source.isPlaying && Time.time >= nextPlayTime)
+                {
+                    source.Play();
+                    var playbackLength = source.clip != null ? source.clip.length / Mathf.Max(0.01f, Mathf.Abs(pitch)) : 0f;
+                    nextPlayTime = Time.time + playbackLength + loopDelay;
+                }
+
+                return;
+            }
+
+            nextPlayTime = 0f;
+            if (source.isPlaying)
+            {
+                source.Stop();
+            }
         }
 
         private bool EnsureDependenciesReady()

@@ -1,10 +1,12 @@
 using System.Collections;
 using DinoGrow.Core.Growth;
+using DinoGrow.Core.Stage;
 using DinoGrow.Camera;
 using DinoGrow.Gameplay.Enemy;
 using DinoGrow.Gameplay.Player;
 using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
+using DinoGrow.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -37,9 +39,24 @@ namespace DinoGrow.Gameplay.Stage
         [SerializeField] private float mapBoundaryInset = 8f;
         [SerializeField] private GameObject loadingOverlayPanel;
         [SerializeField] private Slider loadingSlider;
+        [SerializeField] private bool logLoadingOverlayDiagnostics;
+        [SerializeField] private GameHud gameHud;
+        [SerializeField] private GameHudHeartUI heartUI;
         [SerializeField] private CinemachineThirdPersonOrbit cameraOrbit;
         [SerializeField] private EnemySpawner enemySpawner;
+        [SerializeField] private GameIntroSequence startOverlaySequence;
+        [SerializeField] private float initialLoadingMinVisibleDuration = 1.25f;
+        [SerializeField] private int initialLoadingHideDelayFrames = 1;
+        [SerializeField] private float stageTransitionIdleDelay = 0.85f;
+        [SerializeField] private float stageTransitionFadeDuration = 2f;
+        [SerializeField] private AudioClip stageClearSoundClip;
+        [SerializeField] private AudioSource stageClearSoundSource;
+        [SerializeField, Range(0f, 1f)] private float stageClearSoundVolume = 1f;
+        [SerializeField] private AudioClip backgroundMusicClip;
+        [SerializeField] private AudioSource backgroundMusicSource;
+        [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.7f;
 
+        private GameStateController gameState;
         private GameEventBus eventBus;
         private PlayerDinoController player;
         private CameraReference cameraReference;
@@ -49,16 +66,22 @@ namespace DinoGrow.Gameplay.Stage
         private bool initialMapLoaded;
         private GameObject runtimeLoadingCurtain;
         private Slider runtimeLoadingSlider;
+        private CanvasGroup runtimeLoadingCurtainGroup;
+        private CanvasGroup loadingOverlayGroup;
+        private Canvas loadingOverlayCanvas;
+        private GameObject levelExpPanelObject;
+        private GameObject heartRootObject;
+        private bool levelExpPanelWasActive = true;
+        private bool heartRootWasActive = true;
+        private bool initialIntroPresentationStarted;
 
         private void Awake()
         {
             UseGroundLayerIfAvailable();
             if (loadInitialMap)
             {
-                EnsureRuntimeLoadingCurtain();
                 DisableExistingSceneMapRoots();
                 disabledInitialSceneMaps = true;
-                SetLoadingProgress(0f, true);
             }
             else
             {
@@ -67,18 +90,32 @@ namespace DinoGrow.Gameplay.Stage
         }
 
         [Inject]
-        public void Construct(GameEventBus eventBus, PlayerDinoController player, CameraReference cameraReference)
+        public void Construct(
+            GameEventBus eventBus,
+            PlayerDinoController player,
+            CameraReference cameraReference,
+            GameStateController gameState)
         {
             this.eventBus = eventBus;
             this.player = player;
             this.cameraReference = cameraReference;
+            this.gameState = gameState;
         }
 
         public void ConfigureLoadingOverlay(GameObject panel, Slider slider)
         {
             loadingOverlayPanel = panel;
             loadingSlider = slider;
+            PrepareLoadingOverlayPanel();
             SetLoadingProgress(0f, loadInitialMap && !initialMapLoaded);
+        }
+
+        public void ConfigureHudVisibilityTargets(GameHud hud, GameHudHeartUI hearts)
+        {
+            gameHud = hud;
+            heartUI = hearts;
+            CacheHudVisibilityTargets();
+            SetLoadingHudVisibility(loadInitialMap && !initialMapLoaded);
         }
 
         public void ConfigureCameraOrbit(CinemachineThirdPersonOrbit orbit)
@@ -89,6 +126,36 @@ namespace DinoGrow.Gameplay.Stage
         public void ConfigureEnemySpawner(EnemySpawner spawner)
         {
             enemySpawner = spawner;
+        }
+
+        public void ConfigureStageClearSound(AudioClip clip, AudioSource source, float volume)
+        {
+            stageClearSoundClip = clip;
+            stageClearSoundSource = source;
+            stageClearSoundVolume = Mathf.Clamp01(volume);
+        }
+
+        public void ConfigureBackgroundMusic(AudioClip clip, AudioSource source, float volume)
+        {
+            backgroundMusicClip = clip;
+            backgroundMusicSource = source;
+            backgroundMusicVolume = Mathf.Clamp01(volume);
+            ConfigureBackgroundMusicSource();
+        }
+
+        public void ConfigureStartOverlaySequence(GameIntroSequence sequence)
+        {
+            if (startOverlaySequence != null)
+            {
+                startOverlaySequence.PresentationStarting -= OnIntroPresentationStarting;
+            }
+
+            startOverlaySequence = sequence;
+
+            if (startOverlaySequence != null)
+            {
+                startOverlaySequence.PresentationStarting += OnIntroPresentationStarting;
+            }
         }
 
         private void UseGroundLayerIfAvailable()
@@ -131,6 +198,11 @@ namespace DinoGrow.Gameplay.Stage
                 eventBus.PlayerGrowthChanged -= OnPlayerGrowthChanged;
             }
 
+            if (startOverlaySequence != null)
+            {
+                startOverlaySequence.PresentationStarting -= OnIntroPresentationStarting;
+            }
+
             if (runtimeLoadingCurtain != null)
             {
                 Destroy(runtimeLoadingCurtain);
@@ -167,7 +239,7 @@ namespace DinoGrow.Gameplay.Stage
 
         private IEnumerator LoadInitialRandomMapRoutine()
         {
-            var nextScenePath = PickRandomMapScenePath();
+            var nextScenePath = PickInitialRandomMapScenePath();
             if (string.IsNullOrWhiteSpace(nextScenePath))
             {
                 enemySpawner?.SetMapTransitionInProgress(false);
@@ -175,6 +247,7 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             SetLoadingProgress(0f, true);
+            var loadingStartedAt = Time.realtimeSinceStartup;
             yield return null;
 
             var nextScene = SceneManager.GetSceneByPath(nextScenePath);
@@ -191,24 +264,44 @@ namespace DinoGrow.Gameplay.Stage
             ApplyMapEnvironment(nextScene);
             ConfigurePlayerStartExclusion(nextScene);
             MovePlayerToStartPoint(nextScene);
-            ApplyMapBoundary(nextScene);
+            ApplyMapBoundary(nextScene, false);
+            if (enemySpawner != null)
+            {
+                yield return enemySpawner.RebuildSpawnedEnemiesForMapTransition();
+            }
             yield return null;
             ApplyMapEnvironment(nextScene);
             loadedMapScenePath = nextScenePath;
             yield return null;
             SetLoadingProgress(1f, true);
             yield return null;
+            yield return WaitForMinimumInitialLoadingTime(loadingStartedAt);
+            initialIntroPresentationStarted = false;
+            eventBus?.PublishInitialMapLoaded();
             initialMapLoaded = true;
+            if (startOverlaySequence != null)
+            {
+                yield return WaitForInitialIntroPresentationStart();
+            }
+
+            yield return WaitForLoadingHideDelayFrames();
             SetLoadingProgress(0f, false);
             DestroyRuntimeLoadingCurtain();
             enemySpawner?.SetMapTransitionInProgress(false);
-            eventBus?.PublishInitialMapLoaded();
         }
 
         private IEnumerator SwitchMapRoutine(string nextScenePath)
         {
             isSwitching = true;
-            SetLoadingProgress(0f, true);
+            PauseGameplayForStageTransition();
+            if (stageTransitionIdleDelay > 0f)
+            {
+                yield return new WaitForSeconds(stageTransitionIdleDelay);
+            }
+
+            PlayStageClearSound();
+            yield return FadeLoadingOverlay(true, stageTransitionFadeDuration);
+            SetLoadingOverlayAlpha(1f);
             yield return null;
 
             if (!string.IsNullOrWhiteSpace(loadedMapScenePath))
@@ -242,9 +335,141 @@ namespace DinoGrow.Gameplay.Stage
             yield return null;
             SetLoadingProgress(1f, true);
             yield return null;
-            SetLoadingProgress(0f, false);
+            if (startOverlaySequence != null)
+            {
+                var overlayRoutine = StartCoroutine(startOverlaySequence.PlayStageTransitionStartOverlay());
+                yield return FadeLoadingOverlay(false, stageTransitionFadeDuration);
+                yield return overlayRoutine;
+            }
+            else
+            {
+                yield return FadeLoadingOverlay(false, stageTransitionFadeDuration);
+            }
+
             enemySpawner?.SetMapTransitionInProgress(false);
+            ResumeGameplayAfterStageTransition();
             isSwitching = false;
+        }
+
+        private IEnumerator WaitForInitialIntroPresentationStart()
+        {
+            while (!initialIntroPresentationStarted)
+            {
+                yield return null;
+            }
+        }
+
+        private IEnumerator WaitForLoadingHideDelayFrames()
+        {
+            var frameCount = Mathf.Max(0, initialLoadingHideDelayFrames);
+            for (var i = 0; i < frameCount; i++)
+            {
+                yield return null;
+            }
+        }
+
+        private void OnIntroPresentationStarting()
+        {
+            initialIntroPresentationStarted = true;
+        }
+
+        private IEnumerator WaitForMinimumInitialLoadingTime(float loadingStartedAt)
+        {
+            var remaining = Mathf.Max(0f, initialLoadingMinVisibleDuration - (Time.realtimeSinceStartup - loadingStartedAt));
+            if (remaining > 0f)
+            {
+                yield return new WaitForSecondsRealtime(remaining);
+            }
+        }
+
+        private void PauseGameplayForStageTransition()
+        {
+            if (gameState == null || eventBus == null)
+            {
+                return;
+            }
+
+            gameState.Reset();
+            eventBus.PublishGameStateChanged(gameState.State);
+        }
+
+        private void ResumeGameplayAfterStageTransition()
+        {
+            if (gameState == null || eventBus == null || gameState.IsPlaying)
+            {
+                return;
+            }
+
+            gameState.StartGame();
+            eventBus.PublishGameStateChanged(gameState.State);
+        }
+
+        private void PlayStageClearSound()
+        {
+            if (stageClearSoundClip == null)
+            {
+                return;
+            }
+
+            if (stageClearSoundSource == null)
+            {
+                stageClearSoundSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            stageClearSoundSource.playOnAwake = false;
+            stageClearSoundSource.loop = false;
+            stageClearSoundSource.spatialBlend = 0f;
+            stageClearSoundSource.volume = stageClearSoundVolume;
+            stageClearSoundSource.PlayOneShot(stageClearSoundClip, stageClearSoundVolume);
+        }
+
+        private void UpdateBackgroundMusicForLoading(bool loadingVisible)
+        {
+            if (!Application.isPlaying || backgroundMusicClip == null)
+            {
+                return;
+            }
+
+            ConfigureBackgroundMusicSource();
+            if (backgroundMusicSource == null)
+            {
+                return;
+            }
+
+            if (loadingVisible)
+            {
+                if (backgroundMusicSource.isPlaying)
+                {
+                    backgroundMusicSource.Pause();
+                }
+
+                return;
+            }
+
+            backgroundMusicSource.volume = backgroundMusicVolume;
+            if (!backgroundMusicSource.isPlaying)
+            {
+                backgroundMusicSource.Play();
+            }
+        }
+
+        private void ConfigureBackgroundMusicSource()
+        {
+            if (backgroundMusicClip == null)
+            {
+                return;
+            }
+
+            if (backgroundMusicSource == null)
+            {
+                backgroundMusicSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            backgroundMusicSource.clip = backgroundMusicClip;
+            backgroundMusicSource.loop = true;
+            backgroundMusicSource.playOnAwake = false;
+            backgroundMusicSource.spatialBlend = 0f;
+            backgroundMusicSource.volume = backgroundMusicVolume;
         }
 
         private IEnumerator TrackLoadingOperation(AsyncOperation operation, float startProgress, float endProgress)
@@ -266,9 +491,24 @@ namespace DinoGrow.Gameplay.Stage
 
         private void SetLoadingProgress(float progress, bool visible)
         {
+            if (logLoadingOverlayDiagnostics)
+            {
+                Debug.Log(
+                    $"[LoadingOverlay] {nameof(StageMapSceneLoader)}.{nameof(SetLoadingProgress)} " +
+                    $"progress={Mathf.Clamp01(progress):0.###}, visible={visible}, " +
+                    $"panel={(loadingOverlayPanel != null ? loadingOverlayPanel.name : "null")}, " +
+                    $"panelActive={(loadingOverlayPanel != null ? loadingOverlayPanel.activeInHierarchy.ToString() : "null")}, " +
+                    $"slider={(loadingSlider != null ? loadingSlider.name : "null")}",
+                    this);
+            }
+
+            SetLoadingHudVisibility(visible);
+            UpdateBackgroundMusicForLoading(visible);
+            var useRuntimeCurtain = ShouldUseRuntimeLoadingCurtain(visible);
+
             if (runtimeLoadingCurtain != null)
             {
-                runtimeLoadingCurtain.SetActive(visible && !initialMapLoaded);
+                runtimeLoadingCurtain.SetActive(useRuntimeCurtain);
             }
 
             if (runtimeLoadingSlider != null)
@@ -278,6 +518,7 @@ namespace DinoGrow.Gameplay.Stage
 
             if (loadingOverlayPanel != null)
             {
+                PrepareLoadingOverlayPanel();
                 loadingOverlayPanel.SetActive(visible);
             }
 
@@ -285,6 +526,159 @@ namespace DinoGrow.Gameplay.Stage
             {
                 loadingSlider.value = Mathf.Clamp01(progress);
             }
+        }
+
+        private void SetLoadingHudVisibility(bool loadingVisible)
+        {
+            // Keep the existing loading panel reliable first. HUD hiding can be restored
+            // later with explicitly assigned targets that do not include the loading canvas.
+        }
+
+        private void CacheHudVisibilityTargets()
+        {
+            if (levelExpPanelObject == null && gameHud != null)
+            {
+                var levelExpPanel = gameHud.GetComponentInChildren<global::GameHudLevelExpPanel>(true);
+                if (levelExpPanel != null)
+                {
+                    levelExpPanelObject = levelExpPanel.gameObject;
+                    levelExpPanelWasActive = loadInitialMap && !initialMapLoaded
+                        ? true
+                        : levelExpPanelObject.activeSelf;
+                }
+            }
+
+            if (heartRootObject == null && heartUI != null)
+            {
+                heartRootObject = heartUI.gameObject;
+                heartRootWasActive = loadInitialMap && !initialMapLoaded
+                    ? true
+                    : heartRootObject.activeSelf;
+            }
+        }
+
+        private bool ShouldUseRuntimeLoadingCurtain(bool visible)
+        {
+            if (!visible)
+            {
+                return false;
+            }
+
+            if (loadingOverlayPanel != null)
+            {
+                if (runtimeLoadingCurtain != null)
+                {
+                    runtimeLoadingCurtain.SetActive(false);
+                }
+
+                return false;
+            }
+
+            Debug.LogWarning($"{nameof(StageMapSceneLoader)} needs a custom loading overlay panel. Runtime loading bars are disabled.", this);
+            return false;
+        }
+
+        private static void SetHudTargetVisible(ref GameObject target, ref bool wasActive, bool visible)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            if (!visible)
+            {
+                wasActive = target.activeSelf;
+                target.SetActive(false);
+                return;
+            }
+
+            target.SetActive(wasActive);
+        }
+
+        private IEnumerator FadeLoadingOverlay(bool visible, float duration)
+        {
+            CacheLoadingOverlayGroups();
+            SetLoadingProgress(visible ? 1f : 0f, true);
+
+            var from = visible ? 0f : 1f;
+            var to = visible ? 1f : 0f;
+            duration = Mathf.Max(0f, duration);
+            if (duration <= 0f)
+            {
+                SetLoadingOverlayAlpha(to);
+                SetLoadingProgress(visible ? 1f : 0f, visible);
+                yield break;
+            }
+
+            var elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var progress = Mathf.Clamp01(elapsed / duration);
+                SetLoadingOverlayAlpha(Mathf.Lerp(from, to, progress));
+                yield return null;
+            }
+
+            SetLoadingOverlayAlpha(to);
+            SetLoadingProgress(visible ? 1f : 0f, visible);
+        }
+
+        private void CacheLoadingOverlayGroups()
+        {
+            runtimeLoadingCurtainGroup = GetOrAddCanvasGroup(runtimeLoadingCurtain);
+            loadingOverlayGroup = GetOrAddCanvasGroup(loadingOverlayPanel);
+        }
+
+        private void SetLoadingOverlayAlpha(float alpha)
+        {
+            alpha = Mathf.Clamp01(alpha);
+            SetCanvasGroupAlpha(runtimeLoadingCurtainGroup, alpha);
+            SetCanvasGroupAlpha(loadingOverlayGroup, alpha);
+        }
+
+        private static CanvasGroup GetOrAddCanvasGroup(GameObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            if (target.TryGetComponent<CanvasGroup>(out var group))
+            {
+                return group;
+            }
+
+            return target.AddComponent<CanvasGroup>();
+        }
+
+        private static void SetCanvasGroupAlpha(CanvasGroup group, float alpha)
+        {
+            if (group != null)
+            {
+                group.alpha = alpha;
+            }
+        }
+
+        private void PrepareLoadingOverlayPanel()
+        {
+            if (loadingOverlayPanel == null)
+            {
+                return;
+            }
+
+            loadingOverlayPanel.transform.SetAsLastSibling();
+
+            loadingOverlayCanvas = loadingOverlayPanel.GetComponent<Canvas>();
+            if (loadingOverlayCanvas == null)
+            {
+                loadingOverlayCanvas = loadingOverlayPanel.AddComponent<Canvas>();
+            }
+
+            loadingOverlayCanvas.overrideSorting = true;
+            loadingOverlayCanvas.sortingOrder = short.MaxValue;
+
+            loadingOverlayGroup = GetOrAddCanvasGroup(loadingOverlayPanel);
+            SetCanvasGroupAlpha(loadingOverlayGroup, 1f);
         }
 
         private static void DisableMapSceneCameras(Scene mapScene)
@@ -461,7 +855,7 @@ namespace DinoGrow.Gameplay.Stage
             var curtain = new GameObject("Runtime Loading Curtain", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = curtain.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = short.MaxValue;
+            canvas.sortingOrder = short.MinValue;
 
             var scaler = curtain.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -517,6 +911,7 @@ namespace DinoGrow.Gameplay.Stage
             Destroy(runtimeLoadingCurtain);
             runtimeLoadingCurtain = null;
             runtimeLoadingSlider = null;
+            runtimeLoadingCurtainGroup = null;
         }
 
         private void MovePlayerToStartPoint(Scene mapScene)
@@ -559,7 +954,7 @@ namespace DinoGrow.Gameplay.Stage
             enemySpawner.ConfigurePlayerStartExclusion(startPosition, true);
         }
 
-        private void ApplyMapBoundary(Scene mapScene)
+        private void ApplyMapBoundary(Scene mapScene, bool respawn = true)
         {
             if (enemySpawner == null || !mapScene.IsValid() || !mapScene.isLoaded)
             {
@@ -571,7 +966,7 @@ namespace DinoGrow.Gameplay.Stage
                 return;
             }
 
-            enemySpawner.ConfigureSpawnArea(center, size, true);
+            enemySpawner.ConfigureSpawnArea(center, size, respawn);
         }
 
         private bool TryGetBoundaryArea(Scene mapScene, out Vector3 center, out Vector2 size)
@@ -713,6 +1108,54 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             return mapScenePaths[Random.Range(0, mapScenePaths.Length)];
+        }
+
+        private string PickInitialRandomMapScenePath()
+        {
+            if (mapScenePaths == null || mapScenePaths.Length == 0)
+            {
+                Debug.LogWarning("StageMapSceneLoader has no map scenes assigned.", this);
+                return null;
+            }
+
+            var availableCount = 0;
+            for (var i = 0; i < mapScenePaths.Length; i++)
+            {
+                if (!IsMap4ScenePath(mapScenePaths[i]))
+                {
+                    availableCount++;
+                }
+            }
+
+            if (availableCount == 0)
+            {
+                return PickRandomMapScenePath();
+            }
+
+            var selectedIndex = Random.Range(0, availableCount);
+            for (var i = 0; i < mapScenePaths.Length; i++)
+            {
+                var candidate = mapScenePaths[i];
+                if (IsMap4ScenePath(candidate))
+                {
+                    continue;
+                }
+
+                if (selectedIndex == 0)
+                {
+                    return candidate;
+                }
+
+                selectedIndex--;
+            }
+
+            return PickRandomMapScenePath();
+        }
+
+        private static bool IsMap4ScenePath(string scenePath)
+        {
+            return !string.IsNullOrWhiteSpace(scenePath)
+                && scenePath.EndsWith("map4.unity", System.StringComparison.OrdinalIgnoreCase);
         }
     }
 }

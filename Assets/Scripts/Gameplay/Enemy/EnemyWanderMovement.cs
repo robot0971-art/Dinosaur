@@ -12,6 +12,7 @@ namespace DinoGrow.Gameplay.Enemy
     public sealed class EnemyWanderMovement : MonoBehaviour
     {
         private static readonly List<EnemyWanderMovement> ActiveMovements = new();
+        private static readonly RaycastHit[] ObstacleHits = new RaycastHit[12];
 
         [SerializeField] private float moveSpeed = 3.2f;
         [SerializeField] private float turnSpeed = 420f;
@@ -26,6 +27,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float chaseSpeedMultiplier = 1.45f;
         [SerializeField] private bool useNavMeshAgent = true;
         [SerializeField] private float navDestinationDistance = 8f;
+        [SerializeField] private float navRepathInterval = 0.25f;
         [SerializeField] private float navSampleDistance = 4f;
         [SerializeField] private float navVerticalSampleDistance = 80f;
         [SerializeField] private float groundColliderRadius = 0.45f;
@@ -38,8 +40,13 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundRaycastDistance = 120f;
         [SerializeField] private float groundOffset = 0f;
         [SerializeField] private float maxGroundSnapStep = 0.2f;
+        [SerializeField] private bool avoidObstaclesWithoutNavMesh;
+        [SerializeField] private LayerMask obstacleLayers = ~0;
         [SerializeField] private bool ignoreOtherEnemies = true;
         [SerializeField] private DinoAnimatorView animatorView;
+        [SerializeField] private float aiThinkInterval = 0.18f;
+        [SerializeField] private float farAnimationDistance = 36f;
+        [SerializeField] private float farAnimationUpdateInterval = 0.25f;
         [SerializeField] private Vector3 areaCenter;
         [SerializeField] private Vector2 areaSize = new(80f, 80f);
 
@@ -61,6 +68,12 @@ namespace DinoGrow.Gameplay.Enemy
         private EnemyAreaMovementRule areaRule;
         private EnemyWanderDirectionRule wanderDirectionRule;
         private EnemyBehaviorPlanner behaviorPlanner;
+        private float nextNavRepathTime;
+        private Vector3 lastNavDestination;
+        private float nextAiThinkTime;
+        private EnemyBehaviorIntent cachedBehaviorIntent = EnemyBehaviorIntent.Wander;
+        private Vector3 cachedPlayerOffset;
+        private bool farAnimationUpdates;
 
         [Inject]
         public void Construct(EnemyBehaviorResolver behaviorResolver, GameStateController gameState)
@@ -92,6 +105,9 @@ namespace DinoGrow.Gameplay.Enemy
             moveSpeed = speed;
             desiredMoveDirection = Vector3.zero;
             desiredMoveSpeed = 0f;
+            nextNavRepathTime = 0f;
+            lastNavDestination = Vector3.positiveInfinity;
+            nextAiThinkTime = Time.time + Random.Range(0f, Mathf.Max(0.01f, aiThinkInterval));
             ConfigureRules();
             CacheVisualBottomOffset();
             transform.position = SnapToGroundImmediate(transform.position);
@@ -190,8 +206,9 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
-            var behaviorIntent = ResolveBehaviorIntent(out var playerOffset);
-            if (TryApplyPlayerBehavior(behaviorIntent, playerOffset))
+            UpdateBehaviorIntentIfNeeded();
+            UpdateAnimationDetailLevel();
+            if (TryApplyPlayerBehavior(cachedBehaviorIntent, cachedPlayerOffset))
             {
                 return;
             }
@@ -209,10 +226,40 @@ namespace DinoGrow.Gameplay.Enemy
 
             ApplyMovementPlan(behaviorPlanner.Plan(
                 EnemyBehaviorIntent.Wander,
-                playerOffset,
+                cachedPlayerOffset,
                 moveDirection,
                 transform.forward,
                 moveSpeed));
+        }
+
+        private void UpdateBehaviorIntentIfNeeded()
+        {
+            if (Time.time < nextAiThinkTime)
+            {
+                return;
+            }
+
+            nextAiThinkTime = Time.time + Mathf.Max(0.03f, aiThinkInterval);
+            cachedBehaviorIntent = ResolveBehaviorIntent(out cachedPlayerOffset);
+        }
+
+        private void UpdateAnimationDetailLevel()
+        {
+            if (animatorView == null || player == null)
+            {
+                return;
+            }
+
+            var offset = player.position - transform.position;
+            offset.y = 0f;
+            var shouldUseFarUpdates = offset.sqrMagnitude >= farAnimationDistance * farAnimationDistance;
+            if (shouldUseFarUpdates == farAnimationUpdates)
+            {
+                return;
+            }
+
+            farAnimationUpdates = shouldUseFarUpdates;
+            animatorView.SetLowDetailUpdates(farAnimationUpdates, farAnimationUpdateInterval);
         }
 
         private bool TryApplyPlayerBehavior(EnemyBehaviorIntent behaviorIntent, Vector3 playerOffset)
@@ -440,6 +487,8 @@ namespace DinoGrow.Gameplay.Enemy
             agent.baseOffset = GetAgentBaseOffset();
             agent.enabled = true;
             agent.Warp(navHit.position);
+            nextNavRepathTime = 0f;
+            lastNavDestination = Vector3.positiveInfinity;
         }
 
         private float GetAgentBaseOffset()
@@ -466,11 +515,17 @@ namespace DinoGrow.Gameplay.Enemy
             if (desiredMoveDirection.sqrMagnitude <= 0.001f || desiredMoveSpeed <= 0.001f)
             {
                 agent.ResetPath();
+                lastNavDestination = Vector3.positiveInfinity;
                 return;
             }
 
             var destination = transform.position + desiredMoveDirection * navDestinationDistance;
             destination = ClampToArea(destination);
+            if (!ShouldRefreshAgentDestination(destination))
+            {
+                return;
+            }
+
             if (!NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
             {
                 DisableAgentForManualMovement();
@@ -480,7 +535,10 @@ namespace DinoGrow.Gameplay.Enemy
             if (!agent.SetDestination(hit.position))
             {
                 DisableAgentForManualMovement();
+                return;
             }
+
+            MarkAgentDestinationRefreshed(hit.position);
         }
 
         private void ApplyAgentDestination(Vector3 destination, float speed)
@@ -492,16 +550,45 @@ namespace DinoGrow.Gameplay.Enemy
 
             agent.speed = Mathf.Max(0.1f, speed);
             destination = ClampToArea(destination);
+            if (!ShouldRefreshAgentDestination(destination))
+            {
+                return;
+            }
+
             if (NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
             {
                 if (!agent.SetDestination(hit.position))
                 {
                     DisableAgentForManualMovement();
+                    return;
                 }
+
+                MarkAgentDestinationRefreshed(hit.position);
                 return;
             }
 
             DisableAgentForManualMovement();
+        }
+
+        private bool ShouldRefreshAgentDestination(Vector3 destination)
+        {
+            if (Time.time >= nextNavRepathTime)
+            {
+                return true;
+            }
+
+            if (float.IsInfinity(lastNavDestination.x))
+            {
+                return true;
+            }
+
+            return (destination - lastNavDestination).sqrMagnitude > 1f;
+        }
+
+        private void MarkAgentDestinationRefreshed(Vector3 destination)
+        {
+            lastNavDestination = destination;
+            nextNavRepathTime = Time.time + Mathf.Max(0.05f, navRepathInterval);
         }
 
         private void DisableAgentForManualMovement()
@@ -772,6 +859,22 @@ namespace DinoGrow.Gameplay.Enemy
             nextPosition = ClampToArea(nextPosition);
             if (!IsWaterAt(nextPosition))
             {
+                if (avoidObstaclesWithoutNavMesh && IsObstacleInMove(currentPosition, direction, distance, out var hit))
+                {
+                    var slideDirection = Vector3.ProjectOnPlane(direction, hit.normal);
+                    slideDirection.y = 0f;
+                    if (slideDirection.sqrMagnitude > 0.001f
+                        && !IsObstacleInMove(currentPosition, slideDirection.normalized, distance, out _))
+                    {
+                        moveDirection = slideDirection.normalized;
+                        nextDirectionTime = Time.time + directionChangeInterval;
+                        return SnapToGround(ClampToArea(currentPosition + moveDirection * distance));
+                    }
+
+                    PickNewDirection();
+                    return SnapToGround(currentPosition);
+                }
+
                 return nextPosition;
             }
 
@@ -924,6 +1027,82 @@ namespace DinoGrow.Gameplay.Enemy
             return false;
         }
 
+        private bool IsObstacleInMove(Vector3 currentPosition, Vector3 direction, float distance, out RaycastHit hit)
+        {
+            hit = default;
+            if (direction.sqrMagnitude <= 0.001f || distance <= 0f)
+            {
+                return false;
+            }
+
+            var radius = Mathf.Max(0.1f, groundColliderRadius);
+            var height = Mathf.Max(radius * 2f, groundColliderHeight);
+            var center = currentPosition + Vector3.up * (height * 0.5f);
+            var halfSegment = Mathf.Max(0f, (height * 0.5f) - radius);
+            var point1 = center + Vector3.up * halfSegment;
+            var point2 = center - Vector3.up * halfSegment;
+            var castDistance = distance + radius;
+            var hitCount = Physics.CapsuleCastNonAlloc(
+                point1,
+                point2,
+                radius,
+                direction.normalized,
+                ObstacleHits,
+                castDistance,
+                obstacleLayers,
+                QueryTriggerInteraction.Ignore);
+
+            if (hitCount == 0)
+            {
+                return false;
+            }
+
+            System.Array.Sort(ObstacleHits, 0, hitCount, RaycastHitDistanceComparer.Instance);
+            for (var i = 0; i < hitCount; i++)
+            {
+                var candidate = ObstacleHits[i];
+                if (!IsBlockingObstacle(candidate.collider))
+                {
+                    continue;
+                }
+
+                hit = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private sealed class RaycastHitDistanceComparer : IComparer<RaycastHit>
+        {
+            public static readonly RaycastHitDistanceComparer Instance = new();
+
+            public int Compare(RaycastHit left, RaycastHit right)
+            {
+                return left.distance.CompareTo(right.distance);
+            }
+        }
+
+        private bool IsBlockingObstacle(Collider targetCollider)
+        {
+            if (targetCollider == null || targetCollider.isTrigger)
+            {
+                return false;
+            }
+
+            if (targetCollider.GetComponentInParent<DinoEnemy>() != null)
+            {
+                return false;
+            }
+
+            if (targetCollider.GetComponentInParent<PlayerDinoController>() != null)
+            {
+                return false;
+            }
+
+            return IsNamedObstacle(targetCollider);
+        }
+
         private static bool IsGroundCollider(Collider targetCollider)
         {
             if (targetCollider == null)
@@ -966,12 +1145,34 @@ namespace DinoGrow.Gameplay.Enemy
             return false;
         }
 
+        private static bool IsNamedObstacle(Collider targetCollider)
+        {
+            var target = targetCollider.transform;
+            while (target != null)
+            {
+                if (target.name == "MapBoundary"
+                    || target.name.StartsWith("Tree_", System.StringComparison.Ordinal)
+                    || target.name.StartsWith("Rock_", System.StringComparison.Ordinal)
+                    || target.name.StartsWith("SnowRock_", System.StringComparison.Ordinal)
+                    || target.name.StartsWith("SnowTree_", System.StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                target = target.parent;
+            }
+
+            return false;
+        }
+
         private static bool IsNonGroundSurfaceName(string targetName)
         {
             return targetName == "Water"
                 || targetName == "MapBoundary"
                 || targetName.StartsWith("Tree_", System.StringComparison.Ordinal)
-                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal);
+                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal)
+                || targetName.StartsWith("SnowRock_", System.StringComparison.Ordinal)
+                || targetName.StartsWith("SnowTree_", System.StringComparison.Ordinal);
         }
     }
 }

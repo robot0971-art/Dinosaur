@@ -19,97 +19,97 @@ MonoBehaviour:
     cameraDistance: 6
     cameraHeight: 4
   - level: 2
-    requiredExp: 60
+    requiredExp: 80
     scaleMultiplier: 1.08
     cameraDistance: 6
     cameraHeight: 4
   - level: 3
-    requiredExp: 70
+    requiredExp: 110
     scaleMultiplier: 1.16
     cameraDistance: 6
     cameraHeight: 4
   - level: 4
-    requiredExp: 80
+    requiredExp: 140
     scaleMultiplier: 1.24
     cameraDistance: 6
     cameraHeight: 4
   - level: 5
-    requiredExp: 90
+    requiredExp: 170
     scaleMultiplier: 1.3199999
     cameraDistance: 7
     cameraHeight: 4.5
   - level: 6
-    requiredExp: 100
+    requiredExp: 200
     scaleMultiplier: 1.4
     cameraDistance: 7
     cameraHeight: 4.5
   - level: 7
-    requiredExp: 110
+    requiredExp: 230
     scaleMultiplier: 1.48
     cameraDistance: 7
     cameraHeight: 4.5
   - level: 8
-    requiredExp: 120
+    requiredExp: 260
     scaleMultiplier: 1.56
     cameraDistance: 7
     cameraHeight: 4.5
   - level: 9
-    requiredExp: 130
+    requiredExp: 290
     scaleMultiplier: 1.64
     cameraDistance: 8
     cameraHeight: 5
   - level: 10
-    requiredExp: 140
+    requiredExp: 320
     scaleMultiplier: 1.72
     cameraDistance: 8
     cameraHeight: 5
   - level: 11
-    requiredExp: 150
+    requiredExp: 350
     scaleMultiplier: 1.8
     cameraDistance: 8
     cameraHeight: 5
   - level: 12
-    requiredExp: 160
+    requiredExp: 380
     scaleMultiplier: 1.88
     cameraDistance: 8
     cameraHeight: 5
   - level: 13
-    requiredExp: 170
+    requiredExp: 410
     scaleMultiplier: 1.96
     cameraDistance: 9
     cameraHeight: 6
   - level: 14
-    requiredExp: 180
+    requiredExp: 440
     scaleMultiplier: 2.04
     cameraDistance: 9
     cameraHeight: 6
   - level: 15
-    requiredExp: 190
+    requiredExp: 470
     scaleMultiplier: 2.12
     cameraDistance: 9
     cameraHeight: 6
   - level: 16
-    requiredExp: 200
+    requiredExp: 500
     scaleMultiplier: 2.2
     cameraDistance: 9
     cameraHeight: 6
   - level: 17
-    requiredExp: 210
+    requiredExp: 530
     scaleMultiplier: 2.28
     cameraDistance: 10
     cameraHeight: 7
   - level: 18
-    requiredExp: 220
+    requiredExp: 560
     scaleMultiplier: 2.36
     cameraDistance: 10
     cameraHeight: 7
   - level: 19
-    requiredExp: 230
+    requiredExp: 590
     scaleMultiplier: 2.44
     cameraDistance: 10
     cameraHeight: 7
   - level: 20
-    requiredExp: 240
+    requiredExp: 620
     scaleMultiplier: 2.52
     cameraDistance: 10
     cameraHeight: 7

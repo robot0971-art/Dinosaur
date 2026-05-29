@@ -24,6 +24,9 @@ namespace DinoGrow.UI
         [SerializeField] private string gameOverMessage = "GAME OVER";
         [SerializeField] private GameObject gameOverImage;
         [SerializeField] private string gameOverImageChildName = "Game over Image";
+        [SerializeField] private AudioClip gameOverSoundClip;
+        [SerializeField] private AudioSource gameOverSoundSource;
+        [SerializeField, Range(0f, 1f)] private float gameOverSoundVolume = 1f;
         [SerializeField] private string clearMessage = "LEVEL 20 CLEAR";
 
         private PlayerProgress progress;
@@ -102,6 +105,7 @@ namespace DinoGrow.UI
                 EnsureGameOverImage();
                 SetStatus(gameOverImage != null ? string.Empty : gameOverMessage);
                 SetGameOverPanelVisible(true);
+                PlayGameOverSound();
             }
             else if (state == GameState.Clear)
             {
@@ -254,6 +258,25 @@ namespace DinoGrow.UI
 
             PlayAnimatorFromStart(gameOverImage != null ? gameOverImage.GetComponent<Animator>() : null);
             PlayAnimatorFromStart(restartButton != null ? restartButton.GetComponent<Animator>() : null);
+        }
+
+        private void PlayGameOverSound()
+        {
+            if (!Application.isPlaying || gameOverSoundClip == null)
+            {
+                return;
+            }
+
+            if (gameOverSoundSource == null)
+            {
+                gameOverSoundSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            gameOverSoundSource.playOnAwake = false;
+            gameOverSoundSource.loop = false;
+            gameOverSoundSource.spatialBlend = 0f;
+            gameOverSoundSource.volume = gameOverSoundVolume;
+            gameOverSoundSource.PlayOneShot(gameOverSoundClip, gameOverSoundVolume);
         }
 
         private static void PlayAnimatorFromStart(Animator animator)

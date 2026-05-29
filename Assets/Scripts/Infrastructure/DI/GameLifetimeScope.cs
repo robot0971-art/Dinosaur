@@ -18,6 +18,7 @@ using DinoGrow.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DefaultExecutionOrder(-10000)]
 public class GameLifetimeScope : LifetimeScope
 {
     [Header("Scene Components")]
@@ -26,6 +27,7 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private StageMapSceneLoader stageMapSceneLoader;
     [SerializeField] private GameIntroSequence gameIntroSequence;
     [SerializeField] private GameHud gameHud;
+    [SerializeField] private GameHudHeartUI heartUI;
     [SerializeField] private Transform gameplayCamera;
     [SerializeField] private GameObject loadingOverlayPanel;
     [SerializeField] private Slider loadingSlider;
@@ -33,12 +35,31 @@ public class GameLifetimeScope : LifetimeScope
 
     [Header("Effects")]
     [SerializeField] private ParticleSystem bloodEffectPrefab;
+    [SerializeField] private AudioClip eatingSoundClip;
+    [SerializeField, Range(0f, 1f)] private float eatingSoundVolume = 1f;
+    [SerializeField] private AudioClip stageClearSoundClip;
+    [SerializeField] private AudioSource stageClearSoundSource;
+    [SerializeField, Range(0f, 1f)] private float stageClearSoundVolume = 1f;
+    [SerializeField] private AudioClip backgroundMusicClip;
+    [SerializeField] private AudioSource backgroundMusicSource;
+    [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.7f;
 
     [Header("Generated Data")]
     [SerializeField] private DinoDatabase dinoDatabase;
     [SerializeField] private StageDatabase stageDatabase;
     [SerializeField] private SpawnDatabase spawnDatabase;
     [SerializeField] private PlayerGrowthDatabase playerGrowthDatabase;
+
+    protected override void Awake()
+    {
+        ShowInitialLoadingOverlay();
+        base.Awake();
+    }
+
+    private void OnEnable()
+    {
+        ShowInitialLoadingOverlay();
+    }
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -58,6 +79,8 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<IObjectPoolService, ObjectPoolService>(Lifetime.Singleton);
         builder.RegisterInstance(new DeathEffectSettings(bloodEffectPrefab));
         builder.Register<DeathEffectService>(Lifetime.Singleton);
+        builder.RegisterInstance(new EatingSoundSettings(eatingSoundClip, eatingSoundVolume));
+        builder.Register<EatingSoundService>(Lifetime.Singleton);
         builder.RegisterInstance(dinoRepository);
         builder.RegisterInstance(stageRepository);
         builder.RegisterInstance(spawnRepository);
@@ -65,6 +88,12 @@ public class GameLifetimeScope : LifetimeScope
 
         if (player != null)
         {
+            if (heartUI == null && gameHud != null)
+            {
+                heartUI = gameHud.GetComponentInChildren<GameHudHeartUI>(true);
+            }
+
+            player.ConfigureHeartUI(heartUI);
             builder.RegisterComponent(player);
         }
 
@@ -89,8 +118,11 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.RegisterComponent(stageMapSceneLoader);
         stageMapSceneLoader.ConfigureLoadingOverlay(loadingOverlayPanel, loadingSlider);
+        stageMapSceneLoader.ConfigureHudVisibilityTargets(gameHud, heartUI);
         stageMapSceneLoader.ConfigureCameraOrbit(cameraOrbit);
         stageMapSceneLoader.ConfigureEnemySpawner(enemySpawner);
+        stageMapSceneLoader.ConfigureStageClearSound(stageClearSoundClip, stageClearSoundSource, stageClearSoundVolume);
+        stageMapSceneLoader.ConfigureBackgroundMusic(backgroundMusicClip, backgroundMusicSource, backgroundMusicVolume);
 
         if (gameIntroSequence == null && player != null)
         {
@@ -100,7 +132,41 @@ public class GameLifetimeScope : LifetimeScope
         if (gameIntroSequence != null)
         {
             gameIntroSequence.ConfigurePlayerCameraOrbit(cameraOrbit);
+            stageMapSceneLoader.ConfigureStartOverlaySequence(gameIntroSequence);
             builder.RegisterComponent(gameIntroSequence);
+        }
+    }
+
+    private void ShowInitialLoadingOverlay()
+    {
+        if (loadingOverlayPanel == null)
+        {
+            return;
+        }
+
+        loadingOverlayPanel.SetActive(true);
+        loadingOverlayPanel.transform.SetAsLastSibling();
+
+        var canvas = loadingOverlayPanel.GetComponent<Canvas>();
+        if (canvas == null)
+        {
+            canvas = loadingOverlayPanel.AddComponent<Canvas>();
+        }
+
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = short.MaxValue;
+
+        var canvasGroup = loadingOverlayPanel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = loadingOverlayPanel.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.alpha = 1f;
+
+        if (loadingSlider != null)
+        {
+            loadingSlider.value = 0f;
         }
     }
 
@@ -143,6 +209,54 @@ public sealed class DeathEffectSettings
     }
 
     public ParticleSystem BloodEffectPrefab { get; }
+}
+
+public sealed class EatingSoundSettings
+{
+    public EatingSoundSettings(AudioClip clip, float volume)
+    {
+        Clip = clip;
+        Volume = Mathf.Clamp01(volume);
+    }
+
+    public AudioClip Clip { get; }
+    public float Volume { get; }
+}
+
+public sealed class EatingSoundService
+{
+    private const float SpatialBlend = 0.85f;
+    private const float MinDistance = 1.5f;
+    private const float MaxDistance = 22f;
+
+    private readonly EatingSoundSettings settings;
+
+    public EatingSoundService(EatingSoundSettings settings)
+    {
+        this.settings = settings;
+    }
+
+    public void PlayAt(Vector3 position)
+    {
+        if (settings.Clip == null || settings.Volume <= 0f)
+        {
+            return;
+        }
+
+        var soundObject = new GameObject("EatingSound");
+        soundObject.transform.position = position;
+
+        var source = soundObject.AddComponent<AudioSource>();
+        source.clip = settings.Clip;
+        source.volume = settings.Volume;
+        source.spatialBlend = SpatialBlend;
+        source.minDistance = MinDistance;
+        source.maxDistance = MaxDistance;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.Play();
+
+        Object.Destroy(soundObject, settings.Clip.length + 0.1f);
+    }
 }
 
 public sealed class DeathEffectService

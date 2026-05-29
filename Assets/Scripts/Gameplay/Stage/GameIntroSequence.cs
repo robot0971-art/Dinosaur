@@ -1,6 +1,7 @@
 using DinoGrow.Core.Stage;
 using DinoGrow.Camera;
 using DinoGrow.Infrastructure.Events;
+using System;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -25,6 +26,12 @@ namespace DinoGrow.Gameplay.Stage
         [SerializeField] private float startOverlayFadeDuration = 0.35f;
         [SerializeField] private float startTextHoldDuration = 3f;
         [SerializeField] private float startText2HoldDuration = 2f;
+        [Header("Stage Transition Overlay")]
+        [SerializeField] private float stageStartTextHoldDuration = 1.9f;
+        [Header("Stage Start Sound")]
+        [SerializeField] private AudioClip stageStartRoarClip;
+        [SerializeField] private AudioSource stageStartRoarSource;
+        [SerializeField, Range(0f, 1f)] private float stageStartRoarVolume = 1f;
 
         private GameStateController gameState;
         private GameEventBus eventBus;
@@ -34,6 +41,8 @@ namespace DinoGrow.Gameplay.Stage
         private CanvasGroup startPanelGroup;
         private CanvasGroup startTextGroup;
         private CanvasGroup startText2Group;
+
+        public event Action PresentationStarting;
 
         [Inject]
         public void Construct(GameStateController gameState, GameEventBus eventBus)
@@ -137,6 +146,7 @@ namespace DinoGrow.Gameplay.Stage
                 introCamera.gameObject.SetActive(true);
             }
 
+            NotifyPresentationStarting();
             introDirector.Play();
         }
 
@@ -198,6 +208,7 @@ namespace DinoGrow.Gameplay.Stage
         {
             if (startPanel == null)
             {
+                NotifyPresentationStarting();
                 StartGame();
                 return;
             }
@@ -207,27 +218,83 @@ namespace DinoGrow.Gameplay.Stage
                 StopCoroutine(startOverlayRoutine);
             }
 
+            NotifyPresentationStarting();
             startOverlayRoutine = StartCoroutine(StartOverlayRoutine());
         }
 
+        public IEnumerator PlayStageTransitionStartOverlay()
+        {
+            if (startPanel == null)
+            {
+                yield break;
+            }
+
+            if (startOverlayRoutine != null)
+            {
+                StopCoroutine(startOverlayRoutine);
+                startOverlayRoutine = null;
+            }
+
+            NotifyPresentationStarting();
+            yield return PlaySingleStartOverlay(
+                Mathf.Max(0f, stageStartTextHoldDuration),
+                startText2 != null);
+        }
+
+        private void NotifyPresentationStarting()
+        {
+            PresentationStarting?.Invoke();
+        }
+
         private IEnumerator StartOverlayRoutine()
+        {
+            yield return PlayStartOverlaySequence(
+                Mathf.Max(0f, startTextHoldDuration),
+                Mathf.Max(0f, startText2HoldDuration),
+                true);
+            startOverlayRoutine = null;
+            StartGame();
+        }
+
+        private IEnumerator PlayStartOverlaySequence(float firstTextHoldDuration, float secondTextHoldDuration, bool showSecondText)
         {
             CacheStartOverlayCanvasGroups();
             SetStartOverlayAlpha(0f, 0f, 0f);
 
             SetStartOverlayVisible(true, true, false);
             yield return FadeStartOverlay(0f, 1f, true, false);
-            yield return WaitForStartOverlaySeconds(startTextHoldDuration);
+            yield return WaitForStartOverlaySeconds(firstTextHoldDuration);
             yield return FadeStartOverlay(1f, 0f, true, false);
 
-            SetStartOverlayVisible(true, false, true);
-            yield return FadeStartOverlay(0f, 1f, false, true);
-            yield return WaitForStartOverlaySeconds(startText2HoldDuration);
+            if (showSecondText && startText2 != null)
+            {
+                SetStartOverlayVisible(true, false, true);
+                yield return FadeStartOverlay(0f, 1f, false, true);
+                yield return WaitForStartOverlaySeconds(secondTextHoldDuration);
+                PlayStageStartRoar();
+            }
 
             SetStartOverlayVisible(false, false, false);
             SetStartOverlayAlpha(0f, 0f, 0f);
-            startOverlayRoutine = null;
-            StartGame();
+        }
+
+        private IEnumerator PlaySingleStartOverlay(float holdDuration, bool useSecondText)
+        {
+            CacheStartOverlayCanvasGroups();
+            SetStartOverlayAlpha(0f, 0f, 0f);
+
+            SetStartOverlayVisible(true, !useSecondText, useSecondText);
+            yield return FadeStartOverlay(0f, 1f, !useSecondText, useSecondText);
+            yield return WaitForStartOverlaySeconds(holdDuration);
+            if (useSecondText)
+            {
+                PlayStageStartRoar();
+            }
+
+            yield return FadeStartOverlay(1f, 0f, !useSecondText, useSecondText);
+
+            SetStartOverlayVisible(false, false, false);
+            SetStartOverlayAlpha(0f, 0f, 0f);
         }
 
         private IEnumerator FadeStartOverlay(float from, float to, bool showFirstText, bool showSecondText)
@@ -291,6 +358,25 @@ namespace DinoGrow.Gameplay.Stage
             SetCanvasGroupAlpha(startPanelGroup, panelAlpha);
             SetCanvasGroupAlpha(startTextGroup, firstTextAlpha);
             SetCanvasGroupAlpha(startText2Group, secondTextAlpha);
+        }
+
+        private void PlayStageStartRoar()
+        {
+            if (stageStartRoarClip == null)
+            {
+                return;
+            }
+
+            if (stageStartRoarSource == null)
+            {
+                stageStartRoarSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            stageStartRoarSource.playOnAwake = false;
+            stageStartRoarSource.loop = false;
+            stageStartRoarSource.spatialBlend = 0f;
+            stageStartRoarSource.volume = stageStartRoarVolume;
+            stageStartRoarSource.PlayOneShot(stageStartRoarClip, stageStartRoarVolume);
         }
 
         private static CanvasGroup GetOrAddCanvasGroup(GameObject target)

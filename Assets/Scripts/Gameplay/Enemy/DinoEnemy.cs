@@ -228,6 +228,8 @@ namespace DinoGrow.Gameplay.Enemy
 
         public void OnPlayerBitten()
         {
+            animatorView?.PlayAttack();
+
             if (TryGetComponent(out EnemyWanderMovement wanderMovement))
             {
                 wanderMovement.OnPlayerBitten();

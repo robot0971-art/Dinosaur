@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 131921419}
   - component: {fileID: 131921421}
   - component: {fileID: 131921420}
+  - component: {fileID: 131921422}
   m_Layer: 0
   m_Name: LoadingOverlayPanel
   m_TagString: Untagged
@@ -285,7 +286,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1921820266}
-  m_Father: {fileID: 1016962275}
+  m_Father: {fileID: 1521132394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -330,6 +331,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131921418}
   m_CullTransparentMesh: 1
+--- !u!114 &131921422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131921418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f27b3ceb2bbb77458f702b414a85b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.UI.LoadingOverlayBootstrap
+  loadingSlider: {fileID: 1921820267}
+  logDiagnostics: 0
 --- !u!1 &138388313
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,11 +658,20 @@ MonoBehaviour:
   stageMapSceneLoader: {fileID: 0}
   gameIntroSequence: {fileID: 0}
   gameHud: {fileID: 1521132390}
+  heartUI: {fileID: 1036550089}
   gameplayCamera: {fileID: 330585546}
   loadingOverlayPanel: {fileID: 131921418}
   loadingSlider: {fileID: 1921820267}
   cameraOrbit: {fileID: 0}
   bloodEffectPrefab: {fileID: 8636121712290105106, guid: a4c609b0749da1444a8cb91b19eafeb7, type: 3}
+  eatingSoundClip: {fileID: 8300000, guid: 30213e51cff7eff44b3be02c2fffa744, type: 3}
+  eatingSoundVolume: 1
+  stageClearSoundClip: {fileID: 8300000, guid: d96609b3d2e12d149ab61c87f0f598a2, type: 3}
+  stageClearSoundSource: {fileID: 0}
+  stageClearSoundVolume: 1
+  backgroundMusicClip: {fileID: 8300000, guid: 6a567a2f04b47864f96f5d311b4e1ea0, type: 3}
+  backgroundMusicSource: {fileID: 0}
+  backgroundMusicVolume: 0.7
   dinoDatabase: {fileID: 11400000, guid: 1aaa4625c277f7f4cac3fb578a413e93, type: 2}
   stageDatabase: {fileID: 11400000, guid: 8aaa1d1f0bff97b43a0a97d079deddde, type: 2}
   spawnDatabase: {fileID: 11400000, guid: 2be96919fc9a97844bffc0e9b28ae14e, type: 2}
@@ -1097,6 +1121,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   eatContactCooldown: 0.18
+  damageContactCooldown: 1
+  heartUI: {fileID: 0}
+  hitSoundClip: {fileID: 8300000, guid: 30213e51cff7eff44b3be02c2fffa744, type: 3}
+  hitSoundSource: {fileID: 0}
+  hitSoundVolume: 1
+  sprintStepClip: {fileID: 8300000, guid: 3f73a389f573c624a9a706d99a052708, type: 3}
+  sprintStepSource: {fileID: 0}
+  sprintStepVolume: 1
+  sprintStepPitch: 1
+  sprintStepLoopDelay: 0.2
+  walkStepClip: {fileID: 8300000, guid: c1388ad8f3ba26f4493e2e43e6420cca, type: 3}
+  walkStepSource: {fileID: 0}
+  walkStepVolume: 0.96
+  walkStepPitch: 1
+  walkStepLoopDelay: 0.17
   useMovementBounds: 0
   movementBoundsCenter: {x: 0, y: 0, z: 0}
   movementBoundsSize: {x: 80, y: 80}
@@ -1280,6 +1319,10 @@ MonoBehaviour:
   startOverlayFadeDuration: 0.35
   startTextHoldDuration: 3
   startText2HoldDuration: 2
+  stageStartTextHoldDuration: 1.9
+  stageStartRoarClip: {fileID: 8300000, guid: 6bc1327e0df87ee46856d7941939c6d3, type: 3}
+  stageStartRoarSource: {fileID: 0}
+  stageStartRoarVolume: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1502,7 +1545,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2144274799759311436, guid: a8bc452e48cf9a642a1054acd0c15dd7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1036550089}
   m_SourcePrefab: {fileID: 100100000, guid: a8bc452e48cf9a642a1054acd0c15dd7, type: 3}
 --- !u!224 &463796960 stripped
 RectTransform:
@@ -1659,17 +1705,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4e6ec1b6a75674bba23e5d513024a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameHudLevelExpPanel
-  applyLayout: 1
-  panelSize: {x: 600, y: 140}
-  levelTextPosition: {x: -240, y: 38}
-  expLabelPosition: {x: -240, y: -38}
-  expBarOffsetMin: {x: 130, y: 34}
-  expBarOffsetMax: {x: -130, y: -78}
-  expValuePosition: {x: 175, y: 0}
-  expValueSize: {x: 210, y: 96}
-  levelFontSize: 44
-  expLabelFontSize: 40
-  expValueFontSize: 42
   levelText: {fileID: 1335080787}
   startLevel: 1
   levelFormat: Lv {0}
@@ -2269,7 +2304,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882312405}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13507336, y: -0.0011457005, z: 0.00015618508, w: 0.99083495}
+  m_LocalRotation: {x: 0.1350734, y: -0.0011457017, z: 0.00015618526, w: 0.99083495}
   m_LocalPosition: {x: 0, y: 8.352574, z: -1.8899999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2611,7 +2646,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 131921419}
   - {fileID: 2063579161}
   - {fileID: 1389480031}
   - {fileID: 919088096}
@@ -2731,8 +2765,16 @@ MonoBehaviour:
     m_Bits: 0
   obstacleSpawnClearance: 3
   heartDropPrefab: {fileID: 2015600032867330973, guid: 1ced960c5b1637e418869a71159a7076, type: 3}
-  heartDropChance: 1
+  heartDropIdleEffectPrefab: {fileID: 6532625474870085665, guid: 07a977963523b3b4dbcaa27119f6b469, type: 3}
+  heartPickupEffectPrefab: {fileID: 4938095755617958529, guid: 2e79f16be10fbd14f8d5ef191f8db4aa, type: 3}
+  heartPickupSoundClip: {fileID: 8300000, guid: 247a11d493442ad4d837dcaa5277e2aa, type: 3}
+  heartPickupSoundVolume: 1
+  heartDropChance: 0.4
+  maxSpawnedHeartDrops: 5
+  enableHeartDropIdleEffects: 0
   heartDropHeightOffset: 0.35
+  heartDropKnockbackDistance: 4.5
+  logHeartDrops: 0
 --- !u!4 &1028698014
 Transform:
   m_ObjectHideFlags: 0
@@ -2748,37 +2790,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1029256307
+--- !u!1 &1036550088 stripped
 GameObject:
+  m_CorrespondingSourceObject: {fileID: 2144274799759311436, guid: a8bc452e48cf9a642a1054acd0c15dd7, type: 3}
+  m_PrefabInstance: {fileID: 463796959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1036550089
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1029256308}
-  m_Layer: 0
-  m_Name: GameRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1029256308
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029256307}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.04312, y: 1.07637, z: -1.33349}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1036550088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1f69b6a1d8b48b44a1f7c61157c6eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameHudHeartUI
+  heartImages: []
+  fullHeartSprite: {fileID: 0}
+  emptyHeartSprite: {fileID: 0}
+  maxHearts: 3
+  currentHearts: 3
+  hideEmptyHearts: 1
+  onHeartsChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHeartsEmpty:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1144841842 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e0e14ca1fcefc544792df3cf111d4d2f, type: 3}
@@ -2932,7 +2972,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1184142857
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3302,8 +3342,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 501864177, guid: b67c088d41d882f42856d09a7fe2397e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3338,7 +3378,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 3, y: -240}
-  m_SizeDelta: {x: 403.7661, y: 89.2988}
+  m_SizeDelta: {x: 403.7661, y: 169.1707}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1389480032
 MonoBehaviour:
@@ -3821,6 +3861,9 @@ MonoBehaviour:
   gameOverMessage: GAME OVER
   gameOverImage: {fileID: 919088093}
   gameOverImageChildName: Game over Image
+  gameOverSoundClip: {fileID: 8300000, guid: 764dd16b2f6bc7b438ae4e93b5fc3747, type: 3}
+  gameOverSoundSource: {fileID: 0}
+  gameOverSoundVolume: 1
   clearMessage: LEVEL 20 CLEAR
 --- !u!114 &1521132391
 MonoBehaviour:
@@ -3900,6 +3943,7 @@ RectTransform:
   - {fileID: 2048515830}
   - {fileID: 1707585337}
   - {fileID: 1016962275}
+  - {fileID: 131921419}
   - {fileID: 463796960}
   - {fileID: 287207134}
   - {fileID: 672515807}
@@ -4047,7 +4091,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start!
+  m_text: Let's Go!!!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 86629cc79d131f94fa33d9a849d8bfbc, type: 2}
   m_sharedMaterial: {fileID: -9070568730218026796, guid: 86629cc79d131f94fa33d9a849d8bfbc, type: 2}
@@ -10947,7 +10991,7 @@ GameObject:
   - component: {fileID: 2107339781}
   - component: {fileID: 2107339786}
   m_Layer: 5
-  m_Name: GameHudCanvas
+  m_Name: GuideHudCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10977,7 +11021,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2107339780}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
@@ -11062,7 +11106,7 @@ Animation:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2107339780}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Animation: {fileID: 0}
   m_Animations: []
@@ -11110,7 +11154,6 @@ SceneRoots:
   - {fileID: 849906959}
   - {fileID: 1028698014}
   - {fileID: 502424440}
-  - {fileID: 1029256308}
   - {fileID: 2080923163}
   - {fileID: 2083173626}
   - {fileID: 334747128}

@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -19,15 +20,40 @@ public class TitleStartButtonManager : MonoBehaviour
     [SerializeField] private Color hoverColor = new(0.4f, 0.73f, 0.42f, 1f);
     [SerializeField] private Color pressedColor = new(0.2f, 0.59f, 0.21f, 1f);
 
+    private bool isLoading;
+
     private void Awake()
     {
+        UnlockCursor();
         NormalizeGameSceneName();
         SetupStartButton();
     }
 
     private void Start()
     {
+        UnlockCursor();
         SelectStartButton();
+    }
+
+    private void Update()
+    {
+        if (isLoading)
+        {
+            return;
+        }
+
+        var keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.enterKey.wasPressedThisFrame
+            || keyboard.numpadEnterKey.wasPressedThisFrame
+            || keyboard.spaceKey.wasPressedThisFrame)
+        {
+            OnStartButtonClicked();
+        }
     }
 
     private void OnValidate()
@@ -60,6 +86,11 @@ public class TitleStartButtonManager : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
+        if (isLoading)
+        {
+            return;
+        }
+
         LoadGameScene();
     }
 
@@ -72,7 +103,13 @@ public class TitleStartButtonManager : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(gameSceneName);
+        isLoading = true;
+        if (startButton != null)
+        {
+            startButton.interactable = false;
+        }
+
+        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
     }
 
     private void NormalizeGameSceneName()
@@ -91,6 +128,12 @@ public class TitleStartButtonManager : MonoBehaviour
         }
 
         EventSystem.current.SetSelectedGameObject(startButton.gameObject);
+    }
+
+    private static void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void ChangeButtonText(string newText)

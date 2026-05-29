@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace DinoGrow.Camera
 {
-    [ExecuteAlways]
     public sealed class EnvironmentSettingsController : MonoBehaviour
     {
         [Header("Skybox")]
@@ -19,22 +18,16 @@ namespace DinoGrow.Camera
         [Min(0f)]
         [SerializeField] private float fogEndDistance = 300f;
 
-        private void OnEnable()
-        {
-            Apply();
-        }
-
-        private void OnValidate()
-        {
-            Apply();
-        }
-
         public void Apply()
         {
             if (skyboxMaterial != null)
             {
                 RenderSettings.skybox = skyboxMaterial;
                 DynamicGI.UpdateEnvironment();
+            }
+            else
+            {
+                Debug.LogWarning($"{nameof(EnvironmentSettingsController)} on '{name}' has no skybox material assigned.", this);
             }
 
             RenderSettings.fog = fogEnabled;
@@ -44,5 +37,13 @@ namespace DinoGrow.Camera
             RenderSettings.fogStartDistance = fogStartDistance;
             RenderSettings.fogEndDistance = Mathf.Max(fogStartDistance, fogEndDistance);
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Apply Environment Settings")]
+        private void ApplyFromContextMenu()
+        {
+            Apply();
+        }
+#endif
     }
 }

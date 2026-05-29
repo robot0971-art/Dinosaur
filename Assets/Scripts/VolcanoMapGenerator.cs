@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -349,8 +350,4 @@ public static class VolcanoMapGenerator
         return Color.Lerp(new Color(0.8f, 0.3f, 0.0f), new Color(1.0f, 0.0f, 0.0f), t);
     }
 }
-
-public class VolcanoEnemySpawnData : MonoBehaviour
-{
-    public int level;
-}
+#endif

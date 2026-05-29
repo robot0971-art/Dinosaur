@@ -523,9 +523,6 @@ GameObject:
   - component: {fileID: 1247263032}
   - component: {fileID: 1247263031}
   - component: {fileID: 1247263030}
-  - component: {fileID: 1247263029}
-  - component: {fileID: 1247263034}
-  - component: {fileID: 1247263035}
   m_Layer: 5
   m_Name: GameHudCanvas
   m_TagString: Untagged
@@ -533,22 +530,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1247263029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1247263028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2433696b2a81ec419fc9ec4be1927f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameHudLevelText
-  levelText: {fileID: 0}
-  startLevel: 1
-  levelFormat: Lv. {0}
-  currentLevel: 1
 --- !u!114 &1247263030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -631,39 +612,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1247263034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1247263028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 332170c448d836045b81daa43eb3832c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameHudExpBarBackground
-  backgroundImage: {fileID: 0}
---- !u!114 &1247263035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1247263028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e37cef53a935ad4cab7a57717b0ffe9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameHudExpBarFill
-  fillImage: {fileID: 0}
-  fillColor:
-    r: 0
-    g: 1
-    b: 0.27
-    a: 1
-  currentExp: 70
-  maxExp: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

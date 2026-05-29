@@ -22,22 +22,58 @@ namespace DinoGrow.Gameplay.Items
         [Tooltip("Y-axis rotation speed in degrees per second.")]
         [Min(0f)]
         [SerializeField] private float rotationSpeed = 180f;
+        [SerializeField] private GameObject idleEffectPrefab;
+        [SerializeField] private Vector3 idleEffectOffset = Vector3.zero;
+        [SerializeField, Min(0f)] private float idleEffectLifetime = 15f;
 
         private Vector3 startPosition;
+        private Vector3 landingPosition;
         private float elapsed;
         private bool settled;
+        private Transform idleEffectInstance;
+        private float idleEffectStopTime;
+
+        public bool IsSettled => settled;
+
+        public void ConfigureIdleEffect(GameObject effectPrefab)
+        {
+            idleEffectPrefab = effectPrefab;
+            if (idleEffectPrefab == null)
+            {
+                DisableIdleEffect();
+                return;
+            }
+
+            EnsureIdleEffect();
+        }
+
+        public void PopTo(Vector3 targetPosition)
+        {
+            startPosition = transform.position;
+            landingPosition = targetPosition;
+            elapsed = 0f;
+            settled = false;
+        }
 
         private void OnEnable()
         {
             AlignBottomToSpawnHeight();
             startPosition = transform.position;
+            landingPosition = startPosition;
             elapsed = 0f;
             settled = false;
+            EnsureIdleEffect();
+        }
+
+        private void OnDisable()
+        {
+            DisableIdleEffect();
         }
 
         private void Update()
         {
             Rotate();
+            UpdateIdleEffectLifetime();
 
             if (settled)
             {
@@ -48,11 +84,11 @@ namespace DinoGrow.Gameplay.Items
             var duration = Mathf.Max(0.01f, popDuration);
             var progress = Mathf.Clamp01(elapsed / duration);
             var heightOffset = Mathf.Sin(progress * Mathf.PI) * popHeight;
-            transform.position = startPosition + Vector3.up * heightOffset;
+            transform.position = Vector3.Lerp(startPosition, landingPosition, progress) + Vector3.up * heightOffset;
 
             if (progress >= 1f)
             {
-                transform.position = startPosition;
+                transform.position = landingPosition;
                 settled = true;
             }
         }
@@ -60,6 +96,80 @@ namespace DinoGrow.Gameplay.Items
         private void Rotate()
         {
             transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f, Space.World);
+        }
+
+        private void EnsureIdleEffect()
+        {
+            if (idleEffectPrefab == null)
+            {
+                return;
+            }
+
+            idleEffectStopTime = idleEffectLifetime > 0f
+                ? Time.time + idleEffectLifetime
+                : 0f;
+
+            if (idleEffectInstance != null)
+            {
+                idleEffectInstance.gameObject.SetActive(true);
+                foreach (var particle in idleEffectInstance.GetComponentsInChildren<ParticleSystem>(true))
+                {
+                    particle.Play(true);
+                }
+
+                return;
+            }
+
+            var prefabTransform = idleEffectPrefab.transform;
+            if (prefabTransform == null)
+            {
+                return;
+            }
+
+            idleEffectInstance = Instantiate(idleEffectPrefab, transform).transform;
+
+            if (idleEffectInstance == null)
+            {
+                return;
+            }
+
+            idleEffectInstance.transform.localPosition = idleEffectOffset;
+            idleEffectInstance.transform.localRotation = Quaternion.identity;
+            idleEffectInstance.transform.localScale = Vector3.one;
+
+            foreach (var particle in idleEffectInstance.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                var main = particle.main;
+                main.loop = true;
+                particle.Play(true);
+            }
+        }
+
+        private void UpdateIdleEffectLifetime()
+        {
+            if (idleEffectInstance == null || idleEffectStopTime <= 0f || Time.time < idleEffectStopTime)
+            {
+                return;
+            }
+
+            idleEffectStopTime = 0f;
+            DisableIdleEffect();
+        }
+
+        private void DisableIdleEffect()
+        {
+            idleEffectStopTime = 0f;
+            if (idleEffectInstance == null)
+            {
+                return;
+            }
+
+            foreach (var particle in idleEffectInstance.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+
+            idleEffectInstance.gameObject.SetActive(false);
         }
 
         private void AlignBottomToSpawnHeight()

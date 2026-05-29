@@ -633,7 +633,7 @@ public static class GrasslandMapGenerator
         levelMarker.GetComponent<Renderer>().material = markerMat;
         levelMarker.GetComponent<Collider>().enabled = false;
 
-        spawnPoint.AddComponent<GrasslandEnemySpawnData>().level = level;
+        spawnPoint.AddComponent<GrasslandEnemySpawnData>().SetLevel(level);
     }
 
     private static Color GetLevelColor(int level)
@@ -641,9 +641,4 @@ public static class GrasslandMapGenerator
         float t = (float)level / 20f;
         return Color.Lerp(Color.green, Color.red, t);
     }
-}
-
-public class GrasslandEnemySpawnData : MonoBehaviour
-{
-    public int level;
 }

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -448,8 +449,4 @@ public static class SnowMapGenerator
         return Color.Lerp(new Color(0.5f, 0.7f, 1.0f), new Color(1.0f, 0.0f, 0.0f), t);
     }
 }
-
-public class SnowEnemySpawnData : MonoBehaviour
-{
-    public int level;
-}
+#endif
