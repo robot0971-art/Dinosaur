@@ -1136,6 +1136,9 @@ MonoBehaviour:
   walkStepVolume: 0.96
   walkStepPitch: 1
   walkStepLoopDelay: 0.17
+  roarSoundClip: {fileID: 8300000, guid: 803b561af900f0948a46f2f2acefe857, type: 3}
+  roarSoundSource: {fileID: 0}
+  roarSoundVolume: 1
   useMovementBounds: 0
   movementBoundsCenter: {x: 0, y: 0, z: 0}
   movementBoundsSize: {x: 80, y: 80}

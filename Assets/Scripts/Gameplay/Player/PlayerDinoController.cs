@@ -58,6 +58,9 @@ namespace DinoGrow.Gameplay.Player
         [SerializeField, Range(0f, 1f)] private float walkStepVolume = 0.8f;
         [SerializeField, Range(0.1f, 3f)] private float walkStepPitch = 1f;
         [SerializeField, Min(0f)] private float walkStepLoopDelay = 0.2f;
+        [SerializeField] private AudioClip roarSoundClip;
+        [SerializeField] private AudioSource roarSoundSource;
+        [SerializeField, Range(0f, 1f)] private float roarSoundVolume = 1f;
         [SerializeField] private bool useMovementBounds;
         [SerializeField] private Vector3 movementBoundsCenter;
         [SerializeField] private Vector2 movementBoundsSize = new(80f, 80f);
@@ -217,6 +220,7 @@ namespace DinoGrow.Gameplay.Player
 
             ConfigureSprintStepSource();
             ConfigureWalkStepSource();
+            ConfigureRoarSoundSource();
         }
 
         private void UseGroundLayerIfAvailable()
@@ -301,6 +305,11 @@ namespace DinoGrow.Gameplay.Player
 
             rotateInput = PlayerInputReader.ReadMoveInput();
             isSprinting = PlayerInputReader.IsSprintPressed();
+
+            if (PlayerInputReader.WasRoarPressedThisFrame())
+            {
+                PlayRoarSound();
+            }
         }
 
         private void FixedUpdate()
@@ -643,6 +652,35 @@ namespace DinoGrow.Gameplay.Player
         private void ConfigureWalkStepSource()
         {
             ConfigureStepSource(ref walkStepSource, walkStepClip, walkStepVolume, walkStepPitch);
+        }
+
+        private void ConfigureRoarSoundSource()
+        {
+            if (roarSoundClip == null)
+            {
+                return;
+            }
+
+            if (roarSoundSource == null)
+            {
+                roarSoundSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            roarSoundSource.playOnAwake = false;
+            roarSoundSource.loop = false;
+            roarSoundSource.spatialBlend = 0f;
+            roarSoundSource.volume = roarSoundVolume;
+        }
+
+        private void PlayRoarSound()
+        {
+            if (roarSoundClip == null)
+            {
+                return;
+            }
+
+            ConfigureRoarSoundSource();
+            roarSoundSource.PlayOneShot(roarSoundClip, roarSoundVolume);
         }
 
         private void ConfigureStepSource(ref AudioSource source, AudioClip clip, float volume, float pitch)

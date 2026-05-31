@@ -42,5 +42,11 @@ namespace DinoGrow.Gameplay.Player
             var keyboard = Keyboard.current;
             return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
         }
+
+        public static bool WasRoarPressedThisFrame()
+        {
+            var keyboard = Keyboard.current;
+            return keyboard != null && keyboard.gKey.wasPressedThisFrame;
+        }
     }
 }

@@ -86837,7 +86837,7 @@ MonoBehaviour:
   fogEnabled: 1
   fogMode: 3
   fogColor: {r: 0.7122642, g: 1, b: 0.91490364, a: 1}
-  fogDensity: 0.005
+  fogDensity: 0.008
   fogStartDistance: 0
   fogEndDistance: 300
 --- !u!4 &435097241
