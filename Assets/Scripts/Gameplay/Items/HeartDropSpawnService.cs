@@ -89,7 +89,7 @@ namespace DinoGrow.Gameplay.Items
                 return;
             }
 
-            SpawnHeartDropEffect(settings, context, landingPosition, idleEffectPrefab);
+            SpawnHeartDropEffect(settings, context, landingPosition);
             ConfigurePickup(settings, context, heartDrop);
             ConfigureMotion(settings, heartDrop, landingPosition, idleEffectPrefab);
 
@@ -134,15 +134,14 @@ namespace DinoGrow.Gameplay.Items
         private void SpawnHeartDropEffect(
             HeartDropSpawnSettings settings,
             HeartDropSpawnContext context,
-            Vector3 position,
-            GameObject resolvedIdleEffectPrefab)
+            Vector3 position)
         {
             if (!settings.EnableSpawnEffect)
             {
                 return;
             }
 
-            var effectPrefab = resolvedIdleEffectPrefab;
+            var effectPrefab = settings.HeartDropIdleEffectPrefab;
             if (effectPrefab == null || effectPrefab.transform == null)
             {
                 return;

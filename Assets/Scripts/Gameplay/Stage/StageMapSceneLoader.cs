@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using DinoGrow.Core.Growth;
 using DinoGrow.Core.Stage;
 using DinoGrow.Camera;
@@ -1118,38 +1119,22 @@ namespace DinoGrow.Gameplay.Stage
                 return null;
             }
 
-            var availableCount = 0;
+            var initialCandidates = new List<string>();
             for (var i = 0; i < mapScenePaths.Length; i++)
             {
-                if (!IsMap4ScenePath(mapScenePaths[i]))
+                var candidate = mapScenePaths[i];
+                if (!IsMap4ScenePath(candidate))
                 {
-                    availableCount++;
+                    initialCandidates.Add(candidate);
                 }
             }
 
-            if (availableCount == 0)
+            if (initialCandidates.Count == 0)
             {
                 return PickRandomMapScenePath();
             }
 
-            var selectedIndex = Random.Range(0, availableCount);
-            for (var i = 0; i < mapScenePaths.Length; i++)
-            {
-                var candidate = mapScenePaths[i];
-                if (IsMap4ScenePath(candidate))
-                {
-                    continue;
-                }
-
-                if (selectedIndex == 0)
-                {
-                    return candidate;
-                }
-
-                selectedIndex--;
-            }
-
-            return PickRandomMapScenePath();
+            return initialCandidates[Random.Range(0, initialCandidates.Count)];
         }
 
         private static bool IsMap4ScenePath(string scenePath)

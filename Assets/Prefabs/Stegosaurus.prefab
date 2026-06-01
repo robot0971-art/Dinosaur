@@ -1145,7 +1145,9 @@ MonoBehaviour:
   fleeSpeedMultiplier: 1.65
   chaseDetectDistance: 16
   chaseStopDistance: 22
-  chaseSpeedMultiplier: 1.45
+  chaseSpeedMultiplier: 2.85
+  minChaseSpeed: 5.4
+  maxChaseSpeed: 6.2
   useNavMeshAgent: 0
   navDestinationDistance: 8
   navSampleDistance: 4

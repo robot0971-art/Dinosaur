@@ -24,7 +24,9 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float fleeSpeedMultiplier = 1.65f;
         [SerializeField] private float chaseDetectDistance = 16f;
         [SerializeField] private float chaseStopDistance = 22f;
-        [SerializeField] private float chaseSpeedMultiplier = 1.45f;
+        [SerializeField] private float chaseSpeedMultiplier = 2.85f;
+        [SerializeField] private float minChaseSpeed = 5.4f;
+        [SerializeField] private float maxChaseSpeed = 6.2f;
         [SerializeField] private bool useNavMeshAgent = true;
         [SerializeField] private float navDestinationDistance = 8f;
         [SerializeField] private float navRepathInterval = 0.25f;
@@ -152,7 +154,9 @@ namespace DinoGrow.Gameplay.Enemy
             behaviorPlanner ??= new EnemyBehaviorPlanner(
                     fleeSpeedMultiplier,
                     chaseSpeedMultiplier,
-                    animationRule);
+                    animationRule,
+                    minChaseSpeed,
+                    maxChaseSpeed);
             playerBehaviorSensor ??= CreatePlayerBehaviorSensor();
         }
 

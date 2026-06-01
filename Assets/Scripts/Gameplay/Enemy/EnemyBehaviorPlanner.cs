@@ -7,15 +7,21 @@ namespace DinoGrow.Gameplay.Enemy
     {
         private readonly float fleeSpeedMultiplier;
         private readonly float chaseSpeedMultiplier;
+        private readonly float minChaseSpeed;
+        private readonly float maxChaseSpeed;
         private readonly EnemyAnimationMoveRule animationRule;
 
         public EnemyBehaviorPlanner(
             float fleeSpeedMultiplier,
             float chaseSpeedMultiplier,
-            EnemyAnimationMoveRule animationRule)
+            EnemyAnimationMoveRule animationRule,
+            float minChaseSpeed = 5.4f,
+            float maxChaseSpeed = 6.2f)
         {
             this.fleeSpeedMultiplier = fleeSpeedMultiplier;
             this.chaseSpeedMultiplier = chaseSpeedMultiplier;
+            this.minChaseSpeed = minChaseSpeed;
+            this.maxChaseSpeed = maxChaseSpeed;
             this.animationRule = animationRule;
         }
 
@@ -29,7 +35,10 @@ namespace DinoGrow.Gameplay.Enemy
             return intent switch
             {
                 EnemyBehaviorIntent.Flee => CreatePlan(GetFleeDirection(playerOffset), moveSpeed * fleeSpeedMultiplier, true),
-                EnemyBehaviorIntent.Chase => CreatePlan(GetChaseDirection(playerOffset, fallbackChaseDirection), moveSpeed * chaseSpeedMultiplier, true),
+                EnemyBehaviorIntent.Chase => CreatePlan(
+                    GetChaseDirection(playerOffset, fallbackChaseDirection),
+                    Mathf.Clamp(moveSpeed * chaseSpeedMultiplier, minChaseSpeed, maxChaseSpeed),
+                    true),
                 _ => CreatePlan(wanderDirection, moveSpeed, animationRule.IsRunning(moveSpeed))
             };
         }

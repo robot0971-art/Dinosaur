@@ -907,7 +907,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &330585546
@@ -2764,8 +2764,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   obstacleSpawnClearance: 3
+  centerWeightedSpawnChance: 0.65
+  centerWeightedSpawnScale: 0.65
+  spawnEdgePaddingRatio: 0.12
   heartDropPrefab: {fileID: 2015600032867330973, guid: 1ced960c5b1637e418869a71159a7076, type: 3}
   heartDropIdleEffectPrefab: {fileID: 6532625474870085665, guid: 07a977963523b3b4dbcaa27119f6b469, type: 3}
+  enableHeartDropSpawnEffect: 1
   heartPickupEffectPrefab: {fileID: 4938095755617958529, guid: 2e79f16be10fbd14f8d5ef191f8db4aa, type: 3}
   heartPickupSoundClip: {fileID: 8300000, guid: 247a11d493442ad4d837dcaa5277e2aa, type: 3}
   heartPickupSoundVolume: 1
@@ -3686,7 +3690,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB098\uBCF4\uB2E4 \uC57D\uD55C \uB140\uC11D\uB4E4\uC744 \uAD34\uB86D\uD788\uC790!!!"
+  m_text: "\uB808\uBCA8\uC774 \uB0AE\uC740 \uACF5\uB8E1\uBD80\uD130 \uB0E0\uB0E0, 
+    \uC465\uC465 \uD06C\uC790!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 86629cc79d131f94fa33d9a849d8bfbc, type: 2}
   m_sharedMaterial: {fileID: -9070568730218026796, guid: 86629cc79d131f94fa33d9a849d8bfbc, type: 2}
