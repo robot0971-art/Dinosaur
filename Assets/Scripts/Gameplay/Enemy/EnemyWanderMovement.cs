@@ -68,6 +68,7 @@ namespace DinoGrow.Gameplay.Enemy
         private EnemyAreaMovementRule areaRule;
         private EnemyWanderDirectionRule wanderDirectionRule;
         private EnemyBehaviorPlanner behaviorPlanner;
+        private EnemyPlayerBehaviorSensor playerBehaviorSensor;
         private float nextNavRepathTime;
         private Vector3 lastNavDestination;
         private float nextAiThinkTime;
@@ -80,6 +81,7 @@ namespace DinoGrow.Gameplay.Enemy
         {
             this.behaviorResolver = behaviorResolver;
             this.gameState = gameState;
+            RebuildPlayerBehaviorSensor();
         }
 
         public void Configure(
@@ -100,6 +102,7 @@ namespace DinoGrow.Gameplay.Enemy
                 this.gameState = gameState;
             }
 
+            RebuildPlayerBehaviorSensor();
             areaCenter = center;
             areaSize = size;
             moveSpeed = speed;
@@ -150,6 +153,21 @@ namespace DinoGrow.Gameplay.Enemy
                     fleeSpeedMultiplier,
                     chaseSpeedMultiplier,
                     animationRule);
+            playerBehaviorSensor ??= CreatePlayerBehaviorSensor();
+        }
+
+        private void RebuildPlayerBehaviorSensor()
+        {
+            playerBehaviorSensor = CreatePlayerBehaviorSensor();
+        }
+
+        private EnemyPlayerBehaviorSensor CreatePlayerBehaviorSensor()
+        {
+            return new EnemyPlayerBehaviorSensor(
+                behaviorResolver,
+                fleeDetectDistance,
+                chaseDetectDistance,
+                chaseStopDistance);
         }
 
         private void UseGroundLayerIfAvailable()
@@ -364,23 +382,14 @@ namespace DinoGrow.Gameplay.Enemy
 
         private EnemyBehaviorIntent ResolveBehaviorIntent(out Vector3 playerOffset)
         {
-            playerOffset = Vector3.zero;
-            if (behaviorResolver == null || enemy == null || player == null || playerController == null)
-            {
-                return EnemyBehaviorIntent.Wander;
-            }
-
-            playerOffset = player.position - transform.position;
-            playerOffset.y = 0f;
-
-            return behaviorResolver.Resolve(
-                enemy.Level,
-                playerController.Level,
-                playerOffset.magnitude,
-                fleeDetectDistance,
-                chaseDetectDistance,
-                chaseStopDistance,
-                isChasingPlayer);
+            ConfigureRules();
+            return playerBehaviorSensor.Resolve(
+                enemy,
+                transform,
+                player,
+                playerController,
+                isChasingPlayer,
+                out playerOffset);
         }
 
         private void SetDesiredMove(Vector3 direction, float speed)

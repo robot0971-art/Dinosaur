@@ -1,5 +1,4 @@
 using DinoGrow.Gameplay.Player;
-using DinoGrow.Gameplay.VFX;
 using DinoGrow.Infrastructure.Pooling;
 using System.Collections;
 using UnityEngine;
@@ -23,6 +22,7 @@ namespace DinoGrow.Gameplay.Items
         private float nextNearbyCheckTime;
         private IObjectPoolService poolService;
         private HeartDropMotion dropMotion;
+        private readonly HeartPickupFeedbackService feedbackService = new();
         private Coroutine lifetimeRoutine;
 
         public void ConfigurePickupEffect(IObjectPoolService pool, GameObject effectPrefab)
@@ -145,7 +145,12 @@ namespace DinoGrow.Gameplay.Items
                 return false;
             }
 
-            SpawnPickupEffect();
+            feedbackService.Play(
+                transform.position,
+                poolService,
+                pickupEffectPrefab,
+                pickupSoundClip,
+                pickupSoundVolume);
             consumed = true;
             ReturnToPool();
             return true;
@@ -196,61 +201,6 @@ namespace DinoGrow.Gameplay.Items
             }
 
             gameObject.SetActive(false);
-        }
-
-        private void SpawnPickupEffect()
-        {
-            PlayPickupSound();
-
-            if (pickupEffectPrefab == null)
-            {
-                return;
-            }
-
-            var prefabTransform = pickupEffectPrefab != null ? pickupEffectPrefab.transform : null;
-            if (prefabTransform == null)
-            {
-                return;
-            }
-
-            if (poolService == null)
-            {
-                var effect = Instantiate(pickupEffectPrefab, transform.position, Quaternion.identity);
-                var returner = effect.GetComponent<PooledOneShotVfx>() ?? effect.AddComponent<PooledOneShotVfx>();
-                returner.Play(null, effect.transform);
-                return;
-            }
-
-            var effectRoot = poolService.Spawn(prefabTransform, transform.position, Quaternion.identity);
-            if (effectRoot == null)
-            {
-                return;
-            }
-
-            var pooledVfx = effectRoot.GetComponent<PooledOneShotVfx>() ?? effectRoot.gameObject.AddComponent<PooledOneShotVfx>();
-            pooledVfx.Play(poolService, effectRoot);
-        }
-
-        private void PlayPickupSound()
-        {
-            if (pickupSoundClip == null || pickupSoundVolume <= 0f)
-            {
-                return;
-            }
-
-            var soundObject = new GameObject("HeartPickupSound");
-            soundObject.transform.position = transform.position;
-
-            var source = soundObject.AddComponent<AudioSource>();
-            source.clip = pickupSoundClip;
-            source.volume = pickupSoundVolume;
-            source.spatialBlend = 0.85f;
-            source.minDistance = 1.5f;
-            source.maxDistance = 18f;
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.Play();
-
-            Destroy(soundObject, pickupSoundClip.length + 0.1f);
         }
 
         private void EnsureTriggerCollider()
