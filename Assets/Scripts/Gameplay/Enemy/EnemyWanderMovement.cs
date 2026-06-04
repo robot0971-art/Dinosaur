@@ -13,6 +13,7 @@ namespace DinoGrow.Gameplay.Enemy
     {
         private static readonly List<EnemyWanderMovement> ActiveMovements = new();
         private static readonly RaycastHit[] ObstacleHits = new RaycastHit[12];
+        private static readonly Collider[] ObstacleOverlapHits = new Collider[12];
 
         [SerializeField] private float moveSpeed = 3.2f;
         [SerializeField] private float turnSpeed = 420f;
@@ -42,7 +43,7 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundRaycastDistance = 120f;
         [SerializeField] private float groundOffset = 0f;
         [SerializeField] private float maxGroundSnapStep = 0.2f;
-        [SerializeField] private bool avoidObstaclesWithoutNavMesh;
+        [SerializeField] private bool avoidObstaclesWithoutNavMesh = true;
         [SerializeField] private LayerMask obstacleLayers = ~0;
         [SerializeField] private bool ignoreOtherEnemies = true;
         [SerializeField] private DinoAnimatorView animatorView;
@@ -61,7 +62,6 @@ namespace DinoGrow.Gameplay.Enemy
         private float nextDirectionTime;
         private Vector3 desiredMoveDirection;
         private float desiredMoveSpeed;
-        private float visualBottomOffset;
         private bool isChasingPlayer;
         private float suppressPlayerBehaviorUntil;
         private EnemyBehaviorResolver behaviorResolver;
@@ -71,12 +71,15 @@ namespace DinoGrow.Gameplay.Enemy
         private EnemyWanderDirectionRule wanderDirectionRule;
         private EnemyBehaviorPlanner behaviorPlanner;
         private EnemyPlayerBehaviorSensor playerBehaviorSensor;
-        private float nextNavRepathTime;
-        private Vector3 lastNavDestination;
+        private EnemyAnimationDriver animationDriver;
+        private EnemyNavAgentController navAgentController;
+        private EnemyGroundProbe groundProbe;
         private float nextAiThinkTime;
+        private float obstacleCastRadius;
+        private float obstacleCastHeight;
+        private Vector3 obstacleCastCenter;
         private EnemyBehaviorIntent cachedBehaviorIntent = EnemyBehaviorIntent.Wander;
         private Vector3 cachedPlayerOffset;
-        private bool farAnimationUpdates;
 
         [Inject]
         public void Construct(EnemyBehaviorResolver behaviorResolver, GameStateController gameState)
@@ -110,12 +113,11 @@ namespace DinoGrow.Gameplay.Enemy
             moveSpeed = speed;
             desiredMoveDirection = Vector3.zero;
             desiredMoveSpeed = 0f;
-            nextNavRepathTime = 0f;
-            lastNavDestination = Vector3.positiveInfinity;
             nextAiThinkTime = Time.time + Random.Range(0f, Mathf.Max(0.01f, aiThinkInterval));
             ConfigureRules();
-            CacheVisualBottomOffset();
-            transform.position = SnapToGroundImmediate(transform.position);
+            ConfigureGroundProbe();
+            groundProbe.CacheVisualBottomOffset();
+            transform.position = groundProbe.SnapImmediate(transform.position);
             SetPlayer(playerTransform);
             ConfigureBody();
             ConfigureAgent();
@@ -158,6 +160,26 @@ namespace DinoGrow.Gameplay.Enemy
                     minChaseSpeed,
                     maxChaseSpeed);
             playerBehaviorSensor ??= CreatePlayerBehaviorSensor();
+            animationDriver ??= new EnemyAnimationDriver(
+                animatorView,
+                animationRule,
+                transform,
+                farAnimationDistance,
+                farAnimationUpdateInterval);
+            navAgentController ??= new EnemyNavAgentController(gameObject, transform, agent);
+            groundProbe ??= new EnemyGroundProbe(transform);
+        }
+
+        private void ConfigureGroundProbe()
+        {
+            groundProbe ??= new EnemyGroundProbe(transform);
+            groundProbe.Configure(
+                groundLayers,
+                areaCenter,
+                groundRaycastHeight,
+                groundRaycastDistance,
+                groundOffset,
+                maxGroundSnapStep);
         }
 
         private void RebuildPlayerBehaviorSensor()
@@ -203,10 +225,7 @@ namespace DinoGrow.Gameplay.Enemy
         private void OnDisable()
         {
             ActiveMovements.Remove(this);
-            if (agent != null && agent.enabled && agent.isOnNavMesh)
-            {
-                agent.ResetPath();
-            }
+            navAgentController?.ResetPath();
         }
 
         private void Update()
@@ -214,8 +233,7 @@ namespace DinoGrow.Gameplay.Enemy
             if (gameState == null || !gameState.IsPlaying)
             {
                 SetDesiredMove(Vector3.zero, 0f);
-                animatorView?.SetMove(0f, false);
-                animatorView?.SetPlaybackSpeed(1f);
+                animationDriver?.Stop();
                 return;
             }
 
@@ -224,7 +242,7 @@ namespace DinoGrow.Gameplay.Enemy
             if (Time.time < suppressPlayerBehaviorUntil)
             {
                 SetDesiredMove(Vector3.zero, 0f);
-                animatorView?.SetMove(0f, false);
+                animationDriver?.StopMoveOnly();
                 return;
             }
 
@@ -267,21 +285,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void UpdateAnimationDetailLevel()
         {
-            if (animatorView == null || player == null)
-            {
-                return;
-            }
-
-            var offset = player.position - transform.position;
-            offset.y = 0f;
-            var shouldUseFarUpdates = offset.sqrMagnitude >= farAnimationDistance * farAnimationDistance;
-            if (shouldUseFarUpdates == farAnimationUpdates)
-            {
-                return;
-            }
-
-            farAnimationUpdates = shouldUseFarUpdates;
-            animatorView.SetLowDetailUpdates(farAnimationUpdates, farAnimationUpdateInterval);
+            animationDriver?.UpdateDetailLevel(player);
         }
 
         private bool TryApplyPlayerBehavior(EnemyBehaviorIntent behaviorIntent, Vector3 playerOffset)
@@ -323,8 +327,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void ApplyAnimationPlan(EnemyMovementPlan plan)
         {
-            animatorView?.SetMove(animationRule.GetMoveBlend(plan.Speed, plan.IsRunning), plan.IsRunning);
-            animatorView?.SetPlaybackSpeed(animationRule.GetPlaybackSpeed(plan.Speed, plan.IsRunning));
+            animationDriver?.ApplyMovementPlan(plan);
         }
 
         private void FixedUpdate()
@@ -332,19 +335,16 @@ namespace DinoGrow.Gameplay.Enemy
             if (gameState == null || !gameState.IsPlaying)
             {
                 StopBody();
-                if (agent != null && agent.enabled && agent.isOnNavMesh)
-                {
-                    agent.ResetPath();
-                }
+                navAgentController?.ResetPath();
 
                 return;
             }
 
-            if (CanUseAgent())
+            if (navAgentController != null && navAgentController.CanUse())
             {
-                if (IsAgentStalled())
+                if (navAgentController.IsStalled(desiredMoveDirection, desiredMoveSpeed))
                 {
-                    DisableAgentForManualMovement();
+                    navAgentController.Disable();
                     Move(desiredMoveDirection, desiredMoveSpeed, Time.fixedDeltaTime);
                     return;
                 }
@@ -363,7 +363,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void LateUpdate()
         {
-            RotateWithAgentVelocity();
+            navAgentController?.RotateWithVelocity(turnSpeed);
         }
 
         public void OnPlayerBitten(float idleDuration = 0.75f)
@@ -371,8 +371,7 @@ namespace DinoGrow.Gameplay.Enemy
             isChasingPlayer = false;
             suppressPlayerBehaviorUntil = Time.time + Mathf.Max(0f, idleDuration);
             SetDesiredMove(Vector3.zero, 0f);
-            animatorView?.SetMove(0f, false);
-            animatorView?.SetPlaybackSpeed(1f);
+            animationDriver?.Stop();
             nextDirectionTime = suppressPlayerBehaviorUntil;
             PickNewDirection();
         }
@@ -436,7 +435,8 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
-            CacheVisualBottomOffset();
+            ConfigureGroundProbe();
+            groundProbe.CacheVisualBottomOffset();
             body.useGravity = false;
             body.isKinematic = true;
             body.interpolation = RigidbodyInterpolation.Interpolate;
@@ -449,211 +449,50 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void ConfigureAgent()
         {
-            if (!useNavMeshAgent)
-            {
-                if (agent != null)
-                {
-                    agent.enabled = false;
-                }
-
-                return;
-            }
-
-            var navSearchRadius = Mathf.Max(navSampleDistance, navVerticalSampleDistance);
-            if (!NavMesh.SamplePosition(transform.position, out var navHit, navSearchRadius, NavMesh.AllAreas))
-            {
-                useNavMeshAgent = false;
-                if (agent != null)
-                {
-                    agent.enabled = false;
-                }
-
-                return;
-            }
-
-            transform.position = navHit.position;
-
-            if (agent == null)
-            {
-                agent = GetComponent<NavMeshAgent>();
-                if (agent == null)
-                {
-                    agent = gameObject.AddComponent<NavMeshAgent>();
-                }
-            }
-
-            if (agent == null)
-            {
-                useNavMeshAgent = false;
-                return;
-            }
-
-            agent.speed = Mathf.Max(0.1f, moveSpeed);
-            agent.angularSpeed = turnSpeed;
-            agent.acceleration = Mathf.Max(8f, moveSpeed * 4f);
-            agent.stoppingDistance = 0f;
-            agent.autoBraking = false;
-            agent.updateRotation = false;
-            agent.updateUpAxis = false;
-            agent.radius = Mathf.Max(0.1f, groundColliderRadius);
-            agent.height = Mathf.Max(agent.radius * 2f, groundColliderHeight);
-            agent.baseOffset = GetAgentBaseOffset();
-            agent.enabled = true;
-            agent.Warp(navHit.position);
-            nextNavRepathTime = 0f;
-            lastNavDestination = Vector3.positiveInfinity;
+            ConfigureRules();
+            useNavMeshAgent = navAgentController != null
+                && navAgentController.Configure(
+                    useNavMeshAgent,
+                    moveSpeed,
+                    turnSpeed,
+                    groundColliderRadius,
+                    groundColliderHeight,
+                    GetAgentBaseOffset(),
+                    navSampleDistance,
+                    navVerticalSampleDistance);
+            agent = navAgentController?.Agent;
         }
 
         private float GetAgentBaseOffset()
         {
-            CacheVisualBottomOffset();
-            return Mathf.Abs(visualBottomOffset) <= 0.001f
+            ConfigureGroundProbe();
+            groundProbe.CacheVisualBottomOffset();
+            return Mathf.Abs(groundProbe.VisualBottomOffset) <= 0.001f
                 ? 0f
-                : -visualBottomOffset;
-        }
-
-        private bool CanUseAgent()
-        {
-            return useNavMeshAgent && agent != null && agent.enabled && agent.isOnNavMesh;
+                : -groundProbe.VisualBottomOffset;
         }
 
         private void ApplyAgentDestination()
         {
-            if (!CanUseAgent())
-            {
-                return;
-            }
-
-            agent.speed = Mathf.Max(0.1f, desiredMoveSpeed);
-            if (desiredMoveDirection.sqrMagnitude <= 0.001f || desiredMoveSpeed <= 0.001f)
-            {
-                agent.ResetPath();
-                lastNavDestination = Vector3.positiveInfinity;
-                return;
-            }
-
-            var destination = transform.position + desiredMoveDirection * navDestinationDistance;
-            destination = ClampToArea(destination);
-            if (!ShouldRefreshAgentDestination(destination))
-            {
-                return;
-            }
-
-            if (!NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
-            {
-                DisableAgentForManualMovement();
-                return;
-            }
-
-            if (!agent.SetDestination(hit.position))
-            {
-                DisableAgentForManualMovement();
-                return;
-            }
-
-            MarkAgentDestinationRefreshed(hit.position);
+            navAgentController?.ApplyMoveDestination(
+                transform.position,
+                desiredMoveDirection,
+                desiredMoveSpeed,
+                navDestinationDistance,
+                navSampleDistance,
+                navRepathInterval,
+                ClampToArea);
+            useNavMeshAgent = navAgentController != null && navAgentController.CanUse();
         }
 
         private void ApplyAgentDestination(Vector3 destination, float speed)
         {
-            if (!CanUseAgent())
-            {
-                return;
-            }
-
-            agent.speed = Mathf.Max(0.1f, speed);
-            destination = ClampToArea(destination);
-            if (!ShouldRefreshAgentDestination(destination))
-            {
-                return;
-            }
-
-            if (NavMesh.SamplePosition(destination, out var hit, navSampleDistance, NavMesh.AllAreas))
-            {
-                if (!agent.SetDestination(hit.position))
-                {
-                    DisableAgentForManualMovement();
-                    return;
-                }
-
-                MarkAgentDestinationRefreshed(hit.position);
-                return;
-            }
-
-            DisableAgentForManualMovement();
-        }
-
-        private bool ShouldRefreshAgentDestination(Vector3 destination)
-        {
-            if (Time.time >= nextNavRepathTime)
-            {
-                return true;
-            }
-
-            if (float.IsInfinity(lastNavDestination.x))
-            {
-                return true;
-            }
-
-            return (destination - lastNavDestination).sqrMagnitude > 1f;
-        }
-
-        private void MarkAgentDestinationRefreshed(Vector3 destination)
-        {
-            lastNavDestination = destination;
-            nextNavRepathTime = Time.time + Mathf.Max(0.05f, navRepathInterval);
-        }
-
-        private void DisableAgentForManualMovement()
-        {
-            useNavMeshAgent = false;
-            if (agent != null)
-            {
-                agent.ResetPath();
-                agent.enabled = false;
-            }
-        }
-
-        private bool IsAgentStalled()
-        {
-            if (!CanUseAgent() || desiredMoveDirection.sqrMagnitude <= 0.001f || desiredMoveSpeed <= 0.001f)
-            {
-                return false;
-            }
-
-            if (!agent.hasPath && !agent.pathPending)
-            {
-                return true;
-            }
-
-            if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
-            {
-                return true;
-            }
-
-            var velocity = agent.velocity;
-            velocity.y = 0f;
-            return !agent.pathPending
-                && agent.remainingDistance > agent.stoppingDistance + 0.1f
-                && velocity.sqrMagnitude <= 0.0001f;
-        }
-
-        private void RotateWithAgentVelocity()
-        {
-            if (!CanUseAgent())
-            {
-                return;
-            }
-
-            var velocity = agent.desiredVelocity;
-            velocity.y = 0f;
-            if (velocity.sqrMagnitude <= 0.001f)
-            {
-                return;
-            }
-
-            var targetRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            navAgentController?.ApplyDestination(
+                ClampToArea(destination),
+                speed,
+                navSampleDistance,
+                navRepathInterval);
+            useNavMeshAgent = navAgentController != null && navAgentController.CanUse();
         }
 
         private void StopBody()
@@ -705,6 +544,9 @@ namespace DinoGrow.Gameplay.Enemy
             capsule.radius = colliderRadius;
             capsule.height = Mathf.Max(colliderHeight, colliderRadius * 2f);
             capsule.center = colliderCenter;
+            obstacleCastRadius = capsule.radius;
+            obstacleCastHeight = capsule.height;
+            obstacleCastCenter = capsule.center;
 
             var trigger = GetComponent<BoxCollider>();
             if (trigger == null)
@@ -853,26 +695,26 @@ namespace DinoGrow.Gameplay.Enemy
         {
             ConfigureRules();
             areaRule.Configure(areaCenter, areaSize);
-            return SnapToGround(areaRule.Clamp(position));
-        }
-
-        private Vector3 SnapToGroundImmediate(Vector3 position)
-        {
-            if (TryGetGroundY(position, out var targetY))
-            {
-                position.y = targetY - visualBottomOffset;
-            }
-
-            return position;
+            ConfigureGroundProbe();
+            return groundProbe.Snap(areaRule.Clamp(position));
         }
 
         private Vector3 GetSafeMovePosition(Vector3 currentPosition, Vector3 direction, float distance)
         {
             var nextPosition = currentPosition + direction * distance;
             nextPosition = ClampToArea(nextPosition);
-            if (!IsWaterAt(nextPosition))
+            ConfigureGroundProbe();
+            if (!groundProbe.IsWaterAt(nextPosition))
             {
-                if (avoidObstaclesWithoutNavMesh && IsObstacleInMove(currentPosition, direction, distance, out var hit))
+                if (ShouldAvoidObstaclesWithoutNavMesh()
+                    && TryGetObstacleEscapePosition(currentPosition, out var escapePosition))
+                {
+                    PickNewDirection();
+                    return groundProbe.Snap(ClampToArea(escapePosition));
+                }
+
+                if (ShouldAvoidObstaclesWithoutNavMesh()
+                    && IsObstacleInMove(currentPosition, direction, distance, out var hit))
                 {
                     var slideDirection = Vector3.ProjectOnPlane(direction, hit.normal);
                     slideDirection.y = 0f;
@@ -881,11 +723,11 @@ namespace DinoGrow.Gameplay.Enemy
                     {
                         moveDirection = slideDirection.normalized;
                         nextDirectionTime = Time.time + directionChangeInterval;
-                        return SnapToGround(ClampToArea(currentPosition + moveDirection * distance));
+                        return groundProbe.Snap(ClampToArea(currentPosition + moveDirection * distance));
                     }
 
                     PickNewDirection();
-                    return SnapToGround(currentPosition);
+                    return groundProbe.Snap(currentPosition);
                 }
 
                 return nextPosition;
@@ -901,7 +743,7 @@ namespace DinoGrow.Gameplay.Enemy
                 PickNewDirection();
             }
 
-            return SnapToGround(currentPosition);
+            return groundProbe.Snap(currentPosition);
         }
 
         private Vector3 GetAreaSafeDirection(Vector3 direction)
@@ -931,115 +773,6 @@ namespace DinoGrow.Gameplay.Enemy
             return areaRule.TryGetInwardDirection(transform.position, out inwardDirection);
         }
 
-        private Vector3 SnapToGround(Vector3 position)
-        {
-            if (TryGetGroundY(position, out var targetY))
-            {
-                position.y = Mathf.MoveTowards(position.y, targetY - visualBottomOffset, maxGroundSnapStep);
-            }
-
-            return position;
-        }
-
-        private void CacheVisualBottomOffset()
-        {
-            var bounds = CalculateWorldVisualBounds();
-            visualBottomOffset = bounds.HasValue
-                ? bounds.Value.min.y - transform.position.y
-                : 0f;
-        }
-
-        private Bounds? CalculateWorldVisualBounds()
-        {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                    continue;
-                }
-
-                bounds.Encapsulate(targetRenderer.bounds);
-            }
-
-            return hasBounds ? bounds : null;
-        }
-
-        private bool TryGetGroundY(Vector3 position, out float groundY)
-        {
-            groundY = position.y;
-            var originY = Mathf.Max(position.y + groundRaycastHeight, areaCenter.y + groundRaycastHeight);
-            var origin = new Vector3(position.x, originY, position.z);
-            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
-            if (hits.Length == 0)
-            {
-                return false;
-            }
-
-            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
-            foreach (var hit in hits)
-            {
-                if (!IsGroundCollider(hit.collider))
-                {
-                    continue;
-                }
-
-                if (hit.collider.GetComponentInParent<DinoEnemy>() != null)
-                {
-                    continue;
-                }
-
-                if (hit.collider.GetComponentInParent<PlayerDinoController>() != null)
-                {
-                    continue;
-                }
-
-                groundY = hit.point.y + groundOffset;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsWaterAt(Vector3 position)
-        {
-            var originY = Mathf.Max(position.y + groundRaycastHeight, areaCenter.y + groundRaycastHeight);
-            var origin = new Vector3(position.x, originY, position.z);
-            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
-            if (hits.Length == 0)
-            {
-                return false;
-            }
-
-            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
-            foreach (var hit in hits)
-            {
-                if (hit.collider.GetComponentInParent<DinoEnemy>() != null)
-                {
-                    continue;
-                }
-
-                if (hit.collider.GetComponentInParent<PlayerDinoController>() != null)
-                {
-                    continue;
-                }
-
-                return IsWaterCollider(hit.collider);
-            }
-
-            return false;
-        }
-
         private bool IsObstacleInMove(Vector3 currentPosition, Vector3 direction, float distance, out RaycastHit hit)
         {
             hit = default;
@@ -1048,12 +781,7 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
-            var radius = Mathf.Max(0.1f, groundColliderRadius);
-            var height = Mathf.Max(radius * 2f, groundColliderHeight);
-            var center = currentPosition + Vector3.up * (height * 0.5f);
-            var halfSegment = Mathf.Max(0f, (height * 0.5f) - radius);
-            var point1 = center + Vector3.up * halfSegment;
-            var point2 = center - Vector3.up * halfSegment;
+            GetObstacleCapsule(currentPosition, out var point1, out var point2, out var radius);
             var castDistance = distance + radius;
             var hitCount = Physics.CapsuleCastNonAlloc(
                 point1,
@@ -1086,6 +814,65 @@ namespace DinoGrow.Gameplay.Enemy
             return false;
         }
 
+        private bool TryGetObstacleEscapePosition(Vector3 currentPosition, out Vector3 escapePosition)
+        {
+            GetObstacleCapsule(currentPosition, out var point1, out var point2, out var radius);
+            var hitCount = Physics.OverlapCapsuleNonAlloc(
+                point1,
+                point2,
+                radius,
+                ObstacleOverlapHits,
+                obstacleLayers,
+                QueryTriggerInteraction.Ignore);
+
+            for (var i = 0; i < hitCount; i++)
+            {
+                var targetCollider = ObstacleOverlapHits[i];
+                if (!IsBlockingObstacle(targetCollider))
+                {
+                    continue;
+                }
+
+                var closestPoint = targetCollider.ClosestPoint(currentPosition);
+                var away = currentPosition - closestPoint;
+                away.y = 0f;
+                if (away.sqrMagnitude <= 0.001f)
+                {
+                    away = currentPosition - targetCollider.bounds.center;
+                    away.y = 0f;
+                }
+
+                if (away.sqrMagnitude <= 0.001f)
+                {
+                    away = -transform.forward;
+                    away.y = 0f;
+                }
+
+                escapePosition = currentPosition + away.normalized * Mathf.Max(0.25f, radius);
+                return true;
+            }
+
+            escapePosition = currentPosition;
+            return false;
+        }
+
+        private void GetObstacleCapsule(Vector3 rootPosition, out Vector3 point1, out Vector3 point2, out float radius)
+        {
+            radius = Mathf.Max(0.1f, obstacleCastRadius > 0f ? obstacleCastRadius : groundColliderRadius);
+            var height = Mathf.Max(radius * 2f, obstacleCastHeight > 0f ? obstacleCastHeight : groundColliderHeight);
+            var center = rootPosition + (obstacleCastCenter == Vector3.zero
+                ? Vector3.up * (height * 0.5f)
+                : obstacleCastCenter);
+            var halfSegment = Mathf.Max(0f, (height * 0.5f) - radius);
+            point1 = center + Vector3.up * halfSegment;
+            point2 = center - Vector3.up * halfSegment;
+        }
+
+        private bool ShouldAvoidObstaclesWithoutNavMesh()
+        {
+            return avoidObstaclesWithoutNavMesh || !useNavMeshAgent;
+        }
+
         private sealed class RaycastHitDistanceComparer : IComparer<RaycastHit>
         {
             public static readonly RaycastHitDistanceComparer Instance = new();
@@ -1116,48 +903,6 @@ namespace DinoGrow.Gameplay.Enemy
             return IsNamedObstacle(targetCollider);
         }
 
-        private static bool IsGroundCollider(Collider targetCollider)
-        {
-            if (targetCollider == null)
-            {
-                return false;
-            }
-
-            var target = targetCollider.transform;
-            while (target != null)
-            {
-                if (IsNonGroundSurfaceName(target.name))
-                {
-                    return false;
-                }
-
-                target = target.parent;
-            }
-
-            return true;
-        }
-
-        private static bool IsWaterCollider(Collider targetCollider)
-        {
-            if (targetCollider == null)
-            {
-                return false;
-            }
-
-            var target = targetCollider.transform;
-            while (target != null)
-            {
-                if (target.name == "Water")
-                {
-                    return true;
-                }
-
-                target = target.parent;
-            }
-
-            return false;
-        }
-
         private static bool IsNamedObstacle(Collider targetCollider)
         {
             var target = targetCollider.transform;
@@ -1167,7 +912,15 @@ namespace DinoGrow.Gameplay.Enemy
                     || target.name.StartsWith("Tree_", System.StringComparison.Ordinal)
                     || target.name.StartsWith("Rock_", System.StringComparison.Ordinal)
                     || target.name.StartsWith("SnowRock_", System.StringComparison.Ordinal)
-                    || target.name.StartsWith("SnowTree_", System.StringComparison.Ordinal))
+                    || target.name.StartsWith("SnowTree_", System.StringComparison.Ordinal)
+                    || target.name.Contains("Tree", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Rock", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Cactus", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Boulder", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Stone", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Cliff", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Stump", System.StringComparison.OrdinalIgnoreCase)
+                    || target.name.Contains("Log", System.StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -1176,16 +929,6 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             return false;
-        }
-
-        private static bool IsNonGroundSurfaceName(string targetName)
-        {
-            return targetName == "Water"
-                || targetName == "MapBoundary"
-                || targetName.StartsWith("Tree_", System.StringComparison.Ordinal)
-                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal)
-                || targetName.StartsWith("SnowRock_", System.StringComparison.Ordinal)
-                || targetName.StartsWith("SnowTree_", System.StringComparison.Ordinal);
         }
     }
 }

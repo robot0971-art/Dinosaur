@@ -15,6 +15,10 @@ public sealed class GameHudDangerWarning : MonoBehaviour
 
     [Header("Detection")]
     [SerializeField] private float detectionRadius = 15f;
+    [SerializeField] private float checkInterval = 0.15f;
+
+    private bool isWarningVisible;
+    private float nextCheckTime;
 
     [Inject]
     public void Construct(PlayerDinoController player)
@@ -29,11 +33,19 @@ public sealed class GameHudDangerWarning : MonoBehaviour
             dangerWarningText.text = warningMessage;
         }
 
+        isWarningVisible = dangerWarningText != null && dangerWarningText.gameObject.activeSelf;
         SetWarningVisible(false);
     }
 
     private void Update()
     {
+        if (Time.unscaledTime < nextCheckTime)
+        {
+            return;
+        }
+
+        nextCheckTime = Time.unscaledTime + Mathf.Max(0.02f, checkInterval);
+
         if (playerController == null)
         {
             SetWarningVisible(false);
@@ -70,7 +82,14 @@ public sealed class GameHudDangerWarning : MonoBehaviour
 
     private void SetWarningVisible(bool visible)
     {
-        if (dangerWarningText != null)
+        if (isWarningVisible == visible)
+        {
+            return;
+        }
+
+        isWarningVisible = visible;
+
+        if (dangerWarningText != null && dangerWarningText.gameObject.activeSelf != visible)
         {
             dangerWarningText.gameObject.SetActive(visible);
         }

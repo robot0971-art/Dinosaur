@@ -1,0 +1,6739 @@
+{
+  "projectRoot": "C:/Users/admin/Dino Game",
+  "settings": {
+    "packages": {
+      "com.coffee.ui-effect": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
+      "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
+      "com.unity.2d.sprite": "1.0.0",
+      "com.unity.ai.navigation": "2.0.10",
+      "com.unity.cinemachine": "3.1.6",
+      "com.unity.collab-proxy": "2.11.3",
+      "com.unity.ide.rider": "3.0.39",
+      "com.unity.ide.visualstudio": "2.0.26",
+      "com.unity.inputsystem": "1.18.0",
+      "com.unity.multiplayer.center": "1.0.1",
+      "com.unity.postprocessing": "3.5.4",
+      "com.unity.probuilder": "6.0.9",
+      "com.unity.render-pipelines.universal": "17.3.0",
+      "com.unity.test-framework": "1.6.0",
+      "com.unity.timeline": "1.8.10",
+      "com.unity.ugui": "2.0.0",
+      "com.unity.visualscripting": "1.9.9",
+      "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0",
+      "com.unity.modules.accessibility": "1.0.0",
+      "com.unity.modules.adaptiveperformance": "1.0.0",
+      "com.unity.modules.ai": "1.0.0",
+      "com.unity.modules.androidjni": "1.0.0",
+      "com.unity.modules.animation": "1.0.0",
+      "com.unity.modules.assetbundle": "1.0.0",
+      "com.unity.modules.audio": "1.0.0",
+      "com.unity.modules.cloth": "1.0.0",
+      "com.unity.modules.director": "1.0.0",
+      "com.unity.modules.imageconversion": "1.0.0",
+      "com.unity.modules.imgui": "1.0.0",
+      "com.unity.modules.jsonserialize": "1.0.0",
+      "com.unity.modules.particlesystem": "1.0.0",
+      "com.unity.modules.physics": "1.0.0",
+      "com.unity.modules.physics2d": "1.0.0",
+      "com.unity.modules.screencapture": "1.0.0",
+      "com.unity.modules.terrain": "1.0.0",
+      "com.unity.modules.terrainphysics": "1.0.0",
+      "com.unity.modules.tilemap": "1.0.0",
+      "com.unity.modules.ui": "1.0.0",
+      "com.unity.modules.uielements": "1.0.0",
+      "com.unity.modules.umbra": "1.0.0",
+      "com.unity.modules.unityanalytics": "1.0.0",
+      "com.unity.modules.unitywebrequest": "1.0.0",
+      "com.unity.modules.unitywebrequestassetbundle": "1.0.0",
+      "com.unity.modules.unitywebrequestaudio": "1.0.0",
+      "com.unity.modules.unitywebrequesttexture": "1.0.0",
+      "com.unity.modules.unitywebrequestwww": "1.0.0",
+      "com.unity.modules.vectorgraphics": "1.0.0",
+      "com.unity.modules.vehicles": "1.0.0",
+      "com.unity.modules.video": "1.0.0",
+      "com.unity.modules.vr": "1.0.0",
+      "com.unity.modules.wind": "1.0.0",
+      "com.unity.modules.xr": "1.0.0"
+    },
+    "quality": {
+      "path": "ProjectSettings/QualitySettings.asset",
+      "mentionsURP": false,
+      "mentionsHDRP": false,
+      "colorSpaceLinear": false
+    },
+    "graphics": {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "mentionsURP": true,
+      "mentionsHDRP": false,
+      "colorSpaceLinear": false
+    },
+    "project": {
+      "path": "ProjectSettings/ProjectSettings.asset",
+      "mentionsURP": false,
+      "mentionsHDRP": false,
+      "colorSpaceLinear": true
+    },
+    "projectRoot": "C:/Users/admin/Dino Game"
+  },
+  "assets": {
+    "extensionCounts": [
+      [
+        ".meta",
+        2077
+      ],
+      [
+        ".prefab",
+        468
+      ],
+      [
+        ".asset",
+        390
+      ],
+      [
+        ".fbx",
+        181
+      ],
+      [
+        ".mat",
+        161
+      ],
+      [
+        ".png",
+        142
+      ],
+      [
+        ".cs",
+        132
+      ],
+      [
+        ".tga",
+        67
+      ],
+      [
+        ".unity",
+        63
+      ],
+      [
+        ".anim",
+        40
+      ],
+      [
+        ".dll",
+        32
+      ],
+      [
+        ".shader",
+        20
+      ],
+      [
+        ".txt",
+        17
+      ],
+      [
+        ".obj",
+        15
+      ],
+      [
+        ".wav",
+        12
+      ],
+      [
+        ".controller",
+        11
+      ],
+      [
+        ".jpg",
+        10
+      ],
+      [
+        ".mtl",
+        7
+      ],
+      [
+        ".ttf",
+        7
+      ],
+      [
+        ".shadergraph",
+        7
+      ],
+      [
+        ".psd",
+        7
+      ],
+      [
+        ".mp3",
+        6
+      ],
+      [
+        ".terrainlayer",
+        6
+      ],
+      [
+        ".blend",
+        6
+      ],
+      [
+        ".otf",
+        5
+      ],
+      [
+        ".cginc",
+        4
+      ],
+      [
+        ".playable",
+        3
+      ],
+      [
+        ".pdf",
+        3
+      ],
+      [
+        ".exr",
+        3
+      ],
+      [
+        ".inputactions",
+        2
+      ],
+      [
+        ".tif",
+        2
+      ],
+      [
+        ".gif",
+        1
+      ],
+      [
+        ".spriteatlas",
+        1
+      ],
+      [
+        ".aac",
+        1
+      ],
+      [
+        ".wlt",
+        1
+      ],
+      [
+        ".hdr",
+        1
+      ],
+      [
+        ".hlsl",
+        1
+      ],
+      [
+        ".json",
+        1
+      ],
+      [
+        ".giparams",
+        1
+      ],
+      [
+        ".docx",
+        1
+      ],
+      [
+        ".mesh",
+        1
+      ],
+      [
+        ".rendertexture",
+        1
+      ],
+      [
+        ".xlsx",
+        1
+      ]
+    ],
+    "topLevelFolderCounts": {
+      "Dino TIme.playable": [
+        [
+          ".playable",
+          1
+        ]
+      ],
+      "Dino TIme.playable.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Dinosaur Animated Pack - Dec 2018": [
+        [
+          ".meta",
+          77
+        ],
+        [
+          ".anim",
+          36
+        ],
+        [
+          ".blend",
+          6
+        ],
+        [
+          ".fbx",
+          6
+        ],
+        [
+          ".mtl",
+          6
+        ],
+        [
+          ".obj",
+          6
+        ],
+        [
+          ".controller",
+          6
+        ],
+        [
+          ".txt",
+          1
+        ],
+        [
+          ".gif",
+          1
+        ]
+      ],
+      "Dinosaur Animated Pack - Dec 2018.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Editor": [
+        [
+          ".meta",
+          6
+        ],
+        [
+          ".cs",
+          5
+        ]
+      ],
+      "Editor.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Fantasy Skybox FREE": [
+        [
+          ".meta",
+          131
+        ],
+        [
+          ".png",
+          60
+        ],
+        [
+          ".mat",
+          50
+        ],
+        [
+          ".terrainlayer",
+          3
+        ],
+        [
+          ".txt",
+          2
+        ],
+        [
+          ".unity",
+          2
+        ],
+        [
+          ".asset",
+          2
+        ],
+        [
+          ".exr",
+          2
+        ]
+      ],
+      "Fantasy Skybox FREE.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Fog Particles": [
+        [
+          ".meta",
+          22
+        ],
+        [
+          ".prefab",
+          6
+        ],
+        [
+          ".mat",
+          6
+        ],
+        [
+          ".png",
+          3
+        ],
+        [
+          ".unity",
+          1
+        ],
+        [
+          ".pdf",
+          1
+        ]
+      ],
+      "Fog Particles.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Fonts": [
+        [
+          ".meta",
+          10
+        ],
+        [
+          ".asset",
+          5
+        ],
+        [
+          ".otf",
+          5
+        ]
+      ],
+      "Fonts.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "GameData": [
+        [
+          ".meta",
+          347
+        ],
+        [
+          ".asset",
+          321
+        ],
+        [
+          ".dll",
+          16
+        ],
+        [
+          ".xlsx",
+          1
+        ],
+        [
+          ".txt",
+          1
+        ]
+      ],
+      "GameData.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "IgniteCoders": [
+        [
+          ".meta",
+          17
+        ],
+        [
+          ".mat",
+          3
+        ],
+        [
+          ".prefab",
+          2
+        ],
+        [
+          ".tif",
+          2
+        ],
+        [
+          ".unity",
+          1
+        ],
+        [
+          ".asset",
+          1
+        ],
+        [
+          ".mesh",
+          1
+        ],
+        [
+          ".cs",
+          1
+        ],
+        [
+          ".rendertexture",
+          1
+        ],
+        [
+          ".shadergraph",
+          1
+        ]
+      ],
+      "IgniteCoders.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Image": [
+        [
+          ".meta",
+          17
+        ],
+        [
+          ".png",
+          12
+        ],
+        [
+          ".controller",
+          3
+        ],
+        [
+          ".anim",
+          2
+        ]
+      ],
+      "Image.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "InputSystem_Actions.inputactions": [
+        [
+          ".inputactions",
+          1
+        ]
+      ],
+      "InputSystem_Actions.inputactions.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "IslandMap": [
+        [
+          ".meta",
+          602
+        ],
+        [
+          ".prefab",
+          325
+        ],
+        [
+          ".fbx",
+          138
+        ],
+        [
+          ".asset",
+          25
+        ],
+        [
+          ".mat",
+          21
+        ],
+        [
+          ".png",
+          19
+        ],
+        [
+          ".unity",
+          9
+        ],
+        [
+          ".terrainlayer",
+          3
+        ],
+        [
+          ".shadergraph",
+          2
+        ],
+        [
+          ".txt",
+          2
+        ],
+        [
+          ".inputactions",
+          1
+        ],
+        [
+          ".giparams",
+          1
+        ],
+        [
+          ".exr",
+          1
+        ],
+        [
+          ".docx",
+          1
+        ],
+        [
+          ".psd",
+          1
+        ],
+        [
+          ".tga",
+          1
+        ],
+        [
+          ".playable",
+          1
+        ]
+      ],
+      "IslandMap.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Lana Studio": [
+        [
+          ".meta",
+          77
+        ],
+        [
+          ".png",
+          25
+        ],
+        [
+          ".prefab",
+          22
+        ],
+        [
+          ".mat",
+          4
+        ],
+        [
+          ".unity",
+          4
+        ],
+        [
+          ".fbx",
+          2
+        ],
+        [
+          ".anim",
+          2
+        ],
+        [
+          ".controller",
+          2
+        ],
+        [
+          ".txt",
+          1
+        ]
+      ],
+      "Lana Studio.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Lowpoly Forest Pack Winter": [
+        [
+          ".fbx",
+          1
+        ],
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Lowpoly Forest Pack Winter.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Materials": [
+        [
+          ".mat",
+          1
+        ],
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Materials Collection": [
+        [
+          ".meta",
+          9
+        ],
+        [
+          ".tga",
+          4
+        ],
+        [
+          ".mat",
+          1
+        ]
+      ],
+      "Materials Collection.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Materials.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "New Material 1.mat": [
+        [
+          ".mat",
+          1
+        ]
+      ],
+      "New Material 1.mat.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "New Material.mat": [
+        [
+          ".mat",
+          1
+        ]
+      ],
+      "New Material.mat.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "New Terrain.asset": [
+        [
+          ".asset",
+          1
+        ]
+      ],
+      "New Terrain.asset.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Plugins": [
+        [
+          ".meta",
+          17
+        ],
+        [
+          ".dll",
+          16
+        ]
+      ],
+      "Plugins.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Prefabs": [
+        [
+          ".meta",
+          54
+        ],
+        [
+          ".prefab",
+          45
+        ],
+        [
+          ".mat",
+          2
+        ],
+        [
+          ".mtl",
+          1
+        ],
+        [
+          ".obj",
+          1
+        ],
+        [
+          ".png",
+          1
+        ]
+      ],
+      "Prefabs.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "ProjectSettings": [
+        [
+          ".asset",
+          1
+        ],
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "ProjectSettings.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Pure Poly": [
+        [
+          ".meta",
+          22
+        ],
+        [
+          ".fbx",
+          16
+        ],
+        [
+          ".mat",
+          1
+        ],
+        [
+          ".png",
+          1
+        ]
+      ],
+      "Pure Poly.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Readme.asset": [
+        [
+          ".asset",
+          1
+        ]
+      ],
+      "Readme.asset.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Resources.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Runemark Studio": [
+        [
+          ".meta",
+          24
+        ],
+        [
+          ".obj",
+          8
+        ],
+        [
+          ".mat",
+          7
+        ],
+        [
+          ".fbx",
+          4
+        ]
+      ],
+      "Runemark Studio.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Scenes": [
+        [
+          ".meta",
+          26
+        ],
+        [
+          ".unity",
+          10
+        ],
+        [
+          ".asset",
+          6
+        ],
+        [
+          ".png",
+          5
+        ],
+        [
+          ".spriteatlas",
+          1
+        ]
+      ],
+      "Scenes.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Screenshots": [
+        [
+          ".png",
+          8
+        ],
+        [
+          ".meta",
+          8
+        ]
+      ],
+      "Screenshots.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Scripts": [
+        [
+          ".meta",
+          113
+        ],
+        [
+          ".cs",
+          90
+        ]
+      ],
+      "Scripts.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Settings": [
+        [
+          ".asset",
+          7
+        ],
+        [
+          ".meta",
+          7
+        ]
+      ],
+      "Settings.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Sounds": [
+        [
+          ".meta",
+          18
+        ],
+        [
+          ".wav",
+          12
+        ],
+        [
+          ".mp3",
+          5
+        ],
+        [
+          ".aac",
+          1
+        ]
+      ],
+      "Sounds.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "TextMesh Pro": [
+        [
+          ".meta",
+          193
+        ],
+        [
+          ".cs",
+          34
+        ],
+        [
+          ".unity",
+          31
+        ],
+        [
+          ".mat",
+          26
+        ],
+        [
+          ".asset",
+          18
+        ],
+        [
+          ".shader",
+          14
+        ],
+        [
+          ".txt",
+          10
+        ],
+        [
+          ".jpg",
+          10
+        ],
+        [
+          ".ttf",
+          7
+        ],
+        [
+          ".psd",
+          6
+        ],
+        [
+          ".cginc",
+          4
+        ],
+        [
+          ".shadergraph",
+          4
+        ],
+        [
+          ".png",
+          4
+        ],
+        [
+          ".prefab",
+          3
+        ],
+        [
+          ".hlsl",
+          1
+        ],
+        [
+          ".json",
+          1
+        ]
+      ],
+      "TextMesh Pro.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "TimeLIne": [
+        [
+          ".playable",
+          1
+        ],
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "TimeLIne.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Tiny Teacup Studio": [
+        [
+          ".meta",
+          12
+        ],
+        [
+          ".fbx",
+          7
+        ],
+        [
+          ".mat",
+          1
+        ],
+        [
+          ".png",
+          1
+        ]
+      ],
+      "Tiny Teacup Studio.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "TutorialInfo": [
+        [
+          ".meta",
+          9
+        ],
+        [
+          ".png",
+          3
+        ],
+        [
+          ".cs",
+          2
+        ],
+        [
+          ".wlt",
+          1
+        ]
+      ],
+      "TutorialInfo.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "Vefects": [
+        [
+          ".meta",
+          215
+        ],
+        [
+          ".prefab",
+          65
+        ],
+        [
+          ".tga",
+          62
+        ],
+        [
+          ".mat",
+          36
+        ],
+        [
+          ".fbx",
+          7
+        ],
+        [
+          ".shader",
+          6
+        ],
+        [
+          ".unity",
+          2
+        ],
+        [
+          ".pdf",
+          2
+        ],
+        [
+          ".asset",
+          2
+        ],
+        [
+          ".hdr",
+          1
+        ]
+      ],
+      "Vefects.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "_Recovery": [
+        [
+          ".unity",
+          3
+        ],
+        [
+          ".meta",
+          3
+        ]
+      ],
+      "_Recovery.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ],
+      "eating-sound.mp3": [
+        [
+          ".mp3",
+          1
+        ]
+      ],
+      "eating-sound.mp3.meta": [
+        [
+          ".meta",
+          1
+        ]
+      ]
+    },
+    "meshAssets": [
+      "Assets/Lowpoly Forest Pack Winter/Lowpoly Forest Pack Winter.fbx",
+      "Assets/Prefabs/Heart.obj",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Meshes/SM_Extra_Billboard_01.fbx",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Meshes/SM_Extra_Billboard_Base_01.fbx",
+      "Assets/Vefects/Free Blood VFX/VFX/Meshes/SM_VFX_Cube_01.fbx",
+      "Assets/Vefects/Free Blood VFX/VFX/Meshes/SM_VFX_Sphere_32.fbx",
+      "Assets/Vefects/Free Blood VFX/VFX/Meshes/SM_VFX_Sphere_64.fbx",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Meshes/SM_VFX_Background_Plate_Flat_01.fbx",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Meshes/SM_Vefects_Vexa_Unity_01.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Ground_01.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Rock_01.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Rock_02.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Rock_03.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Rock_04.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Rock_05.fbx",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Meshes/Tree_01.fbx",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/aloe.fbx",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/cactus1.fbx",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/cactus2.fbx",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/cactus3.fbx",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock01.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock02.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock03.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock04.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock05.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock06.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock07.obj",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/rock08.obj",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Birch_Tree_05.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Birch_Tree_06.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Daffodil_03.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Grass_11.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Grass_15.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Hyacinth_04.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Meadow_08.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Mushroom_Fantasy_Orange_09.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Mushroom_Fantasy_Purple_05.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Rock_Moss_Grown_09.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Rock_Moss_Grown_11.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Rock_Pile_Forest_Moss_05.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Rock_Pile_Forest_Moss_10.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Sunflower_04.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Tree_02.fbx",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Meshes/PP_Tree_10.fbx",
+      "Assets/Lana Studio/Hyper Casual FX/Models/Area_vertical.fbx",
+      "Assets/Lana Studio/Hyper Casual FX/Models/Confetti.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Axe.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Backpack.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Barrel.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Basket.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Bucket.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Buoy.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Butterfly.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Chest.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_FarmField.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Fish.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_FishBucket.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_FishingRod.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_House.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Island.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Lantern.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_LargeIsland.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_LeafBelt.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Log.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Market.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Net.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_PalmTree.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Pickaxe.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Plane.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Port.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Pumpkin.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Raft.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_ShawkStickman.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Sprout.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Stool.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Storage.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Stump.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Sword.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Table.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Tent.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_Tower.fbx",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Models/SM_TruckerHat.fbx",
+      "Assets/IslandMap/ocean&lakeShaderPack/other/oceanModelFBX.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Breeze.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Brick.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Brick_Subway.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Clay.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Concrete.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_ConcreteMoss.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_ConcreteMossCornerIn.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_ConcreteMossCornerOut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_ConcreteMossEdge.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Concrete_Plain.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Grass.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Lava.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Mossy.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Sand.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Snow.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Stones.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Cap_Water.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Concrete.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_LavaBase.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Rounded_Clay.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Rounded_Sand.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Rounded_SnowBase.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Rounded_Soil.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Block_Rounded_Water.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom1.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom2.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom3.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom4.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom5.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Mushroom6.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/OakTree.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_A.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_B.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_C.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_D.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_E.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/PineTree_F.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockCanyon004.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockCanyon1.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockCanyon2.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockCanyon3.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockMoss1.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockMoss2.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockMoss3.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockPlainBrown2.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockPlainBrown3.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockPlainGrey1.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockPlainGrey2.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/RockPlainGrey3.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Rock_CanyonLarge.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/SilverBirchTreeLarge.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/SilverBirchTreeMedium.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/SilverBirchTreeMediumB.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/SilverBirchTreeSmall.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Autumn.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Autumn_Small.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Spring.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Spring_Small.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_SumAut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_SumAut_Small.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Summer.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Summer_Small.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Winter.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Winter_Alt.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Winter_Small.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Cube_Winter_Small_Alt.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Medium_SumAut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Medium_Summer.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Medium_Winter.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_SmallWide_SumAut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_SmallWide_Summer.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_SmallWide_Winter.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Small_SumAut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Small_Summer.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Small_Winter.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Tall_SumAut.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Tall_Summer.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Fern_Tall_Winter.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_A.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_B.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_C.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_D.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_E.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_F.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_G.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Large_H.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_A.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_B.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_C.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_D.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_E.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Medium_F.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_A.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_B.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_C.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_D.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_E.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_F.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Meshes/Tree_Small_G.fbx",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Model/LowPoly_Env_Set1.FBX",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Models/beachprops.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Apatosaurus.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Parasaurolophus.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Stegosaurus.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Trex.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Triceratops.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/Blends/Velociraptor.blend",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Apatosaurus.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Parasaurolophus.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Stegosaurus.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Trex.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Triceratops.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/FBX/Velociraptor.fbx",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Apatosaurus.obj",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Parasaurolophus.obj",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Stegosaurus.obj",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Trex.obj",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Triceratops.obj",
+      "Assets/Dinosaur Animated Pack - Dec 2018/OBJ/Velociraptor.obj"
+    ],
+    "materialCount": 161,
+    "sampleMaterials": [
+      "Assets/New Material 1.mat",
+      "Assets/New Material.mat",
+      "Assets/Materials/MapEdgeSkirt.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_01.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_02.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_03.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_04.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_05.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_06.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_07.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_08.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_09.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_10.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_11.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_12.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_13.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Billboard_14.mat",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Materials/M_Vefects_Extra_Grid_01.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit_Extra_01.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit_Extra_02.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit_GS_Pure.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_01_Lit_GS_Pure_02.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_02_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_03_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit_Extra_01.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit_Extra_02.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit_GS_Pure.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_01_Lit_GS_Pure_02.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_02_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/VFX/Materials/M_VFX_Fake_Blood_Directional_03_Lit_GS.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Materials/M_Grid.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Materials/M_Sky.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Materials/M_Vefects_Grid_01.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Materials/M_VFX_Character_Showoff_01.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Materials/M_VFX_Metallic_01.mat",
+      "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Materials/Mat_01.mat",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Crate - Surface Shader Scene.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Crate - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Ground - Logo Scene.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Ground - Surface Shader Scene.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Ground - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Materials/Small Crate_diffuse.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Sunny Days.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Drop Shadow - 2 Pass.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Glow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Logo - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Logo.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Metalic Green.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Overlay.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Soft Mask.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - HDRP Unlit.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - Surface.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Unity SDF - HDRP LIT - Bloom.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Unity SDF - HDRP LIT - Outline.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/Aloe.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/Cactus.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/DesertRocks.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/Flower.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/FlowerCenter.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Materials/Thorn.mat",
+      "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Meshes/Materials/defaultMat.mat",
+      "Assets/Pure Poly/Free Low Poly Nature Pack/Materials/PP_Standard_Material.mat",
+      "Assets/Prefabs/Effects/RuntimeBloodParticle.mat",
+      "Assets/Prefabs/Effects/Materials/RuntimeBloodCircle.mat",
+      "Assets/Materials Collection/4 Snow Materials/Materials/snow_1_tga.mat",
+      "Assets/Lana Studio/Hyper Casual FX/Materials/Circles_AB.mat",
+      "Assets/Lana Studio/Hyper Casual FX/Materials/Circles_Additive.mat",
+      "Assets/Lana Studio/Hyper Casual FX/Materials/Drop_AB.mat",
+      "Assets/Lana Studio/Hyper Casual FX/Materials/Square.mat",
+      "Assets/IslandMap/Materials/FishingIslandTerrain_URP.mat",
+      "Assets/IslandMap/Materials/WaterShader.mat",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Materials/M_Atlas.mat",
+      "Assets/IslandMap/ocean&lakeShaderPack/other/sandMatirial.mat",
+      "Assets/IslandMap/ocean&lakeShaderPack/shaders/lake/lakeMatirial.mat",
+      "Assets/IslandMap/ocean&lakeShaderPack/shaders/ocean/seaMatirial.mat",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Materials/BlocksAndTrees/BlocksAndTrees_AtlasMaterial.mat",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Materials/Atlas1_Material.mat",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Materials/LowPolyWater.mat",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Materials/Sky.mat",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Materials/WaterMaterial 1.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/ColorPalette_128.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/ColorPalette_256.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/ColorPalette_64.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/HDRP/ColorPalette_128_HDRP.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/HDRP/ColorPalette_256_HDRP.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/HDRP/ColorPalette_64_HDRP.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/URP/ColorPalette_128_URP.mat",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Materials/URP/ColorPalette_256_URP.mat"
+    ],
+    "shaderCount": 27,
+    "sampleShaders": [
+      "Assets/Vefects/Free Blood VFX/_ Extra/Shaders/SH_Vefects_Extra_Billboard_01.shader",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Shaders/SH_Vefects_Extra_Grid_01.shader",
+      "Assets/Vefects/Free Blood VFX/VFX/Shaders/SH_Vefects_URP_Free_Blood_01_Lit.shader",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Shaders/SH_Vefects_Grid_01.shader",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Character_Showoff.shader",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Opaque_01.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile SSD.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-2-Pass.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph",
+      "Assets/TextMesh Pro/Shaders/TMP_SDF.shader",
+      "Assets/TextMesh Pro/Shaders/TMP_Sprite.shader",
+      "Assets/IslandMap/ocean&lakeShaderPack/shaders/lake/lakeShader.shadergraph",
+      "Assets/IslandMap/ocean&lakeShaderPack/shaders/ocean/seaShader.shadergraph",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterShader.shadergraph"
+    ],
+    "scenes": [
+      "Assets/Fog Particles/Demo.unity",
+      "Assets/Scenes/GameScene.unity",
+      "Assets/Scenes/GameSceneUI.unity",
+      "Assets/Scenes/map10.unity",
+      "Assets/Scenes/map4.unity",
+      "Assets/Scenes/map7.unity",
+      "Assets/Scenes/SampleScene.unity",
+      "Assets/Scenes/Siyeon_GameOver.unity",
+      "Assets/Scenes/Siyeon_GameSceneUI.unity",
+      "Assets/Scenes/Siyeon_TitleScene.unity",
+      "Assets/Scenes/TitleScene.unity",
+      "Assets/_Recovery/0 (1).unity",
+      "Assets/_Recovery/0 (2).unity",
+      "Assets/_Recovery/0.unity",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Scenes/Vefects Secret Extra Scene.unity",
+      "Assets/Vefects/Free Blood VFX/Demo/Scenes/Free Blood VFX Scene.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/01-  Single Line TextMesh Pro.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/02 - Multi-line TextMesh Pro.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/03 - Line Justification.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/04 - Word Wrapping.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/05 - Style Tags.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/06 - Extra Rich Text Examples.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/07 - Superscript & Subscript Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/08 - Improved Text Alignment.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/09 - Margin Tag Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/10 - Bullets & Numbered List Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/11 - The Style Tag.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/12 - Link Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/12a - Text Interactions.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/13 - Soft Hyphenation.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/14 - Multi Font & Sprites.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/15 - Inline Graphics & Sprites.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/16 - Linked text overflow mode example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/17 - Old Computer Terminal.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/18 - ScrollRect & Masking & Layout.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/19 - Masking Texture & Soft Mask.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/20 - Input Field with Scrollbar.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/21 - Script Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/22 - Basic Scripting Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/23 - Animating Vertex Attributes.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/24 - Surface Shader Example URP.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/24 - Surface Shader Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/25 - Sunny Days Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/26 - Dropdown Placeholder Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/27 - Double Pass Shader Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/28 - HDRP Shader Example.unity",
+      "Assets/TextMesh Pro/Examples & Extras/Scenes/Benchmark (Floating Text).unity",
+      "Assets/Lana Studio/Hyper Casual FX/Demo/Scenes/LanaDemo01.unity",
+      "Assets/Lana Studio/Hyper Casual FX/Demo/Scenes/LanaDemo02.unity",
+      "Assets/Lana Studio/Hyper Casual FX/Demo/Scenes/LanaDemo03.unity",
+      "Assets/Lana Studio/Hyper Casual FX/Demo/Scenes/LanaDemo04.unity",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/LittleLowPolyWorldLite_All.unity",
+      "Assets/IslandMap/Scenes/Island.unity",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Scenes/Demo Scene 1.unity",
+      "Assets/IslandMap/Shawk Studios/Island Pack Lite/Scenes/Demo Scene 2.unity",
+      "Assets/IslandMap/ocean&lakeShaderPack/sampleScene/lakeSampleScene.unity",
+      "Assets/IslandMap/ocean&lakeShaderPack/sampleScene/oceanSampleScene.unity",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Scenes/BlocksAndTrees.unity",
+      "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Scenes/LowPoly_Assets.unity",
+      "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Demo/Scenes/Demo_Showroom.unity",
+      "Assets/IgniteCoders/Simple Water Shader/Demo.unity",
+      "Assets/Fantasy Skybox FREE/Scenes/Demo with terrain.unity",
+      "Assets/Fantasy Skybox FREE/Scenes/Demo without terrain.unity"
+    ],
+    "prefabCount": 468,
+    "samplePrefabs": [
+      "Assets/Prefabs/Blood.prefab",
+      "Assets/Prefabs/Enemy_Lv1.prefab",
+      "Assets/Prefabs/Enemy_Lv2.prefab",
+      "Assets/Prefabs/Enemy_Lv3.prefab",
+      "Assets/Prefabs/Heart root    .prefab",
+      "Assets/Prefabs/Heart UI.prefab",
+      "Assets/Prefabs/Parasaurolophus.prefab",
+      "Assets/Prefabs/SnowParticle.prefab",
+      "Assets/Prefabs/Stage 1.prefab",
+      "Assets/Prefabs/Stage 2.prefab",
+      "Assets/Prefabs/Stegosaurus.prefab",
+      "Assets/Prefabs/Trex.prefab",
+      "Assets/Prefabs/Triceratops.prefab",
+      "Assets/Prefabs/Velociraptor.prefab",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Meshes/SM_Extra_Billboard_01.prefab",
+      "Assets/Vefects/Free Blood VFX/_ Extra/Meshes/SM_Extra_Billboard_Base_01.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor_Rot.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor_Rot_Extra.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor_Rot_Extra_02.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor_Rot_GS_Pure.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_01_Floor_Rot_GS_Pure_02.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_02_Floor_Rot.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_Bunch.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_Extra.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_Extra_02.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_GS_Pure.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_GS_Pure_02.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/VFX_Splat_Directional_01_Floor_Rot.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Black.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Blue.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Green.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Orange.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Pink.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Purple.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_White.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_02_Yellow.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Black.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Blue.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Green.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Orange.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Pink.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Purple.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_White.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_01_Floor_Rot_GS_Pure_Yellow.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Black.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Blue.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Green.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Orange.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Pink.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Purple.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_White.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_02_Yellow.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Black.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Blue.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Green.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Orange.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Pink.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Purple.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_White.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Color Variations/VFX_Splat_Directional_01_Floor_GS_Pure_Yellow.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Rot_Extra_02_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Rot_Extra_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Rot_GS_Pure_02_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Rot_GS_Pure_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_01_Floor_Rot_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_02_Floor_Rot_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_Bunch_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_Extra_02_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_Extra_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_GS_Pure_02_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_GS_Pure_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/VFX/Particles/Once/VFX_Splat_Directional_01_Floor_Rot_Once.prefab",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Meshes/SM_VFX_Background_Plate_01.prefab",
+      "Assets/Vefects/Free Blood VFX/Demo/Scene/Prefabs/_ VFX.prefab",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Meshes/SM_Vefects_Vexa_Unity_01.prefab",
+      "Assets/TextMesh Pro/Examples & Extras/Prefabs/Text Popup.prefab",
+      "Assets/TextMesh Pro/Examples & Extras/Prefabs/TextMeshPro - Prefab 1.prefab",
+      "Assets/TextMesh Pro/Examples & Extras/Prefabs/TextMeshPro - Prefab 2.prefab",
+      "Assets/Prefabs/Effects/RuntimeBloodEffect.prefab",
+      "Assets/Prefabs/Imported/Map4 Stage.prefab",
+      "Assets/Prefabs/Imported/New Stage 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowCliff_1919 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowCliff_1919.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowCliff_3456 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowCliff_3456.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowDeadTree_4808 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowDeadTree_4808.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowFallenLog_2041 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowFallenLog_2041.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_1724 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_1724.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_5690 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_5690.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_6974 1.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_6974.prefab",
+      "Assets/Prefabs/Map10 prefabs/SnowPine_9511 1.prefab"
+    ],
+    "resourcesAssetCount": 56,
+    "sampleResourcesAssets": [
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Materials/M_VFX_Character_Showoff_01.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Materials/M_VFX_Metallic_01.mat",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Meshes/SM_Vefects_Vexa_Unity_01.fbx",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Meshes/SM_Vefects_Vexa_Unity_01.prefab",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Character_Showoff.shader",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Opaque_01.shader",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Textures/T_VFX_Lush_HDRI_05.HDR",
+      "Assets/Vefects/Free Blood VFX/Demo/Resources/Textures/T_VFX_Perlin_2_Octaves_Equalized.tga",
+      "Assets/TextMesh Pro/Resources/LineBreaking Following Characters.txt",
+      "Assets/TextMesh Pro/Resources/LineBreaking Leading Characters.txt",
+      "Assets/TextMesh Pro/Resources/TMP Settings.asset",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+      "Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset",
+      "Assets/TextMesh Pro/Resources/Style Sheets/Default Style Sheet.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Color Gradient Presets/Blue to Purple - Vertical.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Color Gradient Presets/Dark to Light Green - Vertical.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Color Gradient Presets/Light to Dark Green - Vertical.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Color Gradient Presets/Yellow to Orange - Vertical.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF - Sunny Days.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Anton SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Drop Shadow - 2 Pass.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Glow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Logo - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF Logo.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Metalic Green.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Overlay.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Soft Mask.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Oswald Bold SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - Drop Shadow.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - HDRP Unlit.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - Surface.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF - URP.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Roboto-Bold SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Unity SDF - HDRP LIT - Bloom.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Unity SDF - HDRP LIT - Outline.mat",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Unity SDF.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Sprite Assets/Default Sprite Asset.asset",
+      "Assets/TextMesh Pro/Examples & Extras/Resources/Sprite Assets/DropCap Numbers.asset",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterBlock_50m.mesh",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterReflection.cs",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterReflection.renderTexture",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterShader.shadergraph",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterSurface_atlas.tif",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/WaterSurface_single.tif",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/Water_mat_01.mat",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/Water_mat_02.mat",
+      "Assets/IgniteCoders/Simple Water Shader/Resources/Water_mat_03.mat"
+    ]
+  },
+  "textures": [
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texture_Dirt_Diffuse.png",
+      "bytes": 20020176,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Lightmaps)/ReflectionProbe-0.exr",
+      "bytes": 17573451,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Textures/LPEP_TextureAtlas_TestCutout.tga",
+      "bytes": 16777260,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Textures/T_VFX_Grid_01_Texture.tga",
+      "bytes": 12583349,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Textures/T_VFX_Grid_01_Normal.tga",
+      "bytes": 11376927,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Textures/LPEP_TextureAtlas_Master.psd",
+      "bytes": 11223912,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texture_Rock_Diffuse.png",
+      "bytes": 8101186,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texture_Grass_Diffuse.png",
+      "bytes": 7224872,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texure_Rock_Normal.png",
+      "bytes": 6896458,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texture_Dirt_Normal.png",
+      "bytes": 6560470,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Textures/T_VFX_Grid_01_Masks.tga",
+      "bytes": 5363713,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Texture_Grass_Normal.png",
+      "bytes": 5300593,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Materials Collection/4 Snow Materials/Maps/snow_1_nmp.tga",
+      "bytes": 4194348,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Materials Collection/4 Snow Materials/Textures/snow_1_tga.tga",
+      "bytes": 4194348,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": [
+        "large_import_size",
+        "large_source_file"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_03_N.tga",
+      "bytes": 786476,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_03_N.tga",
+      "bytes": 786476,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_01_N.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_02_N.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_02_N.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Perlin_01_N.TGA",
+      "bytes": 196626,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_01_N.TGA",
+      "bytes": 196626,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Textures/WaterLowPolyEffect_Normal 1.png",
+      "bytes": 96792,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size",
+        "possible_normal_map_not_marked"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BlocksAndTrees/Textures/Blocks_Master_Orig.png",
+      "bytes": 3726506,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Night_Moonless.png",
+      "bytes": 3186638,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Textures/T_VFX_Metrics_Grid_Base_Color.tga",
+      "bytes": 3145772,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Textures/T_VFX_Metrics_Grid_Normal.tga",
+      "bytes": 3145772,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Night.png",
+      "bytes": 3133186,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Sunset.png",
+      "bytes": 2761937,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Day.png",
+      "bytes": 2727908,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Sunrise.png",
+      "bytes": 2665831,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Day_Sunless.png",
+      "bytes": 2642893,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Rainy.png",
+      "bytes": 2641823,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/Game over.png",
+      "bytes": 2619516,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Rainy.png",
+      "bytes": 2603901,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Snowy.png",
+      "bytes": 2534546,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Scenes/restart (2).png",
+      "bytes": 2428370,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Sunset.png",
+      "bytes": 2246569,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Snowy.png",
+      "bytes": 2177240,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Scenes/Heart.png",
+      "bytes": 2167487,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Night.png",
+      "bytes": 2064279,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Demo/Textures/watertexture.png",
+      "bytes": 2036327,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/Start scene.png",
+      "bytes": 2023409,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Day_Sunless.png",
+      "bytes": 2023218,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS003/FS003_Day.png",
+      "bytes": 2008327,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IgniteCoders/Simple Water Shader/Resources/WaterSurface_atlas.tif",
+      "bytes": 2002736,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Night_Moonless.png",
+      "bytes": 1929990,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_Grass_Normal.png",
+      "bytes": 1912107,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Scenes/Low poly Dino.png",
+      "bytes": 1810235,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Lightmaps)/Lightmap-0_comp_light.exr",
+      "bytes": 1502464,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 6,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Resources/Textures/T_VFX_Lush_HDRI_05.HDR",
+      "bytes": 1446672,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Night.png",
+      "bytes": 1379575,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Night_Moonless.png",
+      "bytes": 1348382,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Rainy.png",
+      "bytes": 1283922,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Snowy.png",
+      "bytes": 1254243,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/mcp_enemy_runtime_check.png",
+      "bytes": 1167977,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Sunset.png",
+      "bytes": 1134039,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Materials Collection/4 Snow Materials/Maps/snow_1_ao.tga",
+      "bytes": 1048620,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Materials Collection/4 Snow Materials/Maps/snow_1_he.tga",
+      "bytes": 1048620,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Sunrise.png",
+      "bytes": 1025144,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Day.png",
+      "bytes": 909954,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS002/FS002_Day_Sunless.png",
+      "bytes": 909729,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS013/FS013_Sunrise.png",
+      "bytes": 898471,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Snowy.png",
+      "bytes": 865271,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Textures/LPEP_TextureAtlas_MetalSmooth.png",
+      "bytes": 817023,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_01.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_02.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_02.TGA",
+      "bytes": 786450,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Lightmaps)/Lightmap-0_comp_dir.png",
+      "bytes": 785204,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 12,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Sunset.png",
+      "bytes": 753479,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_01.png",
+      "bytes": 752497,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_01_Moonless.png",
+      "bytes": 745897,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_04.png",
+      "bytes": 735182,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_06.png",
+      "bytes": 733116,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Sunrise.png",
+      "bytes": 729873,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_04_Sunless.png",
+      "bytes": 721402,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_06_Sunless.png",
+      "bytes": 700356,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_VFX_Mega_Bundle_Pack_Extra_01.tga",
+      "bytes": 671962,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Scenes/Loading.png",
+      "bytes": 666753,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IgniteCoders/Simple Water Shader/Resources/WaterSurface_single.tif",
+      "bytes": 655032,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_03.png",
+      "bytes": 642141,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_03_Sunless.png",
+      "bytes": 618828,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_01.png",
+      "bytes": 617555,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Day.png",
+      "bytes": 589340,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Rainy.png",
+      "bytes": 589000,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Day_Sunless.png",
+      "bytes": 587105,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Space_VFX_Extra_01.tga",
+      "bytes": 586861,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_01_Sunless.png",
+      "bytes": 569586,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Slime_VFX_Extra_01.tga",
+      "bytes": 567561,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/Gameoverbackground.png",
+      "bytes": 557122,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Loot_VFX_Extra_01.tga",
+      "bytes": 535613,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_02.png",
+      "bytes": 535317,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_05.png",
+      "bytes": 534677,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_Sand_Normal.png",
+      "bytes": 525723,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/icon6.png",
+      "bytes": 521093,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_05_Sunless.png",
+      "bytes": 520165,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Level_Up_VFX_Extra_01.tga",
+      "bytes": 516058,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Day_02_Sunless.png",
+      "bytes": 490845,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Flipbook_VFX_Extra_01.tga",
+      "bytes": 480086,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Night.png",
+      "bytes": 470505,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_03.png",
+      "bytes": 464541,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Panoramics/FS017/FS017_Night_Moonless.png",
+      "bytes": 456971,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_03_Moonless.png",
+      "bytes": 455901,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Item_Pickup_VFX_Extra_01.tga",
+      "bytes": 447106,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Explosions_VFX_Extra_01.tga",
+      "bytes": 425585,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/icon1.png",
+      "bytes": 417409,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/new_stage_1_player_area.png",
+      "bytes": 415443,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/lake/water taxture.png",
+      "bytes": 414662,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/ocean/water taxture.png",
+      "bytes": 414662,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Anime_Stylized_VFX_Extra_01.tga",
+      "bytes": 394551,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Smoke_Bombs_VFX_Extra_01.tga",
+      "bytes": 387015,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Essential_Trails_VFX_Extra_01.tga",
+      "bytes": 377837,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Anime_VFX_Extra_01.tga",
+      "bytes": 377060,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_02.png",
+      "bytes": 344201,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Cubemaps/Classic/FS000_Night_02_Moonless.png",
+      "bytes": 339980,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Vignette_VFX_Extra_01.tga",
+      "bytes": 319890,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Scenes/Gauge.png",
+      "bytes": 313557,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/map4_ground_restored.png",
+      "bytes": 295317,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/map4_stage_gamescene.png",
+      "bytes": 295273,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/_ Extra/Textures/Vefects_Shots_VFX_Extra_01.tga",
+      "bytes": 294325,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/icon7.png",
+      "bytes": 275213,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Sunny Days - Seamless.jpg",
+      "bytes": 273488,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Directional_03.tga",
+      "bytes": 262188,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_03.tga",
+      "bytes": 262188,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Brush_Grass_01.png",
+      "bytes": 249957,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/fishing_island_preview_fixed.png",
+      "bytes": 236713,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_GodRay_01.png",
+      "bytes": 213702,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/ui4.png",
+      "bytes": 213566,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/Demo/Resources/Textures/T_VFX_Perlin_2_Octaves_Equalized.tga",
+      "bytes": 196652,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Perlin_01.TGA",
+      "bytes": 196626,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Splat_Radial_01.TGA",
+      "bytes": 196626,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_2D_Fire_Ice_01.TGA",
+      "bytes": 196626,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyEnviroPack_LITE_builtIn/BeachArea_Set1/Textures/Water_Normal.png",
+      "bytes": 188705,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Brush_Grass_02.png",
+      "bytes": 188640,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/fishing_island_preview-1.png",
+      "bytes": 159262,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/fishing_island_preview.png",
+      "bytes": 159262,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/Brush_Flower.png",
+      "bytes": 139561,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TutorialInfo/Icons/Water Shader icon.PNG",
+      "bytes": 122056,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Screenshots/new_stage_1_in_gamescene.png",
+      "bytes": 114413,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TextMesh Pro/Sprites/EmojiOne.png",
+      "bytes": 112319,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fog Particles/Bonus/Materials & Textures/LavaSphere.png",
+      "bytes": 106416,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fog Particles/Texture/Smoke Sprite Sheet.png",
+      "bytes": 92499,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 3,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_Sand.png",
+      "bytes": 90670,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Mask_Cone_256_01.tga",
+      "bytes": 65580,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/T_VFX_Mask_Pyramid_256_01.tga",
+      "bytes": 65580,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/left allow.png",
+      "bytes": 63039,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/right allow.png",
+      "bytes": 60627,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/ui5.png",
+      "bytes": 51300,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Shawk Studios/Island Pack Lite/Textures/T_Atlas.png",
+      "bytes": 45575,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_Grass.png",
+      "bytes": 40443,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Fog Particles/Bonus/Materials & Textures/Snow.png",
+      "bytes": 37899,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 3,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Shawk Studios/Island Pack Lite/Scenes/Demo Scene/ReflectionProbe-0.exr",
+      "bytes": 33129,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Text Overflow - Linked Text Image 1.png",
+      "bytes": 26169,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TutorialInfo/Icons/URP.png",
+      "bytes": 24069,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 2,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Shockwave_spiky.png",
+      "bytes": 19866,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Blast_directional.png",
+      "bytes": 18761,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle02.png",
+      "bytes": 18651,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TutorialInfo/Icons/Help_Icon.png",
+      "bytes": 18108,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 2,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Blast_spiky.png",
+      "bytes": 16363,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Ray01.png",
+      "bytes": 15660,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/confetti_large.png",
+      "bytes": 15353,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Flare01.png",
+      "bytes": 14556,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Textures/TropicalEnvironmentLite_Texture_01.png",
+      "bytes": 14202,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Dust01.png",
+      "bytes": 13394,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 3,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/lake/foam taxture.png",
+      "bytes": 12538,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/ocean/foam taxture.png",
+      "bytes": 12538,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/UI2.png",
+      "bytes": 12367,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Star01.png",
+      "bytes": 11783,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Diagonal (Color).jpg",
+      "bytes": 11688,
+      "meta": {
+        "maxTextureSize": 2048,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Star02.png",
+      "bytes": 11656,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle05.png",
+      "bytes": 11333,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Image/U1I.png",
+      "bytes": 10347,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle06.png",
+      "bytes": 7046,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Flare03.png",
+      "bytes": 6659,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle03.png",
+      "bytes": 6589,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/drop_green.png",
+      "bytes": 6233,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Materials/Palette.png",
+      "bytes": 5793,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/drop_blue.png",
+      "bytes": 5422,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Flare02.png",
+      "bytes": 5059,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Pure Poly/Free Low Poly Nature Pack/Textures/PP_Color_Palette.png",
+      "bytes": 5034,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Plus01.png",
+      "bytes": 4902,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle01.png",
+      "bytes": 4500,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Square01.png",
+      "bytes": 4149,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Prefabs/Effects/RuntimeBloodCircle.png",
+      "bytes": 4122,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Textures/ColorPalette_128.png",
+      "bytes": 4096,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Textures/ColorPalette_256.png",
+      "bytes": 4096,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/IslandMap/Akduman/ToonTastic - Beach Props/Textures/ColorPalette_64.png",
+      "bytes": 4096,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/drop.png",
+      "bytes": 3567,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/spark01.png",
+      "bytes": 3353,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Blood_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Blood_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Blood_02.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Blood_03.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Blood_03_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Candy_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Candy_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Fire_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Fire_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Flame_Example_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_GS_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_GS_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_GS_02.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_GS_02_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Light_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Light_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Nature_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Nature_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Night_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Night_01_Inverted.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Night_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Rainbow_Desaturated_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Rainbow_Desaturated_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Water_01.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Vefects/Free Blood VFX/VFX/Textures/LUTs/T_VFX_LUT_Water_01_Mirrored.TGA",
+      "bytes": 3090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 0,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Gradient01.png",
+      "bytes": 2596,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle04.png",
+      "bytes": 2457,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/Lana Studio/Hyper Casual FX/Textures/Square02.png",
+      "bytes": 1090,
+      "meta": {
+        "maxTextureSize": 2048,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 8,
+        "sRGBTexture": 1
+      },
+      "flags": [
+        "large_import_size"
+      ]
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Sprites/DropCap Numbers.psd",
+      "bytes": 482546,
+      "meta": {
+        "maxTextureSize": 512,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Sprites/Default Sprites.png",
+      "bytes": 178491,
+      "meta": {
+        "maxTextureSize": 512,
+        "textureCompression": 2,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Floor Tiles 1 - diffuse.jpg",
+      "bytes": 155648,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Fruit Jelly (B&W).jpg",
+      "bytes": 150089,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Small Crate_normal.jpg",
+      "bytes": 126976,
+      "meta": {
+        "maxTextureSize": 512,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 1,
+        "sRGBTexture": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Small Crate_diffuse.jpg",
+      "bytes": 95326,
+      "meta": {
+        "maxTextureSize": 512,
+        "textureCompression": 1,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0,
+        "sRGBTexture": 1
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Floor Cement.jpg",
+      "bytes": 71537,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Text Overflow - Linked Text UI Screenshot.png",
+      "bytes": 49290,
+      "meta": {
+        "maxTextureSize": 512,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 5
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Mask Zig-n-Zag.psd",
+      "bytes": 38488,
+      "meta": {
+        "maxTextureSize": 128,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 5
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Radial Quad.psd",
+      "bytes": 34433,
+      "meta": {
+        "maxTextureSize": 64,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 5
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Radial Double.psd",
+      "bytes": 33155,
+      "meta": {
+        "maxTextureSize": 64,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Diagonal.psd",
+      "bytes": 33064,
+      "meta": {
+        "maxTextureSize": 64,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Wipe Pattern - Circle.psd",
+      "bytes": 32696,
+      "meta": {
+        "maxTextureSize": 64,
+        "compressionQuality": 50,
+        "isReadable": 0,
+        "textureType": 5
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Brushed Metal 3.jpg",
+      "bytes": 28175,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Horizontal (Color).jpg",
+      "bytes": 11341,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/TextMesh Pro/Examples & Extras/Textures/Gradient Vertical (Color).jpg",
+      "bytes": 11336,
+      "meta": {
+        "maxTextureSize": 1024,
+        "compressionQuality": 50,
+        "isReadable": 0
+      },
+      "flags": []
+    }
+  ],
+  "audio": [
+    {
+      "path": "Assets/Sounds/Main Menu BGM.mp3",
+      "bytes": 4040084,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": [
+        "large_audio_source",
+        "large_decompress_on_load_candidate"
+      ]
+    },
+    {
+      "path": "Assets/Sounds/Main Menu BGM_louder.mp3",
+      "bytes": 2767473,
+      "meta": {
+        "loadType": 2,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": [
+        "large_audio_source"
+      ]
+    },
+    {
+      "path": "Assets/Sounds/Game Over SFX.wav",
+      "bytes": 1058444,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": [
+        "large_decompress_on_load_candidate"
+      ]
+    },
+    {
+      "path": "Assets/Sounds/Dinosaur Roar SFX 1.wav",
+      "bytes": 718496,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/Dinosaur Roar SFX.wav",
+      "bytes": 718496,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/Clear_trimmed.wav",
+      "bytes": 543390,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/Heart Sound.wav",
+      "bytes": 353132,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/Clear.mp3",
+      "bytes": 259134,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/walk step_loop.wav",
+      "bytes": 205584,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/run sound 1_fixed.wav",
+      "bytes": 203292,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/step sound.wav",
+      "bytes": 203292,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/step sound_louder.wav",
+      "bytes": 203292,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/run sound 1_loop.wav",
+      "bytes": 175068,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/run sound 1_loop_louder.wav",
+      "bytes": 175068,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/run sound 1.wav",
+      "bytes": 72877,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/eating2.mp3",
+      "bytes": 53498,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/eating-sound.mp3",
+      "bytes": 18720,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    },
+    {
+      "path": "Assets/Sounds/eating-sound.mp3",
+      "bytes": 18720,
+      "meta": {
+        "loadType": 0,
+        "compressionFormat": 1,
+        "preloadAudioData": 0
+      },
+      "flags": []
+    }
+  ],
+  "scripts": {
+    "totals": [
+      [
+        "getComponentCalls",
+        172
+      ],
+      [
+        "debugLogging",
+        131
+      ],
+      [
+        "instantiateDestroy",
+        51
+      ],
+      [
+        "updateMethods",
+        30
+      ],
+      [
+        "coroutines",
+        25
+      ],
+      [
+        "resourcesLoad",
+        13
+      ],
+      [
+        "linqUsage",
+        12
+      ],
+      [
+        "gameObjectFind",
+        6
+      ],
+      [
+        "syncSceneLoad",
+        6
+      ]
+    ],
+    "files": [
+      {
+        "path": "Assets/Editor/DinoShaderRepairUtility.cs",
+        "hits": {
+          "debugLogging": 4
+        }
+      },
+      {
+        "path": "Assets/Editor/GameOverAnimationSetupUtility.cs",
+        "hits": {
+          "gameObjectFind": 2,
+          "getComponentCalls": 4,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Editor/PerformanceCleanupUtility.cs",
+        "hits": {
+          "debugLogging": 5
+        }
+      },
+      {
+        "path": "Assets/Editor/RuntimeBloodEffectPrefabCreator.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/SnowMapGenerator.cs",
+        "hits": {
+          "getComponentCalls": 4,
+          "instantiateDestroy": 10,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/SpawnPoint.cs",
+        "hits": {
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/VolcanoMapGenerator.cs",
+        "hits": {
+          "getComponentCalls": 5,
+          "instantiateDestroy": 6,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/TutorialInfo/Scripts/Editor/ReadmeEditor.cs",
+        "hits": {
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 2,
+          "resourcesLoad": 3
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01_UGUI.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1,
+          "resourcesLoad": 3
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark02.cs",
+        "hits": {
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark03.cs",
+        "hits": {
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark04.cs",
+        "hits": {
+          "resourcesLoad": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/CameraController.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/EnvMapAnimator.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/ObjectSpin.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/ShaderPropAnimator.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/SimpleScript.cs",
+        "hits": {
+          "updateMethods": 1,
+          "resourcesLoad": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/SkewTextExample.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TeleType.cs",
+        "hits": {
+          "getComponentCalls": 3,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TextConsoleSimulator.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TextMeshProFloatingText.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1,
+          "resourcesLoad": 2,
+          "debugLogging": 6,
+          "coroutines": 4
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TextMeshSpawner.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "resourcesLoad": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMPro_InstructionOverlay.cs",
+        "hits": {
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_ExampleScript_01.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_FrameRateCounter.cs",
+        "hits": {
+          "updateMethods": 1,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_PhoneNumberValidator.cs",
+        "hits": {
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextEventCheck.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 5
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextEventHandler.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 2,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextInfoDebugTool.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 10
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextSelector_A.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1,
+          "debugLogging": 5
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_TextSelector_B.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 3,
+          "instantiateDestroy": 2,
+          "debugLogging": 7
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/TMP_UiFrameRateCounter.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexColorCycler.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexJitter.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexShakeA.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexShakeB.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/VertexZoom.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "linqUsage": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/TextMesh Pro/Examples & Extras/Scripts/WarpTextExample.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Camera/BillboardToCamera.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Camera/CinemachineThirdPersonOrbit.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/Camera/EnvironmentSettingsController.cs",
+        "hits": {
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/DesertMapGenerator.cs",
+        "hits": {
+          "getComponentCalls": 9,
+          "instantiateDestroy": 6,
+          "debugLogging": 7
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/GrasslandMapGenerator.cs",
+        "hits": {
+          "getComponentCalls": 6,
+          "instantiateDestroy": 8,
+          "debugLogging": 7
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/Map10DecorationMeshCombiner.cs",
+        "hits": {
+          "gameObjectFind": 1,
+          "getComponentCalls": 1,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/Map10GroundMeshCombiner.cs",
+        "hits": {
+          "gameObjectFind": 1,
+          "getComponentCalls": 1,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/Map7CactusBillboardUtility.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/Map7SceneUtility.cs",
+        "hits": {
+          "gameObjectFind": 2,
+          "getComponentCalls": 6,
+          "linqUsage": 4,
+          "debugLogging": 6
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/MapPerformanceAudit.cs",
+        "hits": {
+          "getComponentCalls": 2,
+          "linqUsage": 6,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/Editor/QuickDrop.cs",
+        "hits": {
+          "getComponentCalls": 2,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/RendererBoundsUtility.cs",
+        "hits": {
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/ExpGainTextView.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1,
+          "instantiateDestroy": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHud.cs",
+        "hits": {
+          "getComponentCalls": 3,
+          "syncSceneLoad": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudDangerWarning.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudExpLabel.cs",
+        "hits": {
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudFlashEffect.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudGuideText.cs",
+        "hits": {
+          "debugLogging": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudHeartUI.cs",
+        "hits": {
+          "getComponentCalls": 2,
+          "instantiateDestroy": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudInventoryUI.cs",
+        "hits": {
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudLevelUpPopup.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudQuitButton.cs",
+        "hits": {
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudRestartButton.cs",
+        "hits": {
+          "syncSceneLoad": 1,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudResumeButton.cs",
+        "hits": {
+          "updateMethods": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudTitleButton.cs",
+        "hits": {
+          "syncSceneLoad": 1,
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/GameHudTitleReturnButton.cs",
+        "hits": {
+          "updateMethods": 1,
+          "syncSceneLoad": 1,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/LoadingOverlayBootstrap.cs",
+        "hits": {
+          "getComponentCalls": 5,
+          "debugLogging": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/StatusTextView.cs",
+        "hits": {
+          "getComponentCalls": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/TitleSceneManager.cs",
+        "hits": {
+          "debugLogging": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/TitleStartButtonManager.cs",
+        "hits": {
+          "updateMethods": 1,
+          "syncSceneLoad": 1,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/UI/TitleUIManager.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/Infrastructure/DI/GameLifetimeScope.cs",
+        "hits": {
+          "getComponentCalls": 8,
+          "instantiateDestroy": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Infrastructure/Pooling/ObjectPoolService.cs",
+        "hits": {
+          "getComponentCalls": 1,
+          "instantiateDestroy": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Animation/DinoAnimatorView.cs",
+        "hits": {
+          "getComponentCalls": 2,
+          "linqUsage": 1,
+          "debugLogging": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Enemy/DinoEnemy.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 2,
+          "instantiateDestroy": 2,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Enemy/EnemySpawner.cs",
+        "hits": {
+          "getComponentCalls": 5,
+          "instantiateDestroy": 6,
+          "debugLogging": 7,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Enemy/EnemyWanderMovement.cs",
+        "hits": {
+          "updateMethods": 3,
+          "getComponentCalls": 16
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Items/HeartDropMotion.cs",
+        "hits": {
+          "updateMethods": 1,
+          "instantiateDestroy": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Items/HeartPickup.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 6,
+          "instantiateDestroy": 2,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Player/PlayerDinoController.cs",
+        "hits": {
+          "updateMethods": 2,
+          "getComponentCalls": 10,
+          "debugLogging": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Player/PlayerMovementUtility.cs",
+        "hits": {
+          "getComponentCalls": 2
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Stage/GameIntroSequence.cs",
+        "hits": {
+          "getComponentCalls": 3,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/Stage/StageMapSceneLoader.cs",
+        "hits": {
+          "getComponentCalls": 22,
+          "instantiateDestroy": 2,
+          "debugLogging": 4,
+          "coroutines": 3
+        }
+      },
+      {
+        "path": "Assets/Scripts/Gameplay/VFX/PooledOneShotVfx.cs",
+        "hits": {
+          "instantiateDestroy": 1,
+          "coroutines": 1
+        }
+      },
+      {
+        "path": "Assets/IgniteCoders/Simple Water Shader/Resources/WaterReflection.cs",
+        "hits": {
+          "updateMethods": 1,
+          "getComponentCalls": 1
+        }
+      },
+      {
+        "path": "Assets/Editor/Data/ExcelDataMenu.cs",
+        "hits": {
+          "debugLogging": 3
+        }
+      }
+    ]
+  },
+  "networking": {
+    "frameworks": [],
+    "totals": [],
+    "files": []
+  },
+  "addressables": {
+    "exists": false,
+    "groupCount": 0,
+    "groups": [],
+    "settingsFiles": []
+  },
+  "shaders": {
+    "totals": [
+      [
+        "transparent_queue",
+        20
+      ],
+      [
+        "multi_pass",
+        20
+      ],
+      [
+        "keyword_or_variant_risk",
+        10
+      ],
+      [
+        "tessellation",
+        8
+      ]
+    ],
+    "files": [
+      {
+        "path": "Assets/Vefects/Free Blood VFX/_ Extra/Shaders/SH_Vefects_Extra_Billboard_01.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 60,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/Vefects/Free Blood VFX/_ Extra/Shaders/SH_Vefects_Extra_Grid_01.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 60,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/Vefects/Free Blood VFX/VFX/Shaders/SH_Vefects_URP_Free_Blood_01_Lit.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 84,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/Vefects/Free Blood VFX/Demo/Scene/Shaders/SH_Vefects_Grid_01.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 60,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Character_Showoff.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 60,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/Vefects/Free Blood VFX/Demo/Resources/Shaders/SH_Vefects_URP_VFX_Opaque_01.shader",
+        "passCount": 12,
+        "keywordPragmaCount": 60,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk",
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader",
+        "passCount": 3,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 5,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 6,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": [
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": [
+          "tessellation"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 4,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 4,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile SSD.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 4,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-2-Pass.shader",
+        "passCount": 5,
+        "keywordPragmaCount": 6,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 4,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": []
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": []
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_SDF.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 5,
+        "flags": [
+          "transparent_queue",
+          "multi_pass",
+          "keyword_or_variant_risk"
+        ]
+      },
+      {
+        "path": "Assets/TextMesh Pro/Shaders/TMP_Sprite.shader",
+        "passCount": 2,
+        "keywordPragmaCount": 2,
+        "flags": [
+          "transparent_queue",
+          "multi_pass"
+        ]
+      },
+      {
+        "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/lake/lakeShader.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": []
+      },
+      {
+        "path": "Assets/IslandMap/ocean&lakeShaderPack/shaders/ocean/seaShader.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": []
+      },
+      {
+        "path": "Assets/IgniteCoders/Simple Water Shader/Resources/WaterShader.shadergraph",
+        "passCount": 0,
+        "keywordPragmaCount": 0,
+        "flags": []
+      }
+    ]
+  },
+  "sceneAndPrefabYaml": {
+    "uniqueMaterialRefs": 63,
+    "topMaterialRefs": [
+      [
+        "be687d3b533df4d45ba2feae3c0eb324",
+        3858
+      ],
+      [
+        "0799a1e95665ef14f8fe2cbcd4ba3dc4",
+        1322
+      ],
+      [
+        "cb1b3563d3837304a9855da8536b8020",
+        710
+      ],
+      [
+        "049886ac1c9be8d4db643c92eee3880f",
+        644
+      ],
+      [
+        "dbc39f66988d81d45929537e762ad795",
+        55
+      ],
+      [
+        "e7476007b3e902f4fbacf11098082904",
+        48
+      ],
+      [
+        "0000000000000000e000000000000000",
+        12
+      ],
+      [
+        "8f586378b4e144a9851e7b34d9b748ee",
+        11
+      ],
+      [
+        "78d6b62cfa9d031459afc8f5d802ab4d",
+        10
+      ],
+      [
+        "f66cc5650dcc5184d962ff33ceb56e12",
+        10
+      ],
+      [
+        "89a3c1413c4018049bcf6475b8b6d92b",
+        10
+      ],
+      [
+        "3751419771dd5ba4e86b8127795ffff9",
+        10
+      ],
+      [
+        "3b5cc91c3bf8cf74391252247f52fb59",
+        9
+      ],
+      [
+        "e6b9b44320f4448d9d5e0ee634259966",
+        9
+      ],
+      [
+        "9452ae1262a74094f8a68013fbcd1834",
+        7
+      ],
+      [
+        "cd9a05818bea7bd4f96041af53d43a72",
+        7
+      ],
+      [
+        "030a65340283b78478dd8047375a772c",
+        6
+      ],
+      [
+        "e73a58f6e2794ae7b1b7e50b7fb811b0",
+        4
+      ],
+      [
+        "a89539ea0582255469e44eb43aabbdfd",
+        3
+      ],
+      [
+        "5d978d0ed71a93b40b2d5acffc507263",
+        3
+      ]
+    ],
+    "uniqueMeshRefs": 37,
+    "topMeshRefs": [
+      [
+        "08eefc2f613faa34fbb717ac2142af0a",
+        282
+      ],
+      [
+        "46d171de72518e343891c4b4c03e5103",
+        136
+      ],
+      [
+        "4e40842238bcca046a7c50ffff32b019",
+        127
+      ],
+      [
+        "43f6c6253561ce74b9f993709176caff",
+        90
+      ],
+      [
+        "eb8566b6e75507e48bd8ec4fff8f4dd9",
+        79
+      ],
+      [
+        "0000000000000000e000000000000000",
+        58
+      ],
+      [
+        "dbc39f66988d81d45929537e762ad795",
+        18
+      ],
+      [
+        "ddd36401006c8654eae1d9a6bcd6380d",
+        16
+      ],
+      [
+        "7d13b1b910c51024aaf2a43713086fb7",
+        15
+      ],
+      [
+        "a3ccb41ae53c6bf4bb0a5bfc470bf069",
+        14
+      ],
+      [
+        "3184c8a016da6e34abff1686da99650b",
+        6
+      ],
+      [
+        "c6b568bf9e55de141add501b8cd2a0e9",
+        6
+      ],
+      [
+        "68d9dbbd4c7c3454789a7a143623f829",
+        4
+      ],
+      [
+        "1aec1266c0ec1804c8c87f521a7cfc61",
+        3
+      ],
+      [
+        "20c3d6dd89e632346a7d802f48037389",
+        2
+      ],
+      [
+        "44ff3df702ea84749845ab7db6801761",
+        2
+      ],
+      [
+        "1a9ae4837de702249b4cf1c29e0b413f",
+        2
+      ],
+      [
+        "3dc1547a7057e7c44b3e587639870a42",
+        2
+      ],
+      [
+        "a80496565b9446a47ac2dc9abad9375f",
+        1
+      ],
+      [
+        "a84d3f1935e9b0e49aff6d350c1c3b48",
+        1
+      ]
+    ],
+    "componentCounts": [
+      [
+        "MeshRenderer",
+        3100
+      ],
+      [
+        "Collider",
+        1965
+      ],
+      [
+        "MeshCollider",
+        731
+      ],
+      [
+        "SkinnedMeshRenderer",
+        132
+      ],
+      [
+        "ParticleSystem",
+        127
+      ],
+      [
+        "SpriteRenderer",
+        127
+      ],
+      [
+        "Light",
+        72
+      ],
+      [
+        "Animator",
+        66
+      ],
+      [
+        "Canvas",
+        35
+      ],
+      [
+        "Rigidbody",
+        8
+      ],
+      [
+        "NavMeshAgent",
+        8
+      ],
+      [
+        "Terrain",
+        7
+      ],
+      [
+        "Animation",
+        6
+      ],
+      [
+        "ReflectionProbe",
+        6
+      ],
+      [
+        "LODGroup",
+        0
+      ],
+      [
+        "GraphicRaycaster",
+        0
+      ],
+      [
+        "Rigidbody2D",
+        0
+      ],
+      [
+        "Collider2D",
+        0
+      ],
+      [
+        "Joint",
+        0
+      ],
+      [
+        "TrailRenderer",
+        0
+      ],
+      [
+        "LineRenderer",
+        0
+      ],
+      [
+        "VisualEffect",
+        0
+      ],
+      [
+        "AudioSource",
+        0
+      ],
+      [
+        "LightProbeGroup",
+        0
+      ],
+      [
+        "SortingGroup",
+        0
+      ],
+      [
+        "Tilemap",
+        0
+      ],
+      [
+        "TilemapRenderer",
+        0
+      ],
+      [
+        "TilemapCollider2D",
+        0
+      ],
+      [
+        "CompositeCollider2D",
+        0
+      ],
+      [
+        "Light2D",
+        0
+      ],
+      [
+        "ShadowCaster2D",
+        0
+      ],
+      [
+        "SpriteSkin",
+        0
+      ]
+    ],
+    "lightComponentCount": 72,
+    "lodGroupCount": 0,
+    "rendererCount": 3232,
+    "canvasCount": 35,
+    "staticFlagValues": [
+      [
+        "0",
+        2483
+      ],
+      [
+        "2147483647",
+        1389
+      ],
+      [
+        "4294967295",
+        8
+      ]
+    ]
+  },
+  "terrain": {
+    "terrainComponentCount": 7,
+    "terrainLayerCount": 6,
+    "sampleTerrainLayers": [
+      "Assets/IslandMap/NewLayer.terrainlayer",
+      "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Terrain/TerrainLayer/Grass_Lite.terrainlayer",
+      "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Terrain/TerrainLayer/Sand_Lite.terrainlayer",
+      "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/TerrainDirt.terrainlayer",
+      "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/TerrainGrass.terrainlayer",
+      "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/TerrainRock.terrainlayer"
+    ],
+    "terrainDataAssetCount": 14,
+    "sampleTerrainDataAssets": [
+      "Assets/New Terrain.asset",
+      "Assets/IslandMap/New Terrain.asset",
+      "Assets/IslandMap/TerrainData_12e6fd9f-bef5-430e-872a-3943eca4735b.asset",
+      "Assets/IslandMap/TerrainData_1c9bd08f-a8a7-40ef-b3b3-a6961af6bb5a.asset",
+      "Assets/IslandMap/TerrainData_7a638fe1-8f40-419b-a982-8520f340ef30.asset",
+      "Assets/IslandMap/TerrainData_7e444977-d572-42e0-9549-78c51bd393e4.asset",
+      "Assets/IslandMap/TerrainData_871da917-5953-4d2c-bc94-0eab3c0b6d87.asset",
+      "Assets/IslandMap/TerrainData_9c9f467f-d40e-43f1-b926-82c3d5c1e651.asset",
+      "Assets/IslandMap/TerrainData_bc28f0f2-de2b-43ba-be9f-5ae9d7b7eeb1.asset",
+      "Assets/IslandMap/TerrainData_bd9b3828-dab4-4f10-8fc5-7653a56fa202.asset",
+      "Assets/IslandMap/TerrainData_d6aa3dd6-8f79-4f8a-8181-03d61ef1773d.asset",
+      "Assets/IslandMap/TerrainData_f05cc73f-042b-4319-83b8-f66275ad60fd.asset",
+      "Assets/IslandMap/LowPolyTropicalEnvironment_LITE/Terrain/TE_Lite_Terrain.asset",
+      "Assets/Fantasy Skybox FREE/Scenes/Textures (Terrain)/SampleTerrain.asset"
+    ]
+  },
+  "2d": {
+    "has2DPackageHints": true,
+    "spriteAtlasCount": 1,
+    "sampleSpriteAtlases": [
+      "Assets/Scenes/New Sprite Atlas.spriteatlas"
+    ],
+    "tileAssetCount": 0,
+    "sampleTileAssets": [],
+    "pixelPerfectScriptReferences": [],
+    "spriteRendererCount": 127,
+    "sortingGroupCount": 0,
+    "tilemapCount": 0,
+    "tilemapRendererCount": 0,
+    "tilemapCollider2DCount": 0,
+    "compositeCollider2DCount": 0,
+    "rigidbody2DCount": 0,
+    "collider2DCount": 0,
+    "light2DCount": 0,
+    "shadowCaster2DCount": 0,
+    "spriteSkinCount": 0
+  },
+  "pipeline": {
+    "renderPipeline": "URP",
+    "hasURP": true,
+    "hasHDRP": false,
+    "mobilePackagesOrTargetsHint": true,
+    "targetFrameRateMentioned": false
+  },
+  "findings": [
+    {
+      "area": "Texture Compression",
+      "priority": "High",
+      "summary": "216 textures have compression/import flags worth reviewing."
+    },
+    {
+      "area": "Mobile Optimization",
+      "priority": "Medium",
+      "summary": "Mobile platform hints were detected; include fill rate, overdraw, thermal, battery, and target FPS review."
+    },
+    {
+      "area": "LOD",
+      "priority": "Medium",
+      "summary": "Renderers were found but no LODGroup components were detected in scanned scenes/prefabs."
+    },
+    {
+      "area": "2D Optimization",
+      "priority": "Medium",
+      "summary": "2D packages, sprite renderers, tilemaps, atlases, 2D physics, or 2D lights were detected; include a dedicated 2D optimization audit."
+    },
+    {
+      "area": "Draw Calls",
+      "priority": "Medium",
+      "summary": "Large material variety may increase SetPass calls and reduce batching."
+    },
+    {
+      "area": "CPU/Scripts",
+      "priority": "Medium",
+      "summary": "Script patterns indicate possible per-frame CPU or lookup overhead; confirm with Profiler before refactoring."
+    },
+    {
+      "area": "Memory/Loading",
+      "priority": "Medium",
+      "summary": "56 assets are under Resources folders; review load lifetime and build size impact."
+    },
+    {
+      "area": "Audio",
+      "priority": "Medium",
+      "summary": "Audio assets have import or size flags worth checking for streaming/compression settings."
+    },
+    {
+      "area": "Shader Audit",
+      "priority": "Medium",
+      "summary": "Shader files include transparency, multi-pass, keyword, or variant risk markers."
+    },
+    {
+      "area": "Lighting/Shadows",
+      "priority": "Medium",
+      "summary": "Many light/probe components were detected; review realtime shadows, baking, and probe density."
+    },
+    {
+      "area": "Physics",
+      "priority": "Medium",
+      "summary": "Physics component counts suggest collision matrix, collider type, and fixed timestep review may be useful."
+    },
+    {
+      "area": "UI",
+      "priority": "Medium",
+      "summary": "Multiple Canvas or GraphicRaycaster components may create UI rebuild or raycast overhead."
+    },
+    {
+      "area": "Animation/VFX",
+      "priority": "Medium",
+      "summary": "Animation and VFX component volume suggests culling, bounds, and max particle count review."
+    },
+    {
+      "area": "Terrain",
+      "priority": "Medium",
+      "summary": "Terrain assets or Terrain components were detected; review layer count, detail density, grass/tree rendering, and terrain LOD."
+    },
+    {
+      "area": "URP/HDRP",
+      "priority": "Medium",
+      "summary": "URP detected; include pipeline-specific render feature, shadow, decal, and post-processing review."
+    },
+    {
+      "area": "Occlusion Culling",
+      "priority": "Medium",
+      "summary": "Scene names suggest enclosed or dense spaces that may benefit from occlusion culling validation."
+    }
+  ]
+}

@@ -48,7 +48,6 @@ namespace DinoGrow.Gameplay.Enemy
         private Action<DinoEnemy> despawnHandler;
         private DeathEffectService deathEffectService;
         private PlayerProgress playerProgress;
-        private Transform levelTextTransform;
         private Transform cameraTransform;
         private bool createdLevelText;
         private bool isDying;
@@ -376,76 +375,24 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void EnsureLevelText()
         {
-            if (levelText == null)
-            {
-                var labelObject = new GameObject("EnemyLevelText");
-                labelObject.transform.SetParent(transform, false);
-                levelText = labelObject.AddComponent<TextMesh>();
-                createdLevelText = true;
-            }
-
-            levelTextTransform = levelText.transform;
-            levelText.anchor = TextAnchor.MiddleCenter;
-            levelText.alignment = TextAlignment.Center;
-            levelText.characterSize = levelTextCharacterSize;
-            levelText.fontSize = levelTextFontSize;
-            ConfigureLevelTextMaterial(levelText);
-            ApplyLevelTextColor();
-            UpdateLevelTextTransform();
-        }
-
-        private static void ConfigureLevelTextMaterial(TextMesh targetText)
-        {
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
-                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
-
-            if (font == null)
-            {
-                return;
-            }
-
-            targetText.font = font;
-
-            if (targetText.TryGetComponent<MeshRenderer>(out var textRenderer))
-            {
-                textRenderer.sharedMaterial = font.material;
-            }
+            levelText = EnemyLevelTextPresenter.Ensure(
+                transform,
+                levelText,
+                ref createdLevelText,
+                CreateLevelTextStyle(),
+                level,
+                playerProgress,
+                cameraTransform);
         }
 
         private void RefreshLevelText()
         {
-            if (levelText == null)
-            {
-                return;
-            }
-
-            levelText.text = $"Lv. {level}";
-            ApplyLevelTextColor();
+            EnemyLevelTextPresenter.Refresh(levelText, level, CreateLevelTextStyle(), playerProgress);
         }
 
         private void ApplyLevelTextColor()
         {
-            if (levelText == null)
-            {
-                return;
-            }
-
-            var palette = new EnemyLevelTextColorPalette(
-                lowerLevelTextColor,
-                sameLevelTextColor,
-                higherLevelTextColor,
-                IsWhiteFallback(levelTextColor) ? sameLevelTextColor : levelTextColor);
-            var playerLevel = playerProgress != null ? playerProgress.Level : 0;
-            levelText.color = EnemyLevelTextColorRule.Resolve(
-                level,
-                playerLevel,
-                Application.isPlaying && usePlayerRelativeLevelTextColor,
-                palette);
-        }
-
-        private static bool IsWhiteFallback(Color color)
-        {
-            return color.r > 0.98f && color.g > 0.98f && color.b > 0.98f;
+            EnemyLevelTextPresenter.ApplyColor(levelText, level, CreateLevelTextStyle(), playerProgress);
         }
 
         private void ScheduleEditorLevelTextRefresh()
@@ -467,32 +414,20 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void UpdateLevelTextTransform()
         {
-            if (levelTextTransform == null)
-            {
-                return;
-            }
-
-            levelTextTransform.position = GetLevelTextPosition();
-            if (cameraTransform == null)
-            {
-                return;
-            }
-
-            var lookDirection = levelTextTransform.position - cameraTransform.position;
-            if (lookDirection.sqrMagnitude > 0.001f)
-            {
-                levelTextTransform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-            }
+            EnemyLevelTextPresenter.UpdateTransform(transform, levelText, levelTextHeightPadding, cameraTransform);
         }
 
-        private Vector3 GetLevelTextPosition()
+        private EnemyLevelTextStyle CreateLevelTextStyle()
         {
-            if (!RendererBoundsUtility.TryCalculateVisibleBounds(transform, out var bounds))
-            {
-                return transform.position + Vector3.up * levelTextHeightPadding;
-            }
-
-            return new Vector3(bounds.center.x, bounds.max.y + levelTextHeightPadding, bounds.center.z);
+            return new EnemyLevelTextStyle(
+                levelTextHeightPadding,
+                levelTextCharacterSize,
+                levelTextFontSize,
+                levelTextColor,
+                lowerLevelTextColor,
+                sameLevelTextColor,
+                higherLevelTextColor,
+                usePlayerRelativeLevelTextColor);
         }
 
         private Material GetMaterialForLevel(int targetLevel)
@@ -555,41 +490,4 @@ namespace DinoGrow.Gameplay.Enemy
         }
     }
 
-    public readonly struct EnemyLevelTextColorPalette
-    {
-        public EnemyLevelTextColorPalette(Color lowerOrEqual, Color sameLevel, Color higherLevel, Color fallback)
-        {
-            LowerOrEqual = lowerOrEqual;
-            SameLevel = sameLevel;
-            HigherLevel = higherLevel;
-            Fallback = fallback;
-        }
-
-        public Color LowerOrEqual { get; }
-        public Color SameLevel { get; }
-        public Color HigherLevel { get; }
-        public Color Fallback { get; }
-    }
-
-    public static class EnemyLevelTextColorRule
-    {
-        public static Color Resolve(
-            int enemyLevel,
-            int playerLevel,
-            bool usePlayerRelativeColor,
-            EnemyLevelTextColorPalette palette)
-        {
-            if (!usePlayerRelativeColor || playerLevel <= 0)
-            {
-                return palette.Fallback;
-            }
-
-            if (enemyLevel > playerLevel)
-            {
-                return palette.HigherLevel;
-            }
-
-            return enemyLevel == playerLevel ? palette.SameLevel : palette.LowerOrEqual;
-        }
-    }
 }

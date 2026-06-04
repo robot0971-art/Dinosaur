@@ -81,7 +81,7 @@ namespace DinoGrow.Gameplay.Enemy
         private readonly EnemySpawnLevelRule spawnLevelRule = new();
         private readonly EnemySpawnStatsRule spawnStatsRule = new();
         private readonly HeartDropSpawnService heartDropSpawnService = new();
-        private EnemySpawnAreaRule spawnAreaRule;
+        private readonly EnemySpawnPositionPicker spawnPositionPicker = new();
         private Coroutine spawnRoutine;
         private PlayerDinoController playerController;
         private Vector3 playerStartExclusionCenter;
@@ -171,10 +171,25 @@ namespace DinoGrow.Gameplay.Enemy
                 return;
             }
 
-            var obstacleLayer = LayerMask.NameToLayer("Obstacle");
-            obstacleLayers = obstacleLayer >= 0
-                ? 1 << obstacleLayer
-                : 0;
+            obstacleLayers = CreateObstacleLayerMask();
+        }
+
+        private static LayerMask CreateObstacleLayerMask()
+        {
+            var mask = 0;
+            AddLayerToMask("Obstacle", ref mask);
+            AddLayerToMask("MediumDecor", ref mask);
+            AddLayerToMask("LargeDecor", ref mask);
+            return mask;
+        }
+
+        private static void AddLayerToMask(string layerName, ref int mask)
+        {
+            var layer = LayerMask.NameToLayer(layerName);
+            if (layer >= 0)
+            {
+                mask |= 1 << layer;
+            }
         }
 
         private void OnDestroy()
@@ -324,7 +339,7 @@ namespace DinoGrow.Gameplay.Enemy
                     continue;
                 }
 
-                var prefab = FindPrefabByName(dinoData.prefab);
+                var prefab = EnemyPrefabResolver.FindByName(enemyPrefabs, dinoData.prefab);
                 if (prefab == null)
                 {
                     Debug.LogWarning($"Enemy prefab '{dinoData.prefab}' was not assigned to EnemySpawner.", this);
@@ -358,7 +373,7 @@ namespace DinoGrow.Gameplay.Enemy
             enemy.SetLevel(level);
             enemy.SetEatenHandler(DropHeartForEnemy);
             enemy.SetDespawnHandler(DespawnEnemy);
-            ApplyNormalizedScale(enemy.transform, GetEnemySize(dinoData, level));
+            EnemyScaleApplier.ApplyNormalizedScale(enemy.transform, GetEnemySize(dinoData, level), sizeUnit);
 
             var wander = enemy.GetComponent<EnemyWanderMovement>();
             if (wander == null)
@@ -540,24 +555,6 @@ namespace DinoGrow.Gameplay.Enemy
             return true;
         }
 
-        private DinoEnemy FindPrefabByName(string prefabName)
-        {
-            if (string.IsNullOrWhiteSpace(prefabName) || enemyPrefabs == null)
-            {
-                return null;
-            }
-
-            foreach (var prefab in enemyPrefabs)
-            {
-                if (prefab != null && prefab.name == prefabName)
-                {
-                    return prefab;
-                }
-            }
-
-            return null;
-        }
-
         private int GetSpawnLevel(SpawnDataRecord spawnRecord)
         {
             var context = new EnemySpawnLevelContext(
@@ -578,33 +575,6 @@ namespace DinoGrow.Gameplay.Enemy
         private float GetEnemySize(DinoDataRecord dinoData, int level)
         {
             return spawnStatsRule.GetEnemySize(dinoData, level);
-        }
-
-        private void ApplyNormalizedScale(Transform enemyTransform, float targetSize)
-        {
-            var renderers = enemyTransform.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0)
-            {
-                enemyTransform.localScale = Vector3.one * targetSize;
-                return;
-            }
-
-            var bounds = renderers[0].bounds;
-            for (var i = 1; i < renderers.Length; i++)
-            {
-                bounds.Encapsulate(renderers[i].bounds);
-            }
-
-            var currentSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
-            if (currentSize <= 0.001f)
-            {
-                enemyTransform.localScale = Vector3.one * targetSize;
-                return;
-            }
-
-            var targetWorldSize = Mathf.Max(0.1f, targetSize * sizeUnit);
-            var scaleMultiplier = targetWorldSize / currentSize;
-            enemyTransform.localScale *= scaleMultiplier;
         }
 
         private float GetMoveSpeed(DinoDataRecord dinoData, SpawnDataRecord spawnRecord)
@@ -649,296 +619,47 @@ namespace DinoGrow.Gameplay.Enemy
 
         private bool TryPickSpawnPosition(out Vector3 spawnPosition)
         {
-            ConfigureSpawnAreaRule();
-            var attempts = Mathf.Max(1, maxSpawnAttemptsPerEnemy);
-            for (var i = 0; i < attempts; i++)
-            {
-                var position = RandomPositionInArea();
-                if (!TrySnapToNavMesh(position, out position))
-                {
-                    continue;
-                }
-
-                if (!IsValidSpawnPosition(position))
-                {
-                    continue;
-                }
-
-                spawnPosition = position;
-                return true;
-            }
-
-            for (var i = 0; i < attempts; i++)
-            {
-                var position = RandomPositionInArea();
-                if (!TryGetBoundedGroundPosition(position, out position))
-                {
-                    continue;
-                }
-
-                if (IsTooCloseToPlayerArea(position))
-                {
-                    continue;
-                }
-
-                if (spawnAreaRule.IsNearEdge(position))
-                {
-                    continue;
-                }
-
-                if (IsNearObstacle(position))
-                {
-                    continue;
-                }
-
-                if (IsTooCloseToSpawnedEnemy(position))
-                {
-                    continue;
-                }
-
-                spawnPosition = position;
-                return true;
-            }
-
-            spawnPosition = Vector3.zero;
-            return false;
-        }
-
-        private bool TrySnapToNavMesh(Vector3 position, out Vector3 navPosition)
-        {
-            ConfigureSpawnAreaRule();
-            position = SnapToGround(position);
-            var navSearchRadius = Mathf.Max(0.1f, navMeshSampleDistance);
-            var verticalTolerance = Mathf.Max(0.1f, navMeshVerticalSampleDistance);
-            if (NavMesh.SamplePosition(position, out var hit, navSearchRadius, NavMesh.AllAreas)
-                && Mathf.Abs(hit.position.y - position.y) <= verticalTolerance
-                && spawnAreaRule.Contains(hit.position))
-            {
-                navPosition = hit.position;
-                return true;
-            }
-
-            navPosition = position;
-            return spawnAreaRule.Contains(navPosition) && TryGetGroundY(navPosition, out _);
-        }
-
-        private bool TryGetBoundedGroundPosition(Vector3 position, out Vector3 groundPosition)
-        {
-            ConfigureSpawnAreaRule();
-            position = spawnAreaRule.Clamp(position);
-            if (TryGetGroundY(position, out var groundY))
-            {
-                position.y = groundY;
-                groundPosition = spawnAreaRule.Clamp(position);
-                return true;
-            }
-
-            var navSearchRadius = Mathf.Max(0.1f, navMeshSampleDistance);
-            if (NavMesh.SamplePosition(position, out var hit, navSearchRadius, NavMesh.AllAreas))
-            {
-                groundPosition = spawnAreaRule.Clamp(hit.position);
-                return true;
-            }
-
-            groundPosition = Vector3.zero;
-            return false;
-        }
-
-        private bool IsValidSpawnPosition(Vector3 position)
-        {
-            ConfigureSpawnAreaRule();
-            if (!spawnAreaRule.Contains(position))
-            {
-                return false;
-            }
-
-            if (spawnAreaRule.IsNearEdge(position))
-            {
-                return false;
-            }
-
-            if (IsNearObstacle(position))
-            {
-                return false;
-            }
-
-            if (IsTooCloseToPlayerArea(position))
-            {
-                return false;
-            }
-
-            return !IsTooCloseToSpawnedEnemy(position);
-        }
-
-        private bool IsTooCloseToSpawnedEnemy(Vector3 position)
-        {
-            var minEnemyDistanceSqr = minDistanceBetweenEnemies * minDistanceBetweenEnemies;
-            foreach (var enemy in spawnedEnemies)
-            {
-                if (enemy == null || enemy.IsDying)
-                {
-                    continue;
-                }
-
-                var offset = position - enemy.transform.position;
-                offset.y = 0f;
-                if (offset.sqrMagnitude < minEnemyDistanceSqr)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool IsTooCloseToPlayerArea(Vector3 position)
-        {
-            var minDistance = Mathf.Max(0f, minDistanceFromPlayer);
-            var minDistanceSqr = minDistance * minDistance;
-            if (player != null)
-            {
-                var offset = position - player.position;
-                offset.y = 0f;
-                if (offset.sqrMagnitude < minDistanceSqr)
-                {
-                    return true;
-                }
-            }
-
-            if (avoidPlayerStartArea && hasPlayerStartExclusion)
-            {
-                minDistance = Mathf.Max(minDistance, playerStartExclusionRadius);
-                minDistanceSqr = minDistance * minDistance;
-                var offset = position - playerStartExclusionCenter;
-                offset.y = 0f;
-                if (offset.sqrMagnitude < minDistanceSqr)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            ConfigureSpawnPositionPicker();
+            return spawnPositionPicker.TryPick(spawnedEnemies, out spawnPosition);
         }
 
         private Vector3 ClampToSpawnArea(Vector3 position)
         {
-            ConfigureSpawnAreaRule();
-            return spawnAreaRule.Clamp(position);
-        }
-
-        private bool IsNearObstacle(Vector3 position)
-        {
-            if (obstacleLayers.value == 0)
-            {
-                return false;
-            }
-
-            var radius = Mathf.Max(0.1f, obstacleSpawnClearance);
-            return Physics.CheckSphere(
-                position + Vector3.up * radius,
-                radius,
-                obstacleLayers,
-                QueryTriggerInteraction.Ignore);
-        }
-
-        private Vector3 RandomPositionInArea()
-        {
-            ConfigureSpawnAreaRule();
-            return SnapToGround(spawnAreaRule.RandomPosition(
-                spawnY,
-                centerWeightedSpawnChance,
-                centerWeightedSpawnScale,
-                () => Random.value,
-                Random.Range));
-        }
-
-        private void ConfigureSpawnAreaRule()
-        {
-            if (spawnAreaRule == null)
-            {
-                spawnAreaRule = new EnemySpawnAreaRule(spawnCenter, spawnSize, spawnEdgePaddingRatio);
-                return;
-            }
-
-            spawnAreaRule.Configure(spawnCenter, spawnSize, spawnEdgePaddingRatio);
-        }
-
-        private bool TryGetGroundY(Vector3 position, out float groundY)
-        {
-            groundY = position.y;
-            var origin = new Vector3(position.x, position.y + groundRaycastHeight, position.z);
-            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
-            if (hits.Length == 0)
-            {
-                return false;
-            }
-
-            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
-            foreach (var hit in hits)
-            {
-                if (!IsGroundCollider(hit.collider))
-                {
-                    continue;
-                }
-
-                groundY = hit.point.y + groundOffset;
-                return true;
-            }
-
-            return false;
+            ConfigureSpawnPositionPicker();
+            return spawnPositionPicker.ClampToSpawnArea(position);
         }
 
         private Vector3 SnapToGround(Vector3 position)
         {
-            var origin = new Vector3(position.x, position.y + groundRaycastHeight, position.z);
-            var hits = Physics.RaycastAll(origin, Vector3.down, groundRaycastDistance, groundLayers, QueryTriggerInteraction.Ignore);
-            if (hits.Length == 0)
-            {
-                return position;
-            }
-
-            System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
-            foreach (var hit in hits)
-            {
-                if (!IsGroundCollider(hit.collider))
-                {
-                    continue;
-                }
-
-                position.y = hit.point.y + groundOffset;
-                return position;
-            }
-
-            return position;
+            ConfigureSpawnPositionPicker();
+            return spawnPositionPicker.SnapToGround(position);
         }
 
-        private static bool IsGroundCollider(Collider targetCollider)
+        private void ConfigureSpawnPositionPicker()
         {
-            if (targetCollider == null)
-            {
-                return false;
-            }
-
-            var target = targetCollider.transform;
-            while (target != null)
-            {
-                if (IsNonGroundSurfaceName(target.name))
-                {
-                    return false;
-                }
-
-                target = target.parent;
-            }
-
-            return true;
-        }
-
-        private static bool IsNonGroundSurfaceName(string targetName)
-        {
-            return targetName == "Water"
-                || targetName == "MapBoundary"
-                || targetName.StartsWith("Tree_", System.StringComparison.Ordinal)
-                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal);
+            spawnPositionPicker.Configure(new EnemySpawnPositionSettings(
+                spawnCenter,
+                spawnSize,
+                spawnY,
+                groundLayers,
+                groundRaycastHeight,
+                groundRaycastDistance,
+                groundOffset,
+                maxSpawnAttemptsPerEnemy,
+                minDistanceFromPlayer,
+                avoidPlayerStartArea,
+                playerStartExclusionRadius,
+                playerStartExclusionCenter,
+                hasPlayerStartExclusion,
+                minDistanceBetweenEnemies,
+                player,
+                navMeshSampleDistance,
+                navMeshVerticalSampleDistance,
+                obstacleLayers,
+                obstacleSpawnClearance,
+                centerWeightedSpawnChance,
+                centerWeightedSpawnScale,
+                spawnEdgePaddingRatio));
         }
 
         private void ClearSpawnedEnemies()

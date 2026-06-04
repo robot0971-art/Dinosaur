@@ -1,4 +1,4 @@
-[MapPerformanceAudit] Assets/Scenes/map4.unity | objects=4099, activeObjects=466, meshRenderers=3796, activeMeshRenderers=171, activeVerts=3,368,841, activeTris=1,319,515, colliders=3794, activeColliders=173, cameras=1, activeCameras=0, groundChunks=9, groundSourceBackupObjects=626, mapBoundaries=5, missingScripts=0
+[MapPerformanceAudit] Assets/Scenes/map4.unity | objects=3815, activeObjects=182, meshRenderers=3653, activeMeshRenderers=169, activeVerts=3,362,762, activeTris=1,316,235, colliders=3651, activeColliders=171, cameras=1, activeCameras=0, groundChunks=9, groundSourceBackupObjects=626, mapBoundaries=5, missingScripts=0
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_-1_-1_3 | mesh=Map4_GroundChunk_-1_-1_3, verts=674,352, tris=257,040
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_-1_0_4 | mesh=Map4_GroundChunk_-1_0_4, verts=674,352, tris=257,040
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_0_-1_6 | mesh=Map4_GroundChunk_0_-1_6, verts=674,352, tris=257,040
@@ -7,21 +7,21 @@
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_-2_0_1 | mesh=Map4_GroundChunk_-2_0_1, verts=56,196, tris=21,420
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_-1_1_5 | mesh=Map4_GroundChunk_-1_1_5, verts=56,196, tris=21,420
 [MapPerformanceAudit:Heavy] Assets/Scenes/map4.unity | GroundChunks/GroundChunk_0_1_8 | mesh=Map4_GroundChunk_0_1_8, verts=56,196, tris=21,420
-[MapPerformanceAudit] Assets/Scenes/map7.unity | objects=23836, activeObjects=1091, meshRenderers=22965, activeMeshRenderers=250, activeVerts=4,977,025, activeTris=2,522,382, colliders=7724, activeColliders=149, cameras=1, activeCameras=0, groundChunks=59, groundSourceBackupObjects=1, mapBoundaries=5, missingScripts=0
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_-2_4 | mesh=Map7_GroundChunk_-1_-2_4, verts=141,028, tris=70,500
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_1_7 | mesh=Map7_GroundChunk_-1_1_7, verts=139,200, tris=69,600
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_2_18 | mesh=Map7_GroundChunk_-1_2_18, verts=134,600, tris=67,300
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_-3_45 | mesh=Map7_GroundChunk_-1_-3_45, verts=134,600, tris=67,300
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_0_6 | mesh=Map7_GroundChunk_-1_0_6, verts=134,428, tris=67,200
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-1_-1_5 | mesh=Map7_GroundChunk_-1_-1_5, verts=134,400, tris=67,200
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_1_-2_12 | mesh=Map7_GroundChunk_1_-2_12, verts=130,028, tris=65,000
-[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_-2_0 | mesh=Map7_GroundChunk_-2_-2_0, verts=125,228, tris=62,600
-[MapPerformanceAudit] Assets/Scenes/map10.unity | objects=23242, activeObjects=23242, meshRenderers=23087, activeMeshRenderers=20439, activeVerts=4,689,348, activeTris=2,326,840, colliders=22664, activeColliders=22522, cameras=1, activeCameras=1, groundChunks=64, groundSourceBackupObjects=0, mapBoundaries=1, missingScripts=0
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_-3 | mesh=Map10_Ground_Chunk_-3_-3, verts=13,000, tris=6,500
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_0_-1 | mesh=Map10_Ground_Chunk_0_-1, verts=13,000, tris=6,500
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_-2 | mesh=Map10_Ground_Chunk_-3_-2, verts=12,800, tris=6,400
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_-1 | mesh=Map10_Ground_Chunk_-3_-1, verts=12,800, tris=6,400
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_0 | mesh=Map10_Ground_Chunk_-3_0, verts=12,800, tris=6,400
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_1 | mesh=Map10_Ground_Chunk_-3_1, verts=12,800, tris=6,400
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-3_2 | mesh=Map10_Ground_Chunk_-3_2, verts=12,800, tris=6,400
-[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedGround/Map10_Ground_Chunk_-2_-3 | mesh=Map10_Ground_Chunk_-2_-3, verts=12,800, tris=6,400
+[MapPerformanceAudit] Assets/Scenes/map7.unity | objects=23595, activeObjects=850, meshRenderers=22865, activeMeshRenderers=291, activeVerts=4,977,025, activeTris=2,522,382, colliders=7624, activeColliders=190, cameras=1, activeCameras=0, groundChunks=100, groundSourceBackupObjects=1, mapBoundaries=5, missingScripts=0
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_-2_0 | mesh=Map7_GroundChunk_-2_-2_0, verts=72,200, tris=36,100
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_1_3 | mesh=Map7_GroundChunk_-2_1_3, verts=69,000, tris=34,500
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_3_17 | mesh=Map7_GroundChunk_-2_3_17, verts=67,400, tris=33,700
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_-1_1 | mesh=Map7_GroundChunk_-2_-1_1, verts=67,200, tris=33,600
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_2_16 | mesh=Map7_GroundChunk_-2_2_16, verts=67,200, tris=33,600
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_0_2 | mesh=Map7_GroundChunk_-2_0_2, verts=67,000, tris=33,500
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_-4_62 | mesh=Map7_GroundChunk_-2_-4_62, verts=64,200, tris=32,100
+[MapPerformanceAudit:Heavy] Assets/Scenes/map7.unity | GroundChunks/GroundChunk_-2_-3_63 | mesh=Map7_GroundChunk_-2_-3_63, verts=64,000, tris=32,000
+[MapPerformanceAudit] Assets/Scenes/map10.unity | objects=23138, activeObjects=23137, meshRenderers=23120, activeMeshRenderers=597, activeVerts=4,686,970, activeTris=2,325,906, colliders=22523, activeColliders=2506, cameras=1, activeCameras=1, groundChunks=64, groundSourceBackupObjects=0, mapBoundaries=1, missingScripts=0
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_2_3_52274 | mesh=Map10_Decoration_Chunk_2_3_52274, verts=26,600, tris=13,300
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_2_5_52274 | mesh=Map10_Decoration_Chunk_2_5_52274, verts=26,400, tris=13,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_2_6_52274 | mesh=Map10_Decoration_Chunk_2_6_52274, verts=26,400, tris=13,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_-7_3_52274 | mesh=Map10_Decoration_Chunk_-7_3_52274, verts=24,400, tris=12,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_4_-1_52274 | mesh=Map10_Decoration_Chunk_4_-1_52274, verts=24,400, tris=12,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_2_-7_52274 | mesh=Map10_Decoration_Chunk_2_-7_52274, verts=24,400, tris=12,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_-7_-7_52274 | mesh=Map10_Decoration_Chunk_-7_-7_52274, verts=24,400, tris=12,200
+[MapPerformanceAudit:Heavy] Assets/Scenes/map10.unity | CombinedDecoration/Map10_Decoration_Chunk_-5_-5_52274 | mesh=Map10_Decoration_Chunk_-5_-5_52274, verts=24,400, tris=12,200

@@ -9,7 +9,6 @@ using DinoGrow.Infrastructure.DI;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VContainer;
@@ -50,6 +49,9 @@ namespace DinoGrow.Gameplay.Stage
         [SerializeField] private int initialLoadingHideDelayFrames = 1;
         [SerializeField] private float stageTransitionIdleDelay = 0.85f;
         [SerializeField] private float stageTransitionFadeDuration = 2f;
+        [SerializeField] private bool smoothSceneLoadingPriority = true;
+        [SerializeField] private ThreadPriority sceneLoadingThreadPriority = ThreadPriority.Low;
+        [SerializeField, Range(-128, 127)] private int sceneAsyncOperationPriority = -64;
         [SerializeField] private AudioClip stageClearSoundClip;
         [SerializeField] private AudioSource stageClearSoundSource;
         [SerializeField, Range(0f, 1f)] private float stageClearSoundVolume = 1f;
@@ -75,6 +77,8 @@ namespace DinoGrow.Gameplay.Stage
         private bool levelExpPanelWasActive = true;
         private bool heartRootWasActive = true;
         private bool initialIntroPresentationStarted;
+        private ThreadPriority previousBackgroundLoadingPriority;
+        private bool hasPreviousBackgroundLoadingPriority;
 
         private void Awake()
         {
@@ -208,6 +212,8 @@ namespace DinoGrow.Gameplay.Stage
             {
                 Destroy(runtimeLoadingCurtain);
             }
+
+            EndSceneLoadingPriorityScope();
         }
 
         private void OnPlayerGrowthChanged(GrowthResult result)
@@ -230,6 +236,7 @@ namespace DinoGrow.Gameplay.Stage
 
             if (isSwitching)
             {
+                EndSceneLoadingPriorityScope();
                 StopAllCoroutines();
                 isSwitching = false;
             }
@@ -260,9 +267,9 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             SetLoadingProgress(0.9f, true);
-            DisableMapSceneCameras(nextScene);
+            StageSceneObjectUtility.DisableMapSceneCameras(nextScene);
             ConfigureMapBillboards(nextScene);
-            ApplyMapEnvironment(nextScene);
+            StageSceneObjectUtility.ApplyMapEnvironment(nextScene);
             ConfigurePlayerStartExclusion(nextScene);
             MovePlayerToStartPoint(nextScene);
             ApplyMapBoundary(nextScene, false);
@@ -271,7 +278,7 @@ namespace DinoGrow.Gameplay.Stage
                 yield return enemySpawner.RebuildSpawnedEnemiesForMapTransition();
             }
             yield return null;
-            ApplyMapEnvironment(nextScene);
+            StageSceneObjectUtility.ApplyMapEnvironment(nextScene);
             loadedMapScenePath = nextScenePath;
             yield return null;
             SetLoadingProgress(1f, true);
@@ -324,14 +331,18 @@ namespace DinoGrow.Gameplay.Stage
             }
 
             SetLoadingProgress(0.95f, true);
-            DisableMapSceneCameras(nextScene);
+            StageSceneObjectUtility.DisableMapSceneCameras(nextScene);
             ConfigureMapBillboards(nextScene);
-            ApplyMapEnvironment(nextScene);
+            StageSceneObjectUtility.ApplyMapEnvironment(nextScene);
             ConfigurePlayerStartExclusion(nextScene);
             MovePlayerToStartPoint(nextScene);
-            ApplyMapBoundary(nextScene);
+            ApplyMapBoundary(nextScene, false);
+            if (enemySpawner != null)
+            {
+                yield return enemySpawner.RebuildSpawnedEnemiesForMapTransition();
+            }
             yield return null;
-            ApplyMapEnvironment(nextScene);
+            StageSceneObjectUtility.ApplyMapEnvironment(nextScene);
             loadedMapScenePath = nextScenePath;
             yield return null;
             SetLoadingProgress(1f, true);
@@ -481,13 +492,43 @@ namespace DinoGrow.Gameplay.Stage
                 yield break;
             }
 
+            BeginSceneLoadingPriorityScope(operation);
             while (!operation.isDone)
             {
                 SetLoadingProgress(Mathf.Lerp(startProgress, endProgress, Mathf.Clamp01(operation.progress / 0.9f)), true);
                 yield return null;
             }
 
+            EndSceneLoadingPriorityScope();
             SetLoadingProgress(endProgress, true);
+        }
+
+        private void BeginSceneLoadingPriorityScope(AsyncOperation operation)
+        {
+            operation.priority = sceneAsyncOperationPriority;
+            if (!smoothSceneLoadingPriority)
+            {
+                return;
+            }
+
+            if (!hasPreviousBackgroundLoadingPriority)
+            {
+                previousBackgroundLoadingPriority = Application.backgroundLoadingPriority;
+                hasPreviousBackgroundLoadingPriority = true;
+            }
+
+            Application.backgroundLoadingPriority = sceneLoadingThreadPriority;
+        }
+
+        private void EndSceneLoadingPriorityScope()
+        {
+            if (!hasPreviousBackgroundLoadingPriority)
+            {
+                return;
+            }
+
+            Application.backgroundLoadingPriority = previousBackgroundLoadingPriority;
+            hasPreviousBackgroundLoadingPriority = false;
         }
 
         private void SetLoadingProgress(float progress, bool visible)
@@ -682,168 +723,18 @@ namespace DinoGrow.Gameplay.Stage
             SetCanvasGroupAlpha(loadingOverlayGroup, 1f);
         }
 
-        private static void DisableMapSceneCameras(Scene mapScene)
-        {
-            if (!mapScene.IsValid() || !mapScene.isLoaded)
-            {
-                return;
-            }
-
-            foreach (var root in mapScene.GetRootGameObjects())
-            {
-                foreach (var targetCamera in root.GetComponentsInChildren<UnityEngine.Camera>(true))
-                {
-                    targetCamera.enabled = false;
-                }
-
-                foreach (var listener in root.GetComponentsInChildren<AudioListener>(true))
-                {
-                    listener.enabled = false;
-                }
-            }
-        }
-
-        private static void ApplyMapEnvironment(Scene mapScene)
-        {
-            if (!mapScene.IsValid() || !mapScene.isLoaded)
-            {
-                return;
-            }
-
-            foreach (var root in mapScene.GetRootGameObjects())
-            {
-                var environment = root.GetComponentInChildren<EnvironmentSettingsController>(true);
-                if (environment == null)
-                {
-                    continue;
-                }
-
-                environment.Apply();
-                return;
-            }
-        }
-
         private void ConfigureMapBillboards(Scene mapScene)
         {
-            if (cameraReference?.Transform == null || !mapScene.IsValid() || !mapScene.isLoaded)
-            {
-                return;
-            }
-
-            foreach (var root in mapScene.GetRootGameObjects())
-            {
-                foreach (var billboard in root.GetComponentsInChildren<BillboardToCamera>(true))
-                {
-                    billboard.SetTarget(cameraReference.Transform);
-                }
-            }
+            StageSceneObjectUtility.ConfigureMapBillboards(mapScene, cameraReference?.Transform);
         }
 
         private void DisableExistingSceneMapRoots()
         {
-            if (!disableExistingSceneMaps)
-            {
-                return;
-            }
-
-            var activeScene = gameObject.scene;
-            if (!activeScene.IsValid() || !activeScene.isLoaded)
-            {
-                return;
-            }
-
-            foreach (var root in activeScene.GetRootGameObjects())
-            {
-                DisableExistingNavMeshSurfaces(root);
-
-                if (LooksLikeMapRoot(root))
-                {
-                    root.SetActive(false);
-                    continue;
-                }
-
-                if (ShouldKeepMainSceneRoot(root))
-                {
-                    continue;
-                }
-            }
-        }
-
-        private void DisableExistingNavMeshSurfaces(GameObject root)
-        {
-            if (!disableExistingSceneNavMeshSurfaces || root == null)
-            {
-                return;
-            }
-
-            foreach (var surface in root.GetComponentsInChildren<Unity.AI.Navigation.NavMeshSurface>(true))
-            {
-                surface.enabled = false;
-            }
-        }
-
-        private bool ShouldKeepMainSceneRoot(GameObject root)
-        {
-            if (root == null || root == gameObject || root.GetComponentInChildren<PlayerDinoController>(true) != null)
-            {
-                return true;
-            }
-
-            return root.GetComponentInChildren<Canvas>(true) != null
-                || root.GetComponentInChildren<EventSystem>(true) != null
-                || root.GetComponentInChildren<UnityEngine.Camera>(true) != null
-                || root.GetComponentInChildren<Light>(true) != null;
-        }
-
-        private bool LooksLikeMapRoot(GameObject root)
-        {
-            if (root == null)
-            {
-                return false;
-            }
-
-            if (root.GetComponentInChildren<PlayerDinoController>(true) != null
-                || root.GetComponentInChildren<Canvas>(true) != null
-                || root.GetComponentInChildren<EventSystem>(true) != null)
-            {
-                return false;
-            }
-
-            if (root.name.Contains("Map") || root.name.Contains("Ground") || root.name.Contains("Environment"))
-            {
-                return true;
-            }
-
-            if (root.GetComponentInChildren<EnvironmentSettingsController>(true) != null
-                || root.GetComponentInChildren<Unity.AI.Navigation.NavMeshSurface>(true) != null
-                || FindChildByName(root.transform, "PlayerStartPoint") != null
-                || FindChildByName(root.transform, mapBoundaryRootName) != null)
-            {
-                return true;
-            }
-
-            var groundLayer = LayerMask.NameToLayer("Ground");
-            if (groundLayer < 0)
-            {
-                return false;
-            }
-
-            var groundObjectCount = 0;
-            foreach (var child in root.GetComponentsInChildren<Transform>(true))
-            {
-                if (child.gameObject.layer != groundLayer)
-                {
-                    continue;
-                }
-
-                groundObjectCount++;
-                if (groundObjectCount >= 8)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            StageInitialMapDisabler.DisableExistingSceneMapRoots(
+                this,
+                disableExistingSceneMaps,
+                disableExistingSceneNavMeshSurfaces,
+                mapBoundaryRootName);
         }
 
         private void EnsureRuntimeLoadingCurtain()
@@ -922,7 +813,7 @@ namespace DinoGrow.Gameplay.Stage
                 return;
             }
 
-            var startPoint = FindInScene(mapScene, "PlayerStartPoint");
+            var startPoint = StageSceneObjectUtility.FindInScene(mapScene, "PlayerStartPoint");
             var startPosition = startPoint != null
                 ? startPoint.position
                 : Vector3.zero;
@@ -944,7 +835,7 @@ namespace DinoGrow.Gameplay.Stage
                 return;
             }
 
-            var startPoint = FindInScene(mapScene, "PlayerStartPoint");
+            var startPoint = StageSceneObjectUtility.FindInScene(mapScene, "PlayerStartPoint");
             if (startPoint == null)
             {
                 enemySpawner.ConfigurePlayerStartExclusion(Vector3.zero, false);
@@ -962,53 +853,13 @@ namespace DinoGrow.Gameplay.Stage
                 return;
             }
 
-            if (!TryGetBoundaryArea(mapScene, out var center, out var size))
+            var boundaryResolver = new StageMapBoundaryResolver(mapBoundaryRootName, mapBoundaryInset);
+            if (!boundaryResolver.TryGetBoundaryArea(mapScene, out var center, out var size))
             {
                 return;
             }
 
             enemySpawner.ConfigureSpawnArea(center, size, respawn);
-        }
-
-        private bool TryGetBoundaryArea(Scene mapScene, out Vector3 center, out Vector2 size)
-        {
-            var hasBounds = false;
-            var bounds = new Bounds();
-            foreach (var boundaryRoot in FindAllInScene(mapScene, mapBoundaryRootName))
-            {
-                var colliders = boundaryRoot.GetComponentsInChildren<Collider>(true);
-                foreach (var targetCollider in colliders)
-                {
-                    if (targetCollider == null || targetCollider.isTrigger || !targetCollider.enabled)
-                    {
-                        continue;
-                    }
-
-                    if (!hasBounds)
-                    {
-                        bounds = targetCollider.bounds;
-                        hasBounds = true;
-                    }
-                    else
-                    {
-                        bounds.Encapsulate(targetCollider.bounds);
-                    }
-                }
-            }
-
-            if (!hasBounds)
-            {
-                center = Vector3.zero;
-                size = Vector2.zero;
-                return false;
-            }
-
-            var inset = Mathf.Max(0f, mapBoundaryInset);
-            center = new Vector3(bounds.center.x, 0f, bounds.center.z);
-            size = new Vector2(
-                Mathf.Max(1f, bounds.size.x - inset * 2f),
-                Mathf.Max(1f, bounds.size.z - inset * 2f));
-            return true;
         }
 
         private Vector3 SnapToMapGround(Vector3 position)
@@ -1022,70 +873,6 @@ namespace DinoGrow.Gameplay.Stage
             position.y += playerStartHeightOffset;
             return position;
         }
-
-        private static Transform FindInScene(Scene scene, string targetName)
-        {
-            foreach (var root in scene.GetRootGameObjects())
-            {
-                var result = FindChildByName(root.transform, targetName);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
-        }
-
-        private static System.Collections.Generic.List<Transform> FindAllInScene(Scene scene, string targetName)
-        {
-            var results = new System.Collections.Generic.List<Transform>();
-            foreach (var root in scene.GetRootGameObjects())
-            {
-                FindChildrenByName(root.transform, targetName, results);
-            }
-
-            return results;
-        }
-
-        private static Transform FindChildByName(Transform root, string targetName)
-        {
-            if (root.name == targetName)
-            {
-                return root;
-            }
-
-            for (var i = 0; i < root.childCount; i++)
-            {
-                var result = FindChildByName(root.GetChild(i), targetName);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
-        }
-
-        private static void FindChildrenByName(Transform root, string targetName, System.Collections.Generic.List<Transform> results)
-        {
-            if (IsMatchingSceneObjectName(root.name, targetName))
-            {
-                results.Add(root);
-            }
-
-            for (var i = 0; i < root.childCount; i++)
-            {
-                FindChildrenByName(root.GetChild(i), targetName, results);
-            }
-        }
-
-        private static bool IsMatchingSceneObjectName(string objectName, string targetName)
-        {
-            return objectName == targetName
-                || objectName.StartsWith(targetName + " (", System.StringComparison.Ordinal);
-        }
-
         private string PickRandomMapScenePath()
         {
             if (mapScenePaths == null || mapScenePaths.Length == 0)

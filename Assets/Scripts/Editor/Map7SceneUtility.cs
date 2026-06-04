@@ -14,7 +14,7 @@ public static class Map7SceneUtility
     private const string GroundSourceBackupRootName = "GroundSourceBackup";
     private const string Map4GroundChunkAssetFolder = "Assets/GameData/Generated/Map4GroundChunks";
     private const string GroundChunkAssetFolder = "Assets/GameData/Generated/Map7GroundChunks";
-    private const float GroundChunkSize = 120f;
+    private const float GroundChunkSize = 80f;
 
     [MenuItem("DinoGrow/Maps/Prepare Map7 Scene")]
     public static void PrepareMap7Scene()

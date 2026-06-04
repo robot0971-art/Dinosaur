@@ -272,6 +272,7 @@ public sealed class DeathEffectService
 public sealed class PooledParticleReturner : MonoBehaviour
 {
     private Coroutine returnRoutine;
+    private ParticleSystem[] cachedParticles;
 
     public void Play(ParticleSystem rootParticle, IObjectPoolService poolService)
     {
@@ -280,7 +281,7 @@ public sealed class PooledParticleReturner : MonoBehaviour
             StopCoroutine(returnRoutine);
         }
 
-        var particles = rootParticle.GetComponentsInChildren<ParticleSystem>(true);
+        var particles = GetParticles(rootParticle);
         foreach (var particle in particles)
         {
             particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -309,5 +310,15 @@ public sealed class PooledParticleReturner : MonoBehaviour
 
         returnRoutine = null;
         poolService.Despawn(rootParticle);
+    }
+
+    private ParticleSystem[] GetParticles(ParticleSystem rootParticle)
+    {
+        if (cachedParticles == null || cachedParticles.Length == 0)
+        {
+            cachedParticles = rootParticle.GetComponentsInChildren<ParticleSystem>(true);
+        }
+
+        return cachedParticles;
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 namespace DinoGrow.Gameplay.Animation
@@ -15,42 +14,6 @@ namespace DinoGrow.Gameplay.Animation
         private static readonly int DeadHash = Animator.StringToHash("Dead");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
-        private static readonly string[] AttackStateNames =
-        {
-            "Armature_Velociraptor_Attack",
-            "Armature_TRex_Attack",
-            "Armature_Triceratops_Attack",
-            "Armature_Stegosaurus_Attack",
-            "Armature_Parasaurolophus_Attack",
-            "Armature_Apatosaurus_Attack"
-        };
-
-        private static readonly int[] DeathStateHashes =
-        {
-            Animator.StringToHash("Base Layer.Armature_Velociraptor_Death"),
-            Animator.StringToHash("Armature_Velociraptor_Death"),
-            Animator.StringToHash("Base Layer.Armature_TRex_Death"),
-            Animator.StringToHash("Armature_TRex_Death"),
-            Animator.StringToHash("Base Layer.Armature_Triceratops_Death"),
-            Animator.StringToHash("Armature_Triceratops_Death"),
-            Animator.StringToHash("Base Layer.Armature_Stegosaurus_Death"),
-            Animator.StringToHash("Armature_Stegosaurus_Death"),
-            Animator.StringToHash("Base Layer.Armature_Parasaurolophus_Death"),
-            Animator.StringToHash("Armature_Parasaurolophus_Death"),
-            Animator.StringToHash("Base Layer.Armature_Apatosaurus_Death"),
-            Animator.StringToHash("Armature_Apatosaurus_Death")
-        };
-
-        private static readonly string[] DeathStateNames =
-        {
-            "Armature_Velociraptor_Death",
-            "Armature_TRex_Death",
-            "Armature_Triceratops_Death",
-            "Armature_Stegosaurus_Death",
-            "Armature_Parasaurolophus_Death",
-            "Armature_Apatosaurus_Death"
-        };
-
         private int idleStateHash;
         private int walkStateHash;
         private int runStateHash;
@@ -61,10 +24,7 @@ namespace DinoGrow.Gameplay.Animation
         private Coroutine deathClipRoutine;
         private bool isDead;
         private float suppressLocomotionUntil;
-        private bool lowDetailUpdates;
-        private float lowDetailUpdateInterval = 0.25f;
-        private float nextLowDetailUpdateTime;
-        private int lowDetailUpdateFrame = -1;
+        private AnimatorUpdateThrottle updateThrottle;
 
         private void Awake()
         {
@@ -131,12 +91,7 @@ namespace DinoGrow.Gameplay.Animation
 
         public void SetLowDetailUpdates(bool enabled, float updateInterval)
         {
-            lowDetailUpdates = enabled;
-            lowDetailUpdateInterval = Mathf.Max(0.05f, updateInterval);
-            if (!enabled)
-            {
-                nextLowDetailUpdateTime = 0f;
-            }
+            updateThrottle.Configure(enabled, updateInterval);
         }
 
         public void SetDead(bool isDead)
@@ -227,8 +182,7 @@ namespace DinoGrow.Gameplay.Animation
                 return;
             }
 
-            deathClip = animator.runtimeAnimatorController.animationClips
-                .FirstOrDefault(clip => clip != null && clip.name.ToLowerInvariant().Contains("death"));
+            deathClip = DinoAnimationStateResolver.FindClipContaining(animator.runtimeAnimatorController, "death");
         }
 
         private static void LockSampleRoot(
@@ -254,21 +208,12 @@ namespace DinoGrow.Gameplay.Animation
                 return;
             }
 
-            idleStateHash = GetStateHash("idle");
-            walkStateHash = GetStateHash("walk");
-            runStateHash = GetStateHash("run");
-            deathStateHash = GetStateHash("death");
-            attackStateHash = GetStateHash("attack");
-        }
-
-        private int GetStateHash(string stateNamePart)
-        {
-            var clip = animator.runtimeAnimatorController.animationClips
-                .FirstOrDefault(candidate =>
-                    candidate != null
-                    && candidate.name.ToLowerInvariant().Contains(stateNamePart));
-
-            return clip == null ? 0 : Animator.StringToHash($"Base Layer.{clip.name}");
+            var controller = animator.runtimeAnimatorController;
+            idleStateHash = DinoAnimationStateResolver.GetStateHash(controller, "idle");
+            walkStateHash = DinoAnimationStateResolver.GetStateHash(controller, "walk");
+            runStateHash = DinoAnimationStateResolver.GetStateHash(controller, "run");
+            deathStateHash = DinoAnimationStateResolver.GetStateHash(controller, "death");
+            attackStateHash = DinoAnimationStateResolver.GetStateHash(controller, "attack");
         }
 
         private void PlayLocomotionState(float speed, bool isRunning)
@@ -342,68 +287,12 @@ namespace DinoGrow.Gameplay.Animation
 
         private bool CanUpdateLowDetailAnimator()
         {
-            if (!Application.isPlaying || !lowDetailUpdates)
-            {
-                return true;
-            }
-
-            if (Time.frameCount == lowDetailUpdateFrame)
-            {
-                return true;
-            }
-
-            if (Time.time < nextLowDetailUpdateTime)
-            {
-                return false;
-            }
-
-            nextLowDetailUpdateTime = Time.time + lowDetailUpdateInterval;
-            lowDetailUpdateFrame = Time.frameCount;
-            return true;
+            return updateThrottle.CanUpdate();
         }
 
         private bool PlayDeathState()
         {
-            if (deathStateHash != 0 && animator.HasState(0, deathStateHash))
-            {
-                animator.enabled = true;
-                animator.speed = 1f;
-                animator.CrossFade(deathStateHash, 0.04f, 0, 0f);
-                animator.Update(0f);
-                return true;
-            }
-
-            for (var i = 0; i < DeathStateHashes.Length; i++)
-            {
-                var stateHash = DeathStateHashes[i];
-                if (!animator.HasState(0, stateHash))
-                {
-                    continue;
-                }
-
-                animator.enabled = true;
-                animator.speed = 1f;
-                animator.Play(stateHash, 0, 0f);
-                animator.Update(0f);
-                return true;
-            }
-
-            for (var i = 0; i < DeathStateNames.Length; i++)
-            {
-                var stateName = DeathStateNames[i];
-                animator.enabled = true;
-                animator.speed = 1f;
-                animator.Play(stateName, 0, 0f);
-                animator.Update(0f);
-
-                var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                if (stateInfo.IsName(stateName))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return DinoAnimationStateResolver.PlayDeathState(animator, deathStateHash);
         }
 
         public void PlayAttack()
@@ -458,8 +347,7 @@ namespace DinoGrow.Gameplay.Animation
                 return;
             }
 
-            attackClip = animator.runtimeAnimatorController.animationClips
-                .FirstOrDefault(clip => clip != null && clip.name.ToLowerInvariant().Contains("attack"));
+            attackClip = DinoAnimationStateResolver.FindClipContaining(animator.runtimeAnimatorController, "attack");
         }
 
         private float GetAttackLockDuration()
@@ -472,27 +360,7 @@ namespace DinoGrow.Gameplay.Animation
 
         private bool PlayAttackState()
         {
-            if (attackStateHash != 0 && animator.HasState(0, attackStateHash))
-            {
-                animator.Play(attackStateHash, 0, 0f);
-                animator.Update(0f);
-                return true;
-            }
-
-            for (var i = 0; i < AttackStateNames.Length; i++)
-            {
-                var stateName = AttackStateNames[i];
-                animator.Play(stateName, 0, 0f);
-                animator.Update(0f);
-
-                var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                if (stateInfo.IsName(stateName))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return DinoAnimationStateResolver.PlayAttackState(animator, attackStateHash);
         }
     }
 }

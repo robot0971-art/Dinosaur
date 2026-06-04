@@ -38,9 +38,7 @@ namespace DinoGrow.Gameplay.Stage
         private bool started;
         private Coroutine startOverlayRoutine;
         private bool subscribedToEvents;
-        private CanvasGroup startPanelGroup;
-        private CanvasGroup startTextGroup;
-        private CanvasGroup startText2Group;
+        private StartOverlayPresenter startOverlayPresenter;
 
         public event Action PresentationStarting;
 
@@ -77,8 +75,7 @@ namespace DinoGrow.Gameplay.Stage
                 introDirector.extrapolationMode = DirectorWrapMode.None;
             }
 
-            SetStartOverlayVisible(false, false, false);
-            CacheStartOverlayCanvasGroups();
+            GetStartOverlayPresenter().HideImmediate();
         }
 
         private void OnEnable()
@@ -258,150 +255,29 @@ namespace DinoGrow.Gameplay.Stage
 
         private IEnumerator PlayStartOverlaySequence(float firstTextHoldDuration, float secondTextHoldDuration, bool showSecondText)
         {
-            CacheStartOverlayCanvasGroups();
-            SetStartOverlayAlpha(0f, 0f, 0f);
-
-            SetStartOverlayVisible(true, true, false);
-            yield return FadeStartOverlay(0f, 1f, true, false);
-            yield return WaitForStartOverlaySeconds(firstTextHoldDuration);
-            yield return FadeStartOverlay(1f, 0f, true, false);
-
-            if (showSecondText && startText2 != null)
-            {
-                SetStartOverlayVisible(true, false, true);
-                yield return FadeStartOverlay(0f, 1f, false, true);
-                yield return WaitForStartOverlaySeconds(secondTextHoldDuration);
-                PlayStageStartRoar();
-            }
-
-            SetStartOverlayVisible(false, false, false);
-            SetStartOverlayAlpha(0f, 0f, 0f);
+            yield return GetStartOverlayPresenter().PlaySequence(
+                firstTextHoldDuration,
+                secondTextHoldDuration,
+                showSecondText);
         }
 
         private IEnumerator PlaySingleStartOverlay(float holdDuration, bool useSecondText)
         {
-            CacheStartOverlayCanvasGroups();
-            SetStartOverlayAlpha(0f, 0f, 0f);
-
-            SetStartOverlayVisible(true, !useSecondText, useSecondText);
-            yield return FadeStartOverlay(0f, 1f, !useSecondText, useSecondText);
-            yield return WaitForStartOverlaySeconds(holdDuration);
-            if (useSecondText)
-            {
-                PlayStageStartRoar();
-            }
-
-            yield return FadeStartOverlay(1f, 0f, !useSecondText, useSecondText);
-
-            SetStartOverlayVisible(false, false, false);
-            SetStartOverlayAlpha(0f, 0f, 0f);
+            yield return GetStartOverlayPresenter().PlaySingle(holdDuration, useSecondText);
         }
 
-        private IEnumerator FadeStartOverlay(float from, float to, bool showFirstText, bool showSecondText)
+        private StartOverlayPresenter GetStartOverlayPresenter()
         {
-            var duration = Mathf.Max(0f, startOverlayFadeDuration);
-            if (duration <= 0f)
-            {
-                SetStartOverlayAlpha(to, showFirstText ? to : 0f, showSecondText ? to : 0f);
-                yield break;
-            }
-
-            var elapsed = 0f;
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                var progress = Mathf.Clamp01(elapsed / duration);
-                var alpha = Mathf.Lerp(from, to, progress);
-                SetStartOverlayAlpha(alpha, showFirstText ? alpha : 0f, showSecondText ? alpha : 0f);
-                yield return null;
-            }
-
-            SetStartOverlayAlpha(to, showFirstText ? to : 0f, showSecondText ? to : 0f);
-        }
-
-        private IEnumerator WaitForStartOverlaySeconds(float seconds)
-        {
-            var delay = Mathf.Max(0f, seconds);
-            if (delay > 0f)
-            {
-                yield return new WaitForSeconds(delay);
-            }
-        }
-
-        private void SetStartOverlayVisible(bool panelVisible, bool firstTextVisible, bool secondTextVisible)
-        {
-            if (startPanel != null)
-            {
-                startPanel.SetActive(panelVisible);
-            }
-
-            if (startText != null)
-            {
-                startText.SetActive(firstTextVisible);
-            }
-
-            if (startText2 != null)
-            {
-                startText2.SetActive(secondTextVisible);
-            }
-        }
-
-        private void CacheStartOverlayCanvasGroups()
-        {
-            startPanelGroup = GetOrAddCanvasGroup(startPanel);
-            startTextGroup = GetOrAddCanvasGroup(startText);
-            startText2Group = GetOrAddCanvasGroup(startText2);
-        }
-
-        private void SetStartOverlayAlpha(float panelAlpha, float firstTextAlpha, float secondTextAlpha)
-        {
-            SetCanvasGroupAlpha(startPanelGroup, panelAlpha);
-            SetCanvasGroupAlpha(startTextGroup, firstTextAlpha);
-            SetCanvasGroupAlpha(startText2Group, secondTextAlpha);
-        }
-
-        private void PlayStageStartRoar()
-        {
-            if (stageStartRoarClip == null)
-            {
-                return;
-            }
-
-            if (stageStartRoarSource == null)
-            {
-                stageStartRoarSource = gameObject.AddComponent<AudioSource>();
-            }
-
-            stageStartRoarSource.playOnAwake = false;
-            stageStartRoarSource.loop = false;
-            stageStartRoarSource.spatialBlend = 0f;
-            stageStartRoarSource.volume = stageStartRoarVolume;
-            stageStartRoarSource.PlayOneShot(stageStartRoarClip, stageStartRoarVolume);
-        }
-
-        private static CanvasGroup GetOrAddCanvasGroup(GameObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            if (target.TryGetComponent<CanvasGroup>(out var group))
-            {
-                return group;
-            }
-
-            return target.AddComponent<CanvasGroup>();
-        }
-
-        private static void SetCanvasGroupAlpha(CanvasGroup group, float alpha)
-        {
-            if (group == null)
-            {
-                return;
-            }
-
-            group.alpha = Mathf.Clamp01(alpha);
+            startOverlayPresenter ??= new StartOverlayPresenter(this);
+            startOverlayPresenter.Configure(
+                startPanel,
+                startText,
+                startText2,
+                startOverlayFadeDuration,
+                stageStartRoarClip,
+                stageStartRoarSource,
+                stageStartRoarVolume);
+            return startOverlayPresenter;
         }
 
         private void SubscribeToEvents()
