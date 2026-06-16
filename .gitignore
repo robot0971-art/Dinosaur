@@ -6,6 +6,8 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/Assets/_Recovery/
+/.agentq/
 
 # IDE and generated project files
 /.vs/
@@ -42,4 +44,5 @@ Desktop.ini
 *.sdf
 *.opensdf
 *.cachefile
+.vsconfig
 nul

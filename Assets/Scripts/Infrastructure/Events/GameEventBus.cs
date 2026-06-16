@@ -11,8 +11,7 @@ namespace DinoGrow.Infrastructure.Events
         public event Action<int, int> EnemyEaten;
         public event Action<GrowthResult> PlayerGrowthChanged;
         public event Action<GameState> GameStateChanged;
-        public event Action<int, int> HeartsChanged;
-        public event Action PlayerDeath;
+        public event Action InitialMapLoaded;
 
         public void PublishEnemySpawned(int enemyLevel)
         {
@@ -39,14 +38,9 @@ namespace DinoGrow.Infrastructure.Events
             GameStateChanged?.Invoke(state);
         }
 
-        public void PublishHeartsChanged(int currentLives, int maxLives)
+        public void PublishInitialMapLoaded()
         {
-            HeartsChanged?.Invoke(currentLives, maxLives);
-        }
-
-        public void PublishPlayerDeath()
-        {
-            PlayerDeath?.Invoke();
+            InitialMapLoaded?.Invoke();
         }
     }
 }

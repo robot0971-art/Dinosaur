@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using DinoGrow.Core.Data;
 using DinoGrow.Core.Enemy;
 using DinoGrow.Core.Growth;
+using DinoGrow.Core.Stage;
 using DinoGrow.Infrastructure.Data;
 using DinoGrow.Infrastructure.Events;
 using DinoGrow.Infrastructure.Pooling;
 using DinoGrow.Gameplay.Player;
+using DinoGrow.Gameplay.Items;
+using DinoGrow.Gameplay.VFX;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -27,6 +30,8 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float groundOffset = 0f;
         [SerializeField] private int spawnCount = 24;
         [SerializeField] private float minDistanceFromPlayer = 8f;
+        [SerializeField] private bool avoidPlayerStartArea = true;
+        [SerializeField] private float playerStartExclusionRadius = 32f;
         [SerializeField] private float minDistanceBetweenEnemies = 9f;
         [SerializeField] private Transform player;
         [SerializeField] private float minWanderSpeed = 4.2f;
@@ -42,19 +47,42 @@ namespace DinoGrow.Gameplay.Enemy
         [SerializeField] private float navMeshSampleDistance = 8f;
         [SerializeField] private float navMeshVerticalSampleDistance = 80f;
         [SerializeField] private int maxSpawnAttemptsPerEnemy = 80;
+        [SerializeField] private int spawnBatchSize = 4;
         [SerializeField] private LayerMask obstacleLayers = 0;
         [SerializeField] private float obstacleSpawnClearance = 3f;
+        [SerializeField, Range(0f, 1f)] private float centerWeightedSpawnChance = 0.65f;
+        [SerializeField, Range(0.1f, 1f)] private float centerWeightedSpawnScale = 0.65f;
+        [SerializeField, Range(0f, 0.45f)] private float spawnEdgePaddingRatio = 0.12f;
+        [Header("Drops")]
+        [SerializeField] private GameObject heartDropPrefab;
+        [SerializeField] private GameObject heartDropIdleEffectPrefab;
+        [SerializeField] private bool enableHeartDropSpawnEffect = true;
+        [SerializeField] private GameObject heartPickupEffectPrefab;
+        [SerializeField] private AudioClip heartPickupSoundClip;
+        [SerializeField, Range(0f, 1f)] private float heartPickupSoundVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float heartDropChance = 0.3f;
+        [SerializeField, Min(0)] private int maxSpawnedHeartDrops = 8;
+        [SerializeField] private bool enableHeartDropIdleEffects;
+        [SerializeField] private float heartDropHeightOffset = 0.35f;
+        [SerializeField] private float heartDropKnockbackDistance = 4.5f;
+        [SerializeField] private bool logHeartDrops;
 
         private readonly List<DinoEnemy> spawnedEnemies = new();
-        private EnemyDinoDataRepository enemyDinoDataRepository;
+        private readonly List<Transform> spawnedHeartDrops = new();
+        private readonly HashSet<DinoEnemy> heartDroppedEnemies = new();
+        private DinoDataRepository dinoDataRepository;
         private SpawnDataRepository spawnDataRepository;
         private StageDataRepository stageDataRepository;
         private PlayerProgress playerProgress;
         private IObjectPoolService poolService;
         private GameEventBus eventBus;
         private EnemyBehaviorResolver enemyBehaviorResolver;
+        private GameStateController gameState;
         private Coroutine spawnRoutine;
         private PlayerDinoController playerController;
+        private Vector3 playerStartExclusionCenter;
+        private bool hasPlayerStartExclusion;
+        private bool mapTransitionInProgress;
 
         public void ConfigureSpawnArea(Vector3 center, Vector2 size, bool respawn)
         {
@@ -70,21 +98,23 @@ namespace DinoGrow.Gameplay.Enemy
 
         [Inject]
         public void Construct(
-            EnemyDinoDataRepository enemyDinoDataRepository,
+            DinoDataRepository dinoDataRepository,
             SpawnDataRepository spawnDataRepository,
             StageDataRepository stageDataRepository,
             PlayerProgress playerProgress,
             IObjectPoolService poolService,
             GameEventBus eventBus,
-            EnemyBehaviorResolver enemyBehaviorResolver)
+            EnemyBehaviorResolver enemyBehaviorResolver,
+            GameStateController gameState)
         {
-            this.enemyDinoDataRepository = enemyDinoDataRepository;
+            this.dinoDataRepository = dinoDataRepository;
             this.spawnDataRepository = spawnDataRepository;
             this.stageDataRepository = stageDataRepository;
             this.playerProgress = playerProgress;
             this.poolService = poolService;
             this.eventBus = eventBus;
             this.enemyBehaviorResolver = enemyBehaviorResolver;
+            this.gameState = gameState;
         }
 
         private void Start()
@@ -97,7 +127,26 @@ namespace DinoGrow.Gameplay.Enemy
             UseGroundLayerIfAvailable();
             UseObstacleLayerIfAvailable();
             ApplyStageData();
-            RequestSpawnInitialEnemies();
+            if (!mapTransitionInProgress)
+            {
+                RequestSpawnInitialEnemies();
+            }
+        }
+
+        public void SetMapTransitionInProgress(bool inProgress)
+        {
+            mapTransitionInProgress = inProgress;
+        }
+
+        public IEnumerator RebuildSpawnedEnemiesForMapTransition()
+        {
+            if (spawnRoutine != null)
+            {
+                StopCoroutine(spawnRoutine);
+                spawnRoutine = null;
+            }
+
+            yield return SpawnInitialEnemiesWhenReady();
         }
 
         private void UseGroundLayerIfAvailable()
@@ -150,8 +199,8 @@ namespace DinoGrow.Gameplay.Enemy
                 yield return null;
             }
 
+            yield return SpawnInitialEnemiesRoutine();
             spawnRoutine = null;
-            SpawnInitialEnemies();
         }
 
         private bool HasNavMeshNearSpawnArea()
@@ -161,24 +210,54 @@ namespace DinoGrow.Gameplay.Enemy
                 || NavMesh.SamplePosition(spawnCenter, out _, navMeshSampleDistance, NavMesh.AllAreas);
         }
 
-        private void SpawnInitialEnemies()
+        private IEnumerator SpawnInitialEnemiesRoutine()
         {
             ClearSpawnedEnemies();
 
-            if (TrySpawnFromGameData())
+            if (TryGetGameDataSpawnRequests(out var gameDataSpawnRequests))
             {
-                return;
+                var spawnedInBatch = 0;
+                foreach (var request in gameDataSpawnRequests)
+                {
+                    for (var i = 0; i < request.Count; i++)
+                    {
+                        TrySpawnFromData(request.Prefab, request.DinoData, request.SpawnRecord);
+                        spawnedInBatch++;
+                        if (ShouldYieldSpawnBatch(spawnedInBatch))
+                        {
+                            spawnedInBatch = 0;
+                            yield return null;
+                        }
+                    }
+                }
+
+                hasPlayerStartExclusion = false;
+                yield break;
             }
 
-            if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+            try
             {
-                Debug.LogWarning("EnemySpawner needs at least one enemy prefab.", this);
-                return;
-            }
+                if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+                {
+                    Debug.LogWarning("EnemySpawner needs at least one enemy prefab.", this);
+                    yield break;
+                }
 
-            for (var i = 0; i < spawnCount; i++)
+                var spawnedInBatch = 0;
+                for (var i = 0; i < spawnCount; i++)
+                {
+                    TrySpawnOne();
+                    spawnedInBatch++;
+                    if (ShouldYieldSpawnBatch(spawnedInBatch))
+                    {
+                        spawnedInBatch = 0;
+                        yield return null;
+                    }
+                }
+            }
+            finally
             {
-                TrySpawnOne();
+                hasPlayerStartExclusion = false;
             }
         }
 
@@ -192,12 +271,14 @@ namespace DinoGrow.Gameplay.Enemy
 
             if (!TryPickSpawnPosition(out var position))
             {
+                Debug.LogWarning("EnemySpawner could not find a valid spawn position.", this);
                 return false;
             }
 
             var rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
             var enemy = SpawnEnemy(prefab, position, rotation);
             enemy.name = $"{prefab.name}_Spawned";
+            enemy.SetEatenHandler(DropHeartForEnemy);
             enemy.SetDespawnHandler(DespawnEnemy);
 
             var wander = enemy.GetComponent<EnemyWanderMovement>();
@@ -217,9 +298,10 @@ namespace DinoGrow.Gameplay.Enemy
             return true;
         }
 
-        private bool TrySpawnFromGameData()
+        private bool TryGetGameDataSpawnRequests(out List<GameDataSpawnRequest> requests)
         {
-            if (enemyDinoDataRepository == null || spawnDataRepository == null)
+            requests = new List<GameDataSpawnRequest>();
+            if (dinoDataRepository == null || spawnDataRepository == null)
             {
                 return false;
             }
@@ -230,10 +312,9 @@ namespace DinoGrow.Gameplay.Enemy
                 return false;
             }
 
-            var spawnedAny = false;
             foreach (var spawnRecord in spawnRecords)
             {
-                if (!enemyDinoDataRepository.TryGetById(spawnRecord.dinoId, out var dinoData))
+                if (!dinoDataRepository.TryGetById(spawnRecord.dinoId, out var dinoData))
                 {
                     Debug.LogWarning($"Dino data was not found for spawn id '{spawnRecord.dinoId}'.", this);
                     continue;
@@ -247,19 +328,22 @@ namespace DinoGrow.Gameplay.Enemy
                 }
 
                 var count = Mathf.Max(0, spawnRecord.count);
-                for (var i = 0; i < count; i++)
+                if (count <= 0)
                 {
-                    spawnedAny |= TrySpawnFromData(prefab, dinoData, spawnRecord);
+                    continue;
                 }
+
+                requests.Add(new GameDataSpawnRequest(prefab, dinoData, spawnRecord, count));
             }
 
-            return spawnedAny;
+            return requests.Count > 0;
         }
 
         private bool TrySpawnFromData(DinoEnemy prefab, DinoDataRecord dinoData, SpawnDataRecord spawnRecord)
         {
             if (!TryPickSpawnPosition(out var position))
             {
+                Debug.LogWarning($"EnemySpawner could not find a valid spawn position for '{prefab.name}'.", this);
                 return false;
             }
 
@@ -268,6 +352,7 @@ namespace DinoGrow.Gameplay.Enemy
             var level = GetSpawnLevel(spawnRecord);
             enemy.name = $"{prefab.name}_Lv{level}";
             enemy.SetLevel(level);
+            enemy.SetEatenHandler(DropHeartForEnemy);
             enemy.SetDespawnHandler(DespawnEnemy);
             ApplyNormalizedScale(enemy.transform, GetEnemySize(dinoData, level));
 
@@ -282,7 +367,8 @@ namespace DinoGrow.Gameplay.Enemy
                 spawnSize,
                 GetMoveSpeed(dinoData, spawnRecord),
                 player,
-                enemyBehaviorResolver);
+                enemyBehaviorResolver,
+                gameState);
             spawnedEnemies.Add(enemy);
             eventBus?.PublishEnemySpawned(enemy.Level);
             return true;
@@ -300,12 +386,23 @@ namespace DinoGrow.Gameplay.Enemy
 
         private void DespawnEnemy(DinoEnemy enemy)
         {
+            DespawnEnemy(enemy, true);
+        }
+
+        private void DespawnEnemy(DinoEnemy enemy, bool dropHeart)
+        {
             if (enemy == null)
             {
                 return;
             }
 
+            if (dropHeart)
+            {
+                DropHeartForEnemy(enemy);
+            }
+
             spawnedEnemies.Remove(enemy);
+            heartDroppedEnemies.Remove(enemy);
             eventBus?.PublishEnemyDespawned(enemy.Level);
 
             if (poolService != null)
@@ -317,11 +414,205 @@ namespace DinoGrow.Gameplay.Enemy
             Destroy(enemy.gameObject);
         }
 
+        private void TryDropHeart(Vector3 spawnPosition, Vector3 landingOrigin, Vector3 awayDirection)
+        {
+            if (heartDropPrefab == null || heartDropChance <= 0f || Random.value > heartDropChance)
+            {
+                if (logHeartDrops)
+                {
+                    Debug.Log($"Heart drop skipped. Prefab assigned: {heartDropPrefab != null}, chance: {heartDropChance}", this);
+                }
+
+                return;
+            }
+
+            var landingPosition = GetHeartDropLandingPosition(landingOrigin, awayDirection);
+            SpawnHeartDrop(spawnPosition, landingPosition);
+            if (logHeartDrops)
+            {
+                Debug.Log($"Heart dropped from {spawnPosition} to {landingPosition}.", this);
+            }
+        }
+
+        private void SpawnHeartDrop(Vector3 position, Vector3 landingPosition)
+        {
+            TrimHeartDropsToLimit();
+            if (maxSpawnedHeartDrops == 0)
+            {
+                return;
+            }
+
+            if (enableHeartDropIdleEffects)
+            {
+                EnsureHeartDropIdleEffectPrefab();
+            }
+
+            Transform heartDrop;
+            if (poolService != null)
+            {
+                heartDrop = poolService.Spawn(heartDropPrefab.transform, landingPosition, Quaternion.identity, spawnParent);
+            }
+            else
+            {
+                heartDrop = Instantiate(heartDropPrefab, landingPosition, Quaternion.identity, spawnParent).transform;
+            }
+
+            if (heartDrop != null)
+            {
+                SpawnHeartDropEffect(landingPosition);
+
+                if (!heartDrop.TryGetComponent(out HeartPickup pickup))
+                {
+                    pickup = heartDrop.gameObject.AddComponent<HeartPickup>();
+                }
+
+                pickup.ConfigurePickupFeedback(
+                    poolService,
+                    heartPickupEffectPrefab,
+                    heartPickupSoundClip,
+                    heartPickupSoundVolume);
+
+                if (heartDrop.TryGetComponent(out HeartDropMotion motion))
+                {
+                    motion.ConfigureIdleEffect(enableHeartDropIdleEffects ? heartDropIdleEffectPrefab : null);
+                    motion.PopTo(landingPosition);
+                }
+
+                if (!spawnedHeartDrops.Contains(heartDrop))
+                {
+                    spawnedHeartDrops.Add(heartDrop);
+                }
+            }
+        }
+
+        private void SpawnHeartDropEffect(Vector3 position)
+        {
+            if (!enableHeartDropSpawnEffect)
+            {
+                return;
+            }
+
+            EnsureHeartDropIdleEffectPrefab();
+            if (heartDropIdleEffectPrefab == null)
+            {
+                return;
+            }
+
+            var prefabTransform = heartDropIdleEffectPrefab.transform;
+            if (prefabTransform == null)
+            {
+                return;
+            }
+
+            if (poolService == null)
+            {
+                var effect = Instantiate(heartDropIdleEffectPrefab, position, Quaternion.identity);
+                var returner = effect.GetComponent<PooledOneShotVfx>() ?? effect.AddComponent<PooledOneShotVfx>();
+                returner.Play(null, effect.transform);
+                return;
+            }
+
+            var effectRoot = poolService.Spawn(prefabTransform, position, Quaternion.identity, spawnParent);
+            if (effectRoot == null)
+            {
+                return;
+            }
+
+            var pooledVfx = effectRoot.GetComponent<PooledOneShotVfx>() ?? effectRoot.gameObject.AddComponent<PooledOneShotVfx>();
+            pooledVfx.Play(poolService, effectRoot);
+        }
+
+        private void TrimHeartDropsToLimit()
+        {
+            spawnedHeartDrops.RemoveAll(drop => drop == null || !drop.gameObject.activeInHierarchy);
+            var limit = Mathf.Max(0, maxSpawnedHeartDrops);
+            while (spawnedHeartDrops.Count >= limit && spawnedHeartDrops.Count > 0)
+            {
+                var oldestDrop = spawnedHeartDrops[0];
+                spawnedHeartDrops.RemoveAt(0);
+                if (oldestDrop == null)
+                {
+                    continue;
+                }
+
+                if (poolService != null)
+                {
+                    poolService.Despawn(oldestDrop);
+                }
+                else
+                {
+                    Destroy(oldestDrop.gameObject);
+                }
+            }
+        }
+
+        private Vector3 GetHeartDropLandingPosition(Vector3 landingOrigin, Vector3 awayDirection)
+        {
+            awayDirection.y = 0f;
+            if (awayDirection.sqrMagnitude < 0.001f)
+            {
+                awayDirection = Random.insideUnitSphere;
+                awayDirection.y = 0f;
+            }
+
+            if (awayDirection.sqrMagnitude < 0.001f)
+            {
+                awayDirection = Vector3.forward;
+            }
+
+            var groundedOrigin = SnapToGround(landingOrigin);
+            groundedOrigin.y += heartDropHeightOffset;
+            var landingPosition = groundedOrigin + awayDirection.normalized * Mathf.Max(0f, heartDropKnockbackDistance);
+            landingPosition = ClampToSpawnArea(landingPosition);
+            landingPosition = SnapToGround(landingPosition);
+            landingPosition.y += heartDropHeightOffset;
+            return landingPosition;
+        }
+
+        private void EnsureHeartDropIdleEffectPrefab()
+        {
+            if (heartDropIdleEffectPrefab != null)
+            {
+                return;
+            }
+
+            heartDropIdleEffectPrefab = Resources.Load<GameObject>("Area_star_ellow");
+        }
+
+        public void ConfigurePlayerStartExclusion(Vector3 center, bool enabled)
+        {
+            playerStartExclusionCenter = center;
+            hasPlayerStartExclusion = enabled;
+        }
+
+        private void DropHeartForEnemy(DinoEnemy enemy)
+        {
+            if (enemy == null)
+            {
+                return;
+            }
+
+            if (!heartDroppedEnemies.Add(enemy))
+            {
+                return;
+            }
+
+            var awayFromPlayer = player != null
+                ? enemy.transform.position - player.position
+                : enemy.transform.forward;
+            TryDropHeart(enemy.GetMouthEffectPosition(), enemy.transform.position, awayFromPlayer);
+        }
+
         private void OnPlayerGrowthChanged(Core.Growth.GrowthResult result)
         {
             RefreshSpawnedEnemyLevelTextColors();
 
             if (!result.LeveledUp)
+            {
+                return;
+            }
+
+            if (mapTransitionInProgress)
             {
                 return;
             }
@@ -502,35 +793,107 @@ namespace DinoGrow.Gameplay.Enemy
                 return true;
             }
 
+            for (var i = 0; i < attempts; i++)
+            {
+                var position = RandomPositionInArea();
+                if (!TryGetBoundedGroundPosition(position, out position))
+                {
+                    continue;
+                }
+
+                if (IsTooCloseToPlayerArea(position))
+                {
+                    continue;
+                }
+
+                if (IsNearSpawnAreaEdge(position))
+                {
+                    continue;
+                }
+
+                if (IsNearObstacle(position))
+                {
+                    continue;
+                }
+
+                if (IsTooCloseToSpawnedEnemy(position))
+                {
+                    continue;
+                }
+
+                spawnPosition = position;
+                return true;
+            }
+
             spawnPosition = Vector3.zero;
             return false;
         }
 
         private bool TrySnapToNavMesh(Vector3 position, out Vector3 navPosition)
         {
-            var navSearchRadius = Mathf.Max(navMeshSampleDistance, navMeshVerticalSampleDistance);
-            if (NavMesh.SamplePosition(position, out var hit, navSearchRadius, NavMesh.AllAreas))
+            position = SnapToGround(position);
+            var navSearchRadius = Mathf.Max(0.1f, navMeshSampleDistance);
+            var verticalTolerance = Mathf.Max(0.1f, navMeshVerticalSampleDistance);
+            if (NavMesh.SamplePosition(position, out var hit, navSearchRadius, NavMesh.AllAreas)
+                && Mathf.Abs(hit.position.y - position.y) <= verticalTolerance
+                && IsInsideSpawnArea(hit.position))
             {
                 navPosition = hit.position;
                 return true;
             }
 
-            navPosition = SnapToGround(position);
-            return TryGetGroundY(navPosition, out _);
+            navPosition = position;
+            return IsInsideSpawnArea(navPosition) && TryGetGroundY(navPosition, out _);
+        }
+
+        private bool TryGetBoundedGroundPosition(Vector3 position, out Vector3 groundPosition)
+        {
+            position = ClampToSpawnArea(position);
+            if (TryGetGroundY(position, out var groundY))
+            {
+                position.y = groundY;
+                groundPosition = ClampToSpawnArea(position);
+                return true;
+            }
+
+            var navSearchRadius = Mathf.Max(0.1f, navMeshSampleDistance);
+            if (NavMesh.SamplePosition(position, out var hit, navSearchRadius, NavMesh.AllAreas))
+            {
+                groundPosition = ClampToSpawnArea(hit.position);
+                return true;
+            }
+
+            groundPosition = Vector3.zero;
+            return false;
         }
 
         private bool IsValidSpawnPosition(Vector3 position)
         {
+            if (!IsInsideSpawnArea(position))
+            {
+                return false;
+            }
+
+            if (IsNearSpawnAreaEdge(position))
+            {
+                return false;
+            }
+
             if (IsNearObstacle(position))
             {
                 return false;
             }
 
-            if (player != null && Vector3.Distance(position, player.position) < minDistanceFromPlayer)
+            if (IsTooCloseToPlayerArea(position))
             {
                 return false;
             }
 
+            return !IsTooCloseToSpawnedEnemy(position);
+        }
+
+        private bool IsTooCloseToSpawnedEnemy(Vector3 position)
+        {
             var minEnemyDistanceSqr = minDistanceBetweenEnemies * minDistanceBetweenEnemies;
             foreach (var enemy in spawnedEnemies)
             {
@@ -543,11 +906,67 @@ namespace DinoGrow.Gameplay.Enemy
                 offset.y = 0f;
                 if (offset.sqrMagnitude < minEnemyDistanceSqr)
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
+        }
+
+        private bool IsTooCloseToPlayerArea(Vector3 position)
+        {
+            var minDistance = Mathf.Max(0f, minDistanceFromPlayer);
+            var minDistanceSqr = minDistance * minDistance;
+            if (player != null)
+            {
+                var offset = position - player.position;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < minDistanceSqr)
+                {
+                    return true;
+                }
+            }
+
+            if (avoidPlayerStartArea && hasPlayerStartExclusion)
+            {
+                minDistance = Mathf.Max(minDistance, playerStartExclusionRadius);
+                minDistanceSqr = minDistance * minDistance;
+                var offset = position - playerStartExclusionCenter;
+                offset.y = 0f;
+                if (offset.sqrMagnitude < minDistanceSqr)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsInsideSpawnArea(Vector3 position)
+        {
+            var halfSize = spawnSize * 0.5f;
+            return position.x >= spawnCenter.x - halfSize.x
+                && position.x <= spawnCenter.x + halfSize.x
+                && position.z >= spawnCenter.z - halfSize.y
+                && position.z <= spawnCenter.z + halfSize.y;
+        }
+
+        private bool IsNearSpawnAreaEdge(Vector3 position)
+        {
+            var halfSize = spawnSize * 0.5f;
+            var padding = new Vector2(halfSize.x * spawnEdgePaddingRatio, halfSize.y * spawnEdgePaddingRatio);
+            return position.x <= spawnCenter.x - halfSize.x + padding.x
+                || position.x >= spawnCenter.x + halfSize.x - padding.x
+                || position.z <= spawnCenter.z - halfSize.y + padding.y
+                || position.z >= spawnCenter.z + halfSize.y - padding.y;
+        }
+
+        private Vector3 ClampToSpawnArea(Vector3 position)
+        {
+            var halfSize = spawnSize * 0.5f;
+            position.x = Mathf.Clamp(position.x, spawnCenter.x - halfSize.x, spawnCenter.x + halfSize.x);
+            position.z = Mathf.Clamp(position.z, spawnCenter.z - halfSize.y, spawnCenter.z + halfSize.y);
+            return position;
         }
 
         private bool IsNearObstacle(Vector3 position)
@@ -568,6 +987,16 @@ namespace DinoGrow.Gameplay.Enemy
         private Vector3 RandomPositionInArea()
         {
             var halfSize = spawnSize * 0.5f;
+            if (Random.value < centerWeightedSpawnChance)
+            {
+                halfSize *= centerWeightedSpawnScale;
+            }
+
+            var edgePadding = spawnSize * (0.5f * spawnEdgePaddingRatio);
+            halfSize = new Vector2(
+                Mathf.Max(1f, halfSize.x - edgePadding.x),
+                Mathf.Max(1f, halfSize.y - edgePadding.y));
+
             var position = new Vector3(
                 Random.Range(spawnCenter.x - halfSize.x, spawnCenter.x + halfSize.x),
                 spawnY,
@@ -589,7 +1018,7 @@ namespace DinoGrow.Gameplay.Enemy
             System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
             foreach (var hit in hits)
             {
-                if (IsWaterCollider(hit.collider))
+                if (!IsGroundCollider(hit.collider))
                 {
                     continue;
                 }
@@ -613,7 +1042,7 @@ namespace DinoGrow.Gameplay.Enemy
             System.Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
             foreach (var hit in hits)
             {
-                if (IsWaterCollider(hit.collider))
+                if (!IsGroundCollider(hit.collider))
                 {
                     continue;
                 }
@@ -625,7 +1054,7 @@ namespace DinoGrow.Gameplay.Enemy
             return position;
         }
 
-        private static bool IsWaterCollider(Collider targetCollider)
+        private static bool IsGroundCollider(Collider targetCollider)
         {
             if (targetCollider == null)
             {
@@ -635,28 +1064,86 @@ namespace DinoGrow.Gameplay.Enemy
             var target = targetCollider.transform;
             while (target != null)
             {
-                if (target.name == "Water")
+                if (IsNonGroundSurfaceName(target.name))
                 {
-                    return true;
+                    return false;
                 }
 
                 target = target.parent;
             }
 
-            return false;
+            return true;
+        }
+
+        private static bool IsNonGroundSurfaceName(string targetName)
+        {
+            return targetName == "Water"
+                || targetName == "MapBoundary"
+                || targetName.StartsWith("Tree_", System.StringComparison.Ordinal)
+                || targetName.StartsWith("Rock_", System.StringComparison.Ordinal);
         }
 
         private void ClearSpawnedEnemies()
         {
+            ClearSpawnedHeartDrops();
+
             for (var i = spawnedEnemies.Count - 1; i >= 0; i--)
             {
                 if (spawnedEnemies[i] != null && !spawnedEnemies[i].IsDying)
                 {
-                    DespawnEnemy(spawnedEnemies[i]);
+                    DespawnEnemy(spawnedEnemies[i], false);
                 }
             }
 
             spawnedEnemies.RemoveAll(enemy => enemy == null || !enemy.IsDying);
+            heartDroppedEnemies.Clear();
+        }
+
+        private void ClearSpawnedHeartDrops()
+        {
+            for (var i = spawnedHeartDrops.Count - 1; i >= 0; i--)
+            {
+                var heartDrop = spawnedHeartDrops[i];
+                if (heartDrop == null)
+                {
+                    continue;
+                }
+
+                if (poolService != null)
+                {
+                    poolService.Despawn(heartDrop);
+                    continue;
+                }
+
+                Destroy(heartDrop.gameObject);
+            }
+
+            spawnedHeartDrops.Clear();
+        }
+
+        private bool ShouldYieldSpawnBatch(int spawnedInBatch)
+        {
+            return Application.isPlaying && spawnedInBatch >= Mathf.Max(1, spawnBatchSize);
+        }
+
+        private readonly struct GameDataSpawnRequest
+        {
+            public GameDataSpawnRequest(
+                DinoEnemy prefab,
+                DinoDataRecord dinoData,
+                SpawnDataRecord spawnRecord,
+                int count)
+            {
+                Prefab = prefab;
+                DinoData = dinoData;
+                SpawnRecord = spawnRecord;
+                Count = count;
+            }
+
+            public DinoEnemy Prefab { get; }
+            public DinoDataRecord DinoData { get; }
+            public SpawnDataRecord SpawnRecord { get; }
+            public int Count { get; }
         }
     }
 }

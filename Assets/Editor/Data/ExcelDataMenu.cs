@@ -48,24 +48,20 @@ public static class ExcelDataMenu
         try
         {
             var dataService = new ExcelDataService();
-            var playerRows = dataService.LoadPlayerRows(excelPath);
-            var enemyDinoRows = dataService.LoadEnemyDinoRows(excelPath);
-            var itemRows = dataService.LoadItemRows(excelPath);
+            var dinoRows = dataService.LoadDinoRows(excelPath);
             var stageRows = dataService.LoadStageRows(excelPath);
             var spawnRows = dataService.LoadSpawnRows(excelPath);
             var playerGrowthRows = dataService.LoadPlayerGrowthRows(excelPath);
 
-            SavePlayerDatabase(Path.Combine(assetFolder, "PlayerDatabase.asset").Replace('\\', '/'), playerRows);
-            SaveEnemyDinoDatabase(Path.Combine(assetFolder, "EnemyDinoDatabase.asset").Replace('\\', '/'), enemyDinoRows);
-            SaveItemDatabase(Path.Combine(assetFolder, "ItemDatabase.asset").Replace('\\', '/'), itemRows);
-            SaveStageDatabase(Path.Combine(assetFolder, "StageDatabase.asset").Replace('\\', '/'), stageRows);
-            SaveSpawnDatabase(Path.Combine(assetFolder, "SpawnDatabase.asset").Replace('\\', '/'), spawnRows);
-            SavePlayerGrowthDatabase(Path.Combine(assetFolder, "PlayerGrowthDatabase.asset").Replace('\\', '/'), playerGrowthRows);
+            SaveDatabase(Path.Combine(assetFolder, "DinoDatabase.asset").Replace('\\', '/'), dinoRows);
+            SaveDatabase(Path.Combine(assetFolder, "StageDatabase.asset").Replace('\\', '/'), stageRows);
+            SaveDatabase(Path.Combine(assetFolder, "SpawnDatabase.asset").Replace('\\', '/'), spawnRows);
+            SaveDatabase(Path.Combine(assetFolder, "PlayerGrowthDatabase.asset").Replace('\\', '/'), playerGrowthRows);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"Converted game data Excel to ScriptableObjects. Player: {playerRows.Count}, EnemyDino: {enemyDinoRows.Count}, Item: {itemRows.Count}, Stage: {stageRows.Count}, Spawn: {spawnRows.Count}, PlayerGrowth: {playerGrowthRows.Count}");
+            Debug.Log($"Converted game data Excel to ScriptableObjects. Dino: {dinoRows.Count}, Stage: {stageRows.Count}, Spawn: {spawnRows.Count}, PlayerGrowth: {playerGrowthRows.Count}");
         }
         catch (IOException ex)
         {
@@ -78,42 +74,28 @@ public static class ExcelDataMenu
         }
     }
 
-    private static void SavePlayerDatabase(string assetPath, System.Collections.Generic.IEnumerable<PlayerDataRecord> records)
+    private static void SaveDatabase(string assetPath, System.Collections.Generic.IEnumerable<DinoDataRecord> records)
     {
-        var database = ScriptableObject.CreateInstance<PlayerDatabase>();
+        var database = ScriptableObject.CreateInstance<DinoDatabase>();
         database.SetRecords(records);
         SaveAsset(assetPath, database);
     }
 
-    private static void SaveEnemyDinoDatabase(string assetPath, System.Collections.Generic.IEnumerable<DinoDataRecord> records)
-    {
-        var database = ScriptableObject.CreateInstance<EnemyDinoDatabase>();
-        database.SetRecords(records);
-        SaveAsset(assetPath, database);
-    }
-
-    private static void SaveItemDatabase(string assetPath, System.Collections.Generic.IEnumerable<ItemDataRecord> records)
-    {
-        var database = ScriptableObject.CreateInstance<ItemDatabase>();
-        database.SetRecords(records);
-        SaveAsset(assetPath, database);
-    }
-
-    private static void SaveStageDatabase(string assetPath, System.Collections.Generic.IEnumerable<StageDataRecord> records)
+    private static void SaveDatabase(string assetPath, System.Collections.Generic.IEnumerable<StageDataRecord> records)
     {
         var database = ScriptableObject.CreateInstance<StageDatabase>();
         database.SetRecords(records);
         SaveAsset(assetPath, database);
     }
 
-    private static void SaveSpawnDatabase(string assetPath, System.Collections.Generic.IEnumerable<SpawnDataRecord> records)
+    private static void SaveDatabase(string assetPath, System.Collections.Generic.IEnumerable<SpawnDataRecord> records)
     {
         var database = ScriptableObject.CreateInstance<SpawnDatabase>();
         database.SetRecords(records);
         SaveAsset(assetPath, database);
     }
 
-    private static void SavePlayerGrowthDatabase(string assetPath, System.Collections.Generic.IEnumerable<PlayerGrowthDataRecord> records)
+    private static void SaveDatabase(string assetPath, System.Collections.Generic.IEnumerable<PlayerGrowthDataRecord> records)
     {
         var database = ScriptableObject.CreateInstance<PlayerGrowthDatabase>();
         database.SetRecords(records);

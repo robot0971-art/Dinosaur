@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DinoGrow.Core.Growth
 {
@@ -6,14 +7,16 @@ namespace DinoGrow.Core.Growth
     {
         public const int DefaultStartLevel = 1;
         public const int DefaultMaxLevel = 20;
-        public const int DefaultExpToLevelUp = 100;
+        public const int DefaultExpToLevelUp = 50;
 
         public int Level { get; private set; }
         public int CurrentExp { get; private set; }
         public int MaxLevel { get; }
-        public int ExpToLevelUp { get; }
+        public int ExpToLevelUp => GetExpToLevelUp(Level);
 
         public bool IsMaxLevel => Level >= MaxLevel;
+
+        private readonly IReadOnlyDictionary<int, int> requiredExpByLevel;
 
         public PlayerProgress()
             : this(DefaultStartLevel, 0, DefaultMaxLevel, DefaultExpToLevelUp)
@@ -21,22 +24,35 @@ namespace DinoGrow.Core.Growth
         }
 
         public PlayerProgress(int startLevel, int currentExp, int maxLevel, int expToLevelUp)
+            : this(startLevel, currentExp, maxLevel, expToLevelUp, null)
+        {
+        }
+
+        public PlayerProgress(
+            int startLevel,
+            int currentExp,
+            int maxLevel,
+            int defaultExpToLevelUp,
+            IReadOnlyDictionary<int, int> requiredExpByLevel)
         {
             if (maxLevel < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(maxLevel), "Max level must be greater than zero.");
             }
 
-            if (expToLevelUp < 1)
+            if (defaultExpToLevelUp < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(expToLevelUp), "EXP to level up must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(defaultExpToLevelUp), "EXP to level up must be greater than zero.");
             }
 
             MaxLevel = maxLevel;
-            ExpToLevelUp = expToLevelUp;
+            this.requiredExpByLevel = requiredExpByLevel;
+            DefaultRequiredExp = defaultExpToLevelUp;
             Level = Math.Clamp(startLevel, 1, MaxLevel);
             CurrentExp = Math.Max(0, currentExp);
         }
+
+        private int DefaultRequiredExp { get; }
 
         public void AddExp(int amount)
         {
@@ -64,6 +80,18 @@ namespace DinoGrow.Core.Growth
             }
 
             return true;
+        }
+
+        private int GetExpToLevelUp(int level)
+        {
+            if (requiredExpByLevel != null
+                && requiredExpByLevel.TryGetValue(level, out var requiredExp)
+                && requiredExp > 0)
+            {
+                return requiredExp;
+            }
+
+            return DefaultRequiredExp;
         }
 
         public void Reset()

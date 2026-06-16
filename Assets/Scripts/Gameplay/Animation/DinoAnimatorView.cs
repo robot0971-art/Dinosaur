@@ -15,7 +15,6 @@ namespace DinoGrow.Gameplay.Animation
         private static readonly int DeadHash = Animator.StringToHash("Dead");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
-        private static readonly int HitHash = Animator.StringToHash("Hit");
         private static readonly string[] AttackStateNames =
         {
             "Armature_Velociraptor_Attack",
@@ -62,6 +61,10 @@ namespace DinoGrow.Gameplay.Animation
         private Coroutine deathClipRoutine;
         private bool isDead;
         private float suppressLocomotionUntil;
+        private bool lowDetailUpdates;
+        private float lowDetailUpdateInterval = 0.25f;
+        private float nextLowDetailUpdateTime;
+        private int lowDetailUpdateFrame = -1;
 
         private void Awake()
         {
@@ -97,6 +100,11 @@ namespace DinoGrow.Gameplay.Animation
                 return;
             }
 
+            if (!CanUpdateLowDetailAnimator())
+            {
+                return;
+            }
+
             EnsureAnimatorActive();
             animator.SetFloat(SpeedHash, Mathf.Clamp01(speed));
             animator.SetBool(IsMovingHash, speed > 0.01f);
@@ -112,8 +120,23 @@ namespace DinoGrow.Gameplay.Animation
                 return;
             }
 
+            if (!CanUpdateLowDetailAnimator())
+            {
+                return;
+            }
+
             EnsureAnimatorActive();
             animator.speed = Mathf.Clamp(speed, 0.1f, 2.5f);
+        }
+
+        public void SetLowDetailUpdates(bool enabled, float updateInterval)
+        {
+            lowDetailUpdates = enabled;
+            lowDetailUpdateInterval = Mathf.Max(0.05f, updateInterval);
+            if (!enabled)
+            {
+                nextLowDetailUpdateTime = 0f;
+            }
         }
 
         public void SetDead(bool isDead)
@@ -312,8 +335,31 @@ namespace DinoGrow.Gameplay.Animation
             }
 
             animator.enabled = true;
+            animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
             animator.speed = 1f;
             animator.applyRootMotion = false;
+        }
+
+        private bool CanUpdateLowDetailAnimator()
+        {
+            if (!Application.isPlaying || !lowDetailUpdates)
+            {
+                return true;
+            }
+
+            if (Time.frameCount == lowDetailUpdateFrame)
+            {
+                return true;
+            }
+
+            if (Time.time < nextLowDetailUpdateTime)
+            {
+                return false;
+            }
+
+            nextLowDetailUpdateTime = Time.time + lowDetailUpdateInterval;
+            lowDetailUpdateFrame = Time.frameCount;
+            return true;
         }
 
         private bool PlayDeathState()
@@ -382,21 +428,6 @@ namespace DinoGrow.Gameplay.Animation
             }
 
             animator.Update(0f);
-        }
-
-        public void SetHit(bool isHit)
-        {
-            EnsureAnimatorReference();
-            if (animator == null || isDead)
-            {
-                return;
-            }
-
-            if (isHit)
-            {
-                EnsureAnimatorActive();
-                animator.SetTrigger(HitHash);
-            }
         }
 
         public void PlayJump()

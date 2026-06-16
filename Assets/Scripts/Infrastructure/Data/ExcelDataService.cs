@@ -10,38 +10,17 @@ namespace DinoGrow.Infrastructure.Data
 {
     public sealed class ExcelDataService : IDataService
     {
-        private static readonly string[] PlayerHeaders =
+        private static readonly string[] DinoHeaders =
         {
             "id",
-            "표시이름",
-            "레벨",
-            "경험치",
-            "이동속도",
-            "크기",
-            "프리팹",
-            "최대목숨"
-        };
-
-        private static readonly string[] EnemyDinoHeaders =
-        {
-            "id",
-            "표시이름",
-            "레벨",
-            "경험치",
-            "이동속도",
-            "크기",
-            "AI유형",
-            "색상유형",
-            "프리팹"
-        };
-
-        private static readonly string[] ItemHeaders =
-        {
-            "id",
-            "표시이름",
-            "효과타입",
-            "효과값",
-            "프리팹"
+            "\ud45c\uc2dc\uc774\ub984",
+            "\ub808\ubca8",
+            "\uacbd\ud5d8\uce58",
+            "\uc774\ub3d9\uc18d\ub3c4",
+            "\ud06c\uae30",
+            "AI\uc720\ud615",
+            "\uc0c9\uc0c1\uc720\ud615",
+            "\ud504\ub9ac\ud339"
         };
 
         private static readonly string[] StageHeaders =
@@ -61,65 +40,28 @@ namespace DinoGrow.Infrastructure.Data
         {
             "stageId",
             "dinoId",
-            "최소레벨",
-            "최대레벨",
-            "생성수",
-            "처치경험치",
-            "가중치",
-            "최소배회속도",
-            "최대배회속도"
+            "\ucd5c\uc18c\ub808\ubca8",
+            "\ucd5c\ub300\ub808\ubca8",
+            "\uc0dd\uc131\uc218",
+            "\ucc98\uce58\uacbd\ud5d8\uce58",
+            "\uac00\uc911\uce58",
+            "\ucd5c\uc18c\ubc30\ud68c\uc18d\ub3c4",
+            "\ucd5c\ub300\ubc30\ud68c\uc18d\ub3c4"
         };
 
         private static readonly string[] PlayerGrowthHeaders =
         {
-            "레벨",
-            "필요경험치",
-            "크기배율",
-            "카메라거리",
-            "카메라높이"
+            "\ub808\ubca8",
+            "\ud544\uc694\uacbd\ud5d8\uce58",
+            "\ud06c\uae30\ubc30\uc728",
+            "\uce74\uba54\ub77c\uac70\ub9ac",
+            "\uce74\uba54\ub77c\ub192\uc774"
         };
 
-        public IReadOnlyList<PlayerDataRecord> LoadPlayerRows(string xlsxPath)
+        public IReadOnlyList<DinoDataRecord> LoadDinoRows(string xlsxPath)
         {
             using var workbook = OpenWorkbook(xlsxPath);
-            var sheet = workbook.GetSheet("PlayerTable") ?? throw new InvalidDataException("PlayerTable sheet was not found.");
-            var formatter = new DataFormatter(CultureInfo.InvariantCulture);
-            var headerMap = ReadHeaderMap(sheet, formatter);
-            var records = new List<PlayerDataRecord>();
-
-            for (var rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
-            {
-                var row = sheet.GetRow(rowIndex);
-                if (row == null || IsRowEmpty(row, formatter))
-                {
-                    continue;
-                }
-
-                var record = new PlayerDataRecord
-                {
-                    id = ReadString(row, headerMap, "id", formatter),
-                    displayName = ReadString(row, headerMap, "displayName", formatter),
-                    level = ReadInt(row, headerMap, "level", formatter, 1),
-                    exp = ReadInt(row, headerMap, "exp", formatter, 0),
-                    speed = ReadFloat(row, headerMap, "speed", formatter, 1f),
-                    size = ReadFloat(row, headerMap, "size", formatter, 1f),
-                    prefab = ReadString(row, headerMap, "prefab", formatter),
-                    maxLives = ReadInt(row, headerMap, "maxLives", formatter, 3)
-                };
-
-                if (!string.IsNullOrWhiteSpace(record.id))
-                {
-                    records.Add(record);
-                }
-            }
-
-            return records;
-        }
-
-        public IReadOnlyList<DinoDataRecord> LoadEnemyDinoRows(string xlsxPath)
-        {
-            using var workbook = OpenWorkbook(xlsxPath);
-            var sheet = workbook.GetSheet("EnemyDinoTable") ?? throw new InvalidDataException("EnemyDinoTable sheet was not found.");
+            var sheet = workbook.GetSheet("DinoTable") ?? workbook.GetSheetAt(0);
             var formatter = new DataFormatter(CultureInfo.InvariantCulture);
             var headerMap = ReadHeaderMap(sheet, formatter);
             var records = new List<DinoDataRecord>();
@@ -142,40 +84,6 @@ namespace DinoGrow.Infrastructure.Data
                     size = ReadFloat(row, headerMap, "size", formatter, 1f),
                     aiType = ReadString(row, headerMap, "aiType", formatter),
                     colorType = ReadString(row, headerMap, "colorType", formatter),
-                    prefab = ReadString(row, headerMap, "prefab", formatter)
-                };
-
-                if (!string.IsNullOrWhiteSpace(record.id))
-                {
-                    records.Add(record);
-                }
-            }
-
-            return records;
-        }
-
-        public IReadOnlyList<ItemDataRecord> LoadItemRows(string xlsxPath)
-        {
-            using var workbook = OpenWorkbook(xlsxPath);
-            var sheet = workbook.GetSheet("ItemTable") ?? throw new InvalidDataException("ItemTable sheet was not found.");
-            var formatter = new DataFormatter(CultureInfo.InvariantCulture);
-            var headerMap = ReadHeaderMap(sheet, formatter);
-            var records = new List<ItemDataRecord>();
-
-            for (var rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
-            {
-                var row = sheet.GetRow(rowIndex);
-                if (row == null || IsRowEmpty(row, formatter))
-                {
-                    continue;
-                }
-
-                var record = new ItemDataRecord
-                {
-                    id = ReadString(row, headerMap, "id", formatter),
-                    displayName = ReadString(row, headerMap, "displayName", formatter),
-                    effectType = ReadString(row, headerMap, "effectType", formatter),
-                    effectValue = ReadInt(row, headerMap, "effectValue", formatter, 1),
                     prefab = ReadString(row, headerMap, "prefab", formatter)
                 };
 
@@ -283,7 +191,7 @@ namespace DinoGrow.Infrastructure.Data
                 var record = new PlayerGrowthDataRecord
                 {
                     level = ReadInt(row, headerMap, "level", formatter, 1),
-                    requiredExp = ReadInt(row, headerMap, "requiredExp", formatter, 100),
+                    requiredExp = ReadInt(row, headerMap, "requiredExp", formatter, 50),
                     scaleMultiplier = ReadFloat(row, headerMap, "scaleMultiplier", formatter, 1f),
                     cameraDistance = ReadFloat(row, headerMap, "cameraDistance", formatter, 6f),
                     cameraHeight = ReadFloat(row, headerMap, "cameraHeight", formatter, 4f)
@@ -303,9 +211,7 @@ namespace DinoGrow.Infrastructure.Data
             EnsureOutputDirectory(xlsxPath);
 
             var workbook = new XSSFWorkbook();
-            CreatePlayerSheet(workbook);
-            CreateEnemyDinoSheet(workbook);
-            CreateItemSheet(workbook);
+            CreateDinoSheet(workbook);
             WriteWorkbook(workbook, xlsxPath);
         }
 
@@ -314,9 +220,7 @@ namespace DinoGrow.Infrastructure.Data
             EnsureOutputDirectory(xlsxPath);
 
             var workbook = new XSSFWorkbook();
-            CreatePlayerSheet(workbook);
-            CreateEnemyDinoSheet(workbook);
-            CreateItemSheet(workbook);
+            CreateDinoSheet(workbook);
             CreateStageSheet(workbook);
             CreateSpawnSheet(workbook);
             CreatePlayerGrowthSheet(workbook);
@@ -359,38 +263,20 @@ namespace DinoGrow.Infrastructure.Data
             workbook.Write(output);
         }
 
-        private static void CreatePlayerSheet(IWorkbook workbook)
+        private static void CreateDinoSheet(IWorkbook workbook)
         {
-            var sheet = workbook.CreateSheet("PlayerTable");
-            WriteHeaders(workbook, sheet, PlayerHeaders);
-            WritePlayerSampleRow(sheet.CreateRow(1), "player", "플레이어", 1, 0, 5f, 1f, "Player", 3);
-            AutoSizeColumns(sheet, PlayerHeaders.Length);
-        }
-
-        private static void CreateEnemyDinoSheet(IWorkbook workbook)
-        {
-            var sheet = workbook.CreateSheet("EnemyDinoTable");
-            WriteHeaders(workbook, sheet, EnemyDinoHeaders);
-            WriteEnemyDinoSampleRow(sheet.CreateRow(1), "dino_001", "초식공룡", 1, 10, 4.2f, 0.8f, "Wander", "Green", "EnemyDinoSmall");
-            WriteEnemyDinoSampleRow(sheet.CreateRow(2), "dino_002", "중형공룡", 2, 20, 4.8f, 1.2f, "Wander", "Brown", "EnemyDinoMedium");
-            WriteEnemyDinoSampleRow(sheet.CreateRow(3), "dino_003", "대형공룡", 3, 30, 3.6f, 1.8f, "Wander", "Red", "EnemyDinoLarge");
-            AutoSizeColumns(sheet, EnemyDinoHeaders.Length);
-        }
-
-        private static void CreateItemSheet(IWorkbook workbook)
-        {
-            var sheet = workbook.CreateSheet("ItemTable");
-            WriteHeaders(workbook, sheet, ItemHeaders);
-            WriteItemSampleRow(sheet.CreateRow(1), "heart", "하트", "Heart", 1, "HeartPickup");
-            AutoSizeColumns(sheet, ItemHeaders.Length);
+            var sheet = workbook.CreateSheet("DinoTable");
+            WriteHeaders(workbook, sheet, DinoHeaders);
+            WriteDinoSampleRow(sheet.CreateRow(1), "player", "\ud50c\ub808\uc774\uc5b4", 1, 0, 5f, 1f, "\ud50c\ub808\uc774\uc5b4", "\ud50c\ub808\uc774\uc5b4", "Player");
+            AutoSizeColumns(sheet, DinoHeaders.Length);
         }
 
         private static void CreateStageSheet(IWorkbook workbook)
         {
             var sheet = workbook.CreateSheet("StageTable");
             WriteHeaders(workbook, sheet, StageHeaders);
-            WriteStageSampleRow(sheet.CreateRow(1), 1, "초원", 0f, 0f, 80f, 80f, 0.75f, 8f, 0f);
-            WriteStageSampleRow(sheet.CreateRow(2), 2, "넓은 초원", 0f, 0f, 100f, 100f, 0.75f, 10f, 0f);
+            WriteStageSampleRow(sheet.CreateRow(1), 1, "\ucd08\uc6d0", 0f, 0f, 80f, 80f, 0.75f, 8f, 0f);
+            WriteStageSampleRow(sheet.CreateRow(2), 2, "\ub113\uc740 \ucd08\uc6d0", 0f, 0f, 100f, 100f, 0.75f, 10f, 0f);
             AutoSizeColumns(sheet, StageHeaders.Length);
         }
 
@@ -417,7 +303,7 @@ namespace DinoGrow.Infrastructure.Data
                 var scale = 1f + (level - 1) * 0.08f;
                 var cameraDistance = GetCameraDistance(level);
                 var cameraHeight = GetCameraHeight(level);
-                WritePlayerGrowthSampleRow(row, level, 100, scale, cameraDistance, cameraHeight);
+                WritePlayerGrowthSampleRow(row, level, 50, scale, cameraDistance, cameraHeight);
             }
 
             AutoSizeColumns(sheet, PlayerGrowthHeaders.Length);
@@ -524,35 +410,32 @@ namespace DinoGrow.Infrastructure.Data
         {
             return header switch
             {
-                "표시이름" => new[] { "displayName" },
-                "레벨" => new[] { "level" },
-                "경험치" => new[] { "exp" },
-                "이동속도" => new[] { "speed" },
-                "크기" => new[] { "size" },
-                "AI유형" => new[] { "aiType" },
-                "색상유형" => new[] { "colorType" },
-                "프리팹" => new[] { "prefab" },
-                "최대목숨" => new[] { "maxLives" },
-                "효과타입" => new[] { "effectType" },
-                "효과값" => new[] { "effectValue" },
-                "스폰중심X" => new[] { "spawnCenterX" },
-                "스폰중심Z" => new[] { "spawnCenterZ" },
-                "스폰범위X" => new[] { "spawnSizeX" },
-                "스폰범위Z" => new[] { "spawnSizeZ" },
-                "스폰높이Y" => new[] { "spawnY" },
-                "플레이어최소거리" => new[] { "minDistanceFromPlayer" },
-                "제한시간" => new[] { "timeLimit" },
-                "최소레벨" => new[] { "minLevel" },
-                "최대레벨" => new[] { "maxLevel" },
-                "생성수" => new[] { "count" },
-                "처치경험치" => new[] { "defeatExp" },
-                "가중치" => new[] { "weight" },
-                "최소배회속도" => new[] { "minWanderSpeed" },
-                "최대배회속도" => new[] { "maxWanderSpeed" },
-                "필요경험치" => new[] { "requiredExp" },
-                "크기배율" => new[] { "scaleMultiplier" },
-                "카메라거리" => new[] { "cameraDistance" },
-                "카메라높이" => new[] { "cameraHeight" },
+                "\ud45c\uc2dc\uc774\ub984" => new[] { "displayName" },
+                "\ub808\ubca8" => new[] { "level" },
+                "\uacbd\ud5d8\uce58" => new[] { "exp" },
+                "\uc774\ub3d9\uc18d\ub3c4" => new[] { "speed" },
+                "\ud06c\uae30" => new[] { "size" },
+                "AI\uc720\ud615" => new[] { "aiType" },
+                "\uc0c9\uc0c1\uc720\ud615" => new[] { "colorType" },
+                "\ud504\ub9ac\ud339" => new[] { "prefab" },
+                "\uc2a4\ud3f0\uc911\uc2ecX" => new[] { "spawnCenterX" },
+                "\uc2a4\ud3f0\uc911\uc2ecZ" => new[] { "spawnCenterZ" },
+                "\uc2a4\ud3f0\ubc94\uc704X" => new[] { "spawnSizeX" },
+                "\uc2a4\ud3f0\ubc94\uc704Z" => new[] { "spawnSizeZ" },
+                "\uc2a4\ud3f0\ub192\uc774Y" => new[] { "spawnY" },
+                "\ud50c\ub808\uc774\uc5b4\ucd5c\uc18c\uac70\ub9ac" => new[] { "minDistanceFromPlayer" },
+                "\uc81c\ud55c\uc2dc\uac04" => new[] { "timeLimit" },
+                "\ucd5c\uc18c\ub808\ubca8" => new[] { "minLevel" },
+                "\ucd5c\ub300\ub808\ubca8" => new[] { "maxLevel" },
+                "\uc0dd\uc131\uc218" => new[] { "count" },
+                "\ucc98\uce58\uacbd\ud5d8\uce58" => new[] { "defeatExp" },
+                "\uac00\uc911\uce58" => new[] { "weight" },
+                "\ucd5c\uc18c\ubc30\ud68c\uc18d\ub3c4" => new[] { "minWanderSpeed" },
+                "\ucd5c\ub300\ubc30\ud68c\uc18d\ub3c4" => new[] { "maxWanderSpeed" },
+                "\ud544\uc694\uacbd\ud5d8\uce58" => new[] { "requiredExp" },
+                "\ud06c\uae30\ubc30\uc728" => new[] { "scaleMultiplier" },
+                "\uce74\uba54\ub77c\uac70\ub9ac" => new[] { "cameraDistance" },
+                "\uce74\uba54\ub77c\ub192\uc774" => new[] { "cameraHeight" },
                 _ => Array.Empty<string>()
             };
         }
@@ -602,19 +485,7 @@ namespace DinoGrow.Infrastructure.Data
             return style;
         }
 
-        private static void WritePlayerSampleRow(IRow row, string id, string displayName, int level, int exp, float speed, float size, string prefab, int maxLives)
-        {
-            row.CreateCell(0).SetCellValue(id);
-            row.CreateCell(1).SetCellValue(displayName);
-            row.CreateCell(2).SetCellValue(level);
-            row.CreateCell(3).SetCellValue(exp);
-            row.CreateCell(4).SetCellValue(speed);
-            row.CreateCell(5).SetCellValue(size);
-            row.CreateCell(6).SetCellValue(prefab);
-            row.CreateCell(7).SetCellValue(maxLives);
-        }
-
-        private static void WriteEnemyDinoSampleRow(IRow row, string id, string displayName, int level, int exp, float speed, float size, string aiType, string colorType, string prefab)
+        private static void WriteDinoSampleRow(IRow row, string id, string displayName, int level, int exp, float speed, float size, string aiType, string colorType, string prefab)
         {
             row.CreateCell(0).SetCellValue(id);
             row.CreateCell(1).SetCellValue(displayName);
@@ -625,15 +496,6 @@ namespace DinoGrow.Infrastructure.Data
             row.CreateCell(6).SetCellValue(aiType);
             row.CreateCell(7).SetCellValue(colorType);
             row.CreateCell(8).SetCellValue(prefab);
-        }
-
-        private static void WriteItemSampleRow(IRow row, string id, string displayName, string effectType, int effectValue, string prefab)
-        {
-            row.CreateCell(0).SetCellValue(id);
-            row.CreateCell(1).SetCellValue(displayName);
-            row.CreateCell(2).SetCellValue(effectType);
-            row.CreateCell(3).SetCellValue(effectValue);
-            row.CreateCell(4).SetCellValue(prefab);
         }
 
         private static void WriteStageSampleRow(IRow row, int stageId, string displayName, float spawnCenterX, float spawnCenterZ, float spawnSizeX, float spawnSizeZ, float spawnY, float minDistanceFromPlayer, float timeLimit)

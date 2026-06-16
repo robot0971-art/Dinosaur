@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7653ae9487e48d45b6d91d3a103b631, type: 3}
+  m_Name: DinoDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Core.Data.DinoDatabase
+  records:
+  - id: player
+    displayName: "\uD50C\uB808\uC774\uC5B4"
+    level: 1
+    exp: 0
+    speed: 5
+    size: 1
+    aiType: "\uD50C\uB808\uC774\uC5B4"
+    colorType: "\uD50C\uB808\uC774\uC5B4"
+    prefab: Player
+  - id: parasaurolophus
+    displayName: "\uD30C\uB77C\uC0AC\uC6B0\uB864\uB85C\uD478\uC2A4"
+    level: 1
+    exp: 10
+    speed: 2.3
+    size: 1
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Parasaurolophus
+  - id: velociraptor
+    displayName: "\uBCA8\uB85C\uC2DC\uB7A9\uD130"
+    level: 2
+    exp: 20
+    speed: 3.5
+    size: 0.9
+    aiType: "\uCD94\uACA9\uD615"
+    colorType: "\uC721\uC2DD"
+    prefab: Velociraptor
+  - id: stegosaurus
+    displayName: "\uC2A4\uD14C\uACE0\uC0AC\uC6B0\uB8E8\uC2A4"
+    level: 4
+    exp: 40
+    speed: 1.8
+    size: 1.4
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Stegosaurus
+  - id: triceratops
+    displayName: "\uD2B8\uB9AC\uCF00\uB77C\uD1B1\uC2A4"
+    level: 6
+    exp: 60
+    speed: 2
+    size: 1.6
+    aiType: "\uBC30\uD68C\uD615"
+    colorType: "\uCD08\uC2DD"
+    prefab: Triceratops
+  - id: trex
+    displayName: "\uD2F0\uB77C\uB178"
+    level: 10
+    exp: 100
+    speed: 3.1
+    size: 2.2
+    aiType: "\uCD94\uACA9\uD615"
+    colorType: "\uC721\uC2DD"
+    prefab: Trex

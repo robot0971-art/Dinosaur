@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public static class GrasslandMapGenerator
 {
-    // �??�기 ?�정
+    // 맵 크기 설정
     private const float MAP_SIZE = 100f;
     private const float PLAYER_START_ZONE = 25f;
     private const float SAFE_ZONE = 50f;
 
-    // Pure Poly - Free Low Poly Nature Forest ?�셋 경로
+    // Pure Poly - Free Low Poly Nature Forest 에셋 경로
     private const string GROUND_PATH = "Assets/Pure Poly/Free Low Poly Nature Pack/Prefabs/PP_Meadow_07.prefab";
     private const string GROUND2_PATH = "Assets/Pure Poly/Free Low Poly Nature Pack/Prefabs/PP_Meadow_08.prefab";
     private const string TREE_PATH = "Assets/Pure Poly/Free Low Poly Nature Pack/Prefabs/PP_Birch_Tree_05.prefab";
@@ -29,7 +29,7 @@ public static class GrasslandMapGenerator
     private const string STUMP_PATH = "Assets/Pure Poly/Free Low Poly Nature Pack/Prefabs/PP_Mushroom_Fantasy_Orange_09.prefab";
     private const string STUMP2_PATH = "Assets/Pure Poly/Free Low Poly Nature Pack/Prefabs/PP_Mushroom_Fantasy_Purple_05.prefab";
 
-    // �??�정
+    // 맵 설정
     private static float mapSize = 250f;
     private static int treeCount = 100;
     private static int rockCount = 60;
@@ -41,7 +41,7 @@ public static class GrasslandMapGenerator
     private static Vector3 playerStartPosition = new Vector3(0, 0.5f, 0);
     private static int[] enemyCountPerLevel = { 20, 18, 15, 12, 10, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
 
-    // ?�셋 캐시
+    // 에셋 캐시
     private static GameObject groundPrefab;
     private static GameObject ground2Prefab;
     private static GameObject treePrefab;
@@ -62,29 +62,29 @@ public static class GrasslandMapGenerator
     private static GameObject stump2Prefab;
 
     /// <summary>
-    /// ?�디??메뉴?�서 ?�출?�는 �??�성 ?�수
+    /// 에디터 메뉴에서 호출하는 맵 생성 함수
     /// </summary>
     [MenuItem("DinoGrow/Generate Grassland Map")]
     public static void GenerateMap()
     {
-        // 기존 �??�리
+        // 기존 맵 정리
         ClearExistingMap();
 
-        // ??�??�성
+        // 새 맵 생성
         CreateGround();
         CreateNatureElements();
         CreatePlayerStartPoint();
         CreateEnemySpawnPoints();
 
-        Debug.Log("초원 �??�성 ?�료!");
+        Debug.Log("초원 맵 생성 완료!");
     }
 
     /// <summary>
-    /// 기존 �??�브?�트 ??��
+    /// 기존 맵 오브젝트 삭제
     /// </summary>
     private static void ClearExistingMap()
     {
-        // 기존 ?�성???�브?�트 찾기 �???��
+        // 기존 생성된 오브젝트 찾기 및 삭제
         GameObject[] existingObjects = GameObject.FindGameObjectsWithTag("EditorOnly");
         foreach (GameObject obj in existingObjects)
         {
@@ -99,23 +99,23 @@ public static class GrasslandMapGenerator
     }
 
 /// <summary>
-    /// 지???�성 (초원) - Pure Poly Meadow ?�셋
+    /// 지형 생성 (초원) - Pure Poly Meadow 에셋
     /// </summary>
     private static void CreateGround()
     {
-        // ?�셋 로드
+        // 에셋 로드
         LoadAssets();
 
-        // Meadow ?�셋 ?�용 (초원 ?��???
+        // Meadow 에셋 사용 (초원 스타일)
         GameObject selectedGround = (Random.value > 0.5f && ground2Prefab != null) ? ground2Prefab : groundPrefab;
 
         if (selectedGround != null)
         {
-            // 부�??�브?�트 ?�성
+            // 부모 오브젝트 생성
             GameObject groundParent = new GameObject("Ground_Grassland");
             groundParent.tag = "EditorOnly";
 
-            // Meadow ?�???�기??10x10 ?�도, �??�기??맞게 배치
+            // Meadow 타일 크기는 10x10 정도, 맵 크기에 맞게 배치
             float tileSize = 10f;
             int tileCount = Mathf.CeilToInt(mapSize / tileSize);
             float offset = (tileCount * tileSize) / 2f - tileSize / 2f;
@@ -132,11 +132,11 @@ public static class GrasslandMapGenerator
                 }
             }
 
-            Debug.Log($"지???�성 ?�료: Pure Poly Meadow ({tileCount}x{tileCount} ?�??");
+            Debug.Log($"지형 생성 완료: Pure Poly Meadow ({tileCount}x{tileCount} 타일)");
         }
         else
         {
-            // ?�백: 기본 Plane
+            // 폴백: 기본 Plane
             GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground_Grassland";
             ground.transform.localScale = new Vector3(mapSize / 10f, 1, mapSize / 10f);
@@ -146,72 +146,72 @@ public static class GrasslandMapGenerator
             ground.GetComponent<Renderer>().material = grassMaterial;
 
             ground.tag = "EditorOnly";
-            Debug.Log("지???�성 ?�료: 기본 Plane (?�백)");
+            Debug.Log("지형 생성 완료: 기본 Plane (폴백)");
         }
     }
 
     /// <summary>
-    /// ?�연 ?�소 ?�성 (?�무, 바위, ?�)
+    /// 자연 요소 생성 (나무, 바위, 풀)
     /// </summary>
     private static void CreateNatureElements()
     {
-        // ?�셋 로드
+        // 에셋 로드
         LoadAssets();
 
-        // ?�무 ?�성
+        // 나무 생성
         for (int i = 0; i < treeCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateTree(pos);
         }
 
-        // 바위 ?�성
+        // 바위 생성
         for (int i = 0; i < rockCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateRock(pos);
         }
 
-        // ?� ?�러?�터 ?�성
+        // 풀 클러스터 생성
         for (int i = 0; i < grassClusterCount; i++)
         {
             Vector3 centerPos = GetRandomPosition(PLAYER_START_ZONE);
             CreateGrassCluster(centerPos);
         }
 
-        // ?�굴 ?�성
+        // 덩굴 생성
         for (int i = 0; i < bushCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateBush(pos);
         }
 
-        // �??�성
+        // 꽃 생성
         for (int i = 0; i < flowerCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateFlowers(pos);
         }
 
-        // 버섯 ?�성
+        // 버섯 생성
         for (int i = 0; i < mushroomCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateMushroom(pos);
         }
 
-        // 추�?：무직초 ?� 배치 (�??�체???�뜨리기)
+        // 추가：무직초 풀 배치 (맵 전체에 퍼뜨리기)
         for (int i = 0; i < scatteredGrassCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateScatteredGrass(pos);
         }
 
-        Debug.Log($"?�연 ?�소 ?�성 ?�료: ?�무 {treeCount}, 바위 {rockCount}, ?� ?�러?�터 {grassClusterCount}, ?�굴 {bushCount}, �?{flowerCount}, 버섯 {mushroomCount}, 개별 ?� {scatteredGrassCount}");
+        Debug.Log($"자연 요소 생성 완료: 나무 {treeCount}, 바위 {rockCount}, 풀 클러스터 {grassClusterCount}, 덩굴 {bushCount}, 꽃 {flowerCount}, 버섯 {mushroomCount}, 개별 풀 {scatteredGrassCount}");
     }
 
     /// <summary>
-    /// ?�덤 ?�치 반환
+    /// 랜덤 위치 반환
     /// </summary>
     private static Vector3 GetRandomPosition(float minDistanceFromCenter)
     {
@@ -226,7 +226,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// ?�셋 로드
+    /// 에셋 로드
     /// </summary>
     private static void LoadAssets()
     {
@@ -281,12 +281,12 @@ public static class GrasslandMapGenerator
         if (stump2Prefab == null)
             stump2Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(STUMP2_PATH);
 
-        Debug.Log($"Pure Poly ?�셋 로드 ?�료: Ground={groundPrefab != null}, Trees={treePrefab != null}, Rocks={rockPrefab != null}");
+        Debug.Log($"Pure Poly 에셋 로드 완료: Ground={groundPrefab != null}, Trees={treePrefab != null}, Rocks={rockPrefab != null}");
 #endif
     }
 
     /// <summary>
-    /// URP ?�질�?변??(?�상 ?��?)
+    /// URP 재질로 변환 (색상 유지)
     /// </summary>
     private static void ConvertToURP(GameObject obj)
     {
@@ -301,10 +301,11 @@ public static class GrasslandMapGenerator
                     var mat = materials[i];
                     if (mat != null)
                     {
-                        var originalColor = Color.white;
+                        // 원본 색상 저장
+                        Color originalColor = Color.white;
                         bool hasColor = false;
 
-                        // ?�양???�상 ?�로?�티 ?�인
+                        // 다양한 색상 프로퍼티 확인
                         if (mat.HasProperty("_BaseColor"))
                         {
                             originalColor = mat.GetColor("_BaseColor");
@@ -321,11 +322,11 @@ public static class GrasslandMapGenerator
                             hasColor = true;
                         }
 
-                        // URP Lit ?�질 ?�성
+                        // URP Lit 재질 생성
                         var newMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
                         newMat.name = mat.name + "_URP";
 
-                        // ?�상 복사 (?��??�이 ?�니�?
+                        // 색상 복사 (하얀색이 아니면)
                         if (hasColor && originalColor != Color.white && originalColor != new Color(1, 1, 1, 0))
                         {
                             newMat.color = originalColor;
@@ -340,13 +341,13 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// ?�무 ?�성
+    /// 나무 생성
     /// </summary>
     private static void CreateTree(Vector3 position)
     {
         GameObject tree;
 
-        // ?�덤?�로 ?�무 종류 ?�택 (4가지 변??
+        // 랜덤으로 나무 종류 선택 (4가지 변형)
         GameObject[] treePrefabs = { treePrefab, tree2Prefab, tree3Prefab, tree4Prefab };
         GameObject selectedTree = treePrefabs[Random.Range(0, treePrefabs.Length)];
 
@@ -358,7 +359,7 @@ public static class GrasslandMapGenerator
         }
         else
         {
-            // ?�백: 기본 Primitive
+            // 폴백: 기본 Primitive
             tree = new GameObject("Tree_" + Random.Range(1, 1000));
             GameObject trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             trunk.transform.parent = tree.transform;
@@ -376,13 +377,13 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// 바위 ?�성
+    /// 바위 생성
     /// </summary>
     private static void CreateRock(Vector3 position)
     {
         GameObject rock;
 
-        // ?�덤?�로 바위 종류 ?�택 (4가지 변??
+        // 랜덤으로 바위 종류 선택 (4가지 변형)
         GameObject[] rockPrefabs = { rockPrefab, rock2Prefab, rock3Prefab, rock4Prefab };
         GameObject selectedRock = rockPrefabs[Random.Range(0, rockPrefabs.Length)];
 
@@ -405,7 +406,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// ?�/�??�굴 ?�러?�터 ?�성
+    /// 풀/꽃/덩굴 클러스터 생성
     /// </summary>
     private static void CreateGrassCluster(Vector3 centerPos)
     {
@@ -413,14 +414,14 @@ public static class GrasslandMapGenerator
         cluster.transform.position = centerPos;
         cluster.tag = "EditorOnly";
 
-        // ??무성??초원 ?�낌 - ??많�? ?� 배치
+        // 더 무성한 초원 느낌 - 더 많은 풀 배치
         int grassCount = Random.Range(15, 25);
         for (int i = 0; i < grassCount; i++)
         {
-            // ??좁�? 범위??집중 배치
+            // 더 좁은 범위에 집중 배치
             Vector3 offset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
 
-            // 초원 ?�낌 - ?�????많이,?�他?�方???�게
+            // 초원 느낌 - 풀을 더 많이,其他地方는 적게
             float rand = Random.value;
             GameObject prefab = null;
 
@@ -428,19 +429,19 @@ public static class GrasslandMapGenerator
                 prefab = bushPrefab;
             else if (rand < 0.25f)
             {
-                // �?변???�택
+                // 꽃 변형 선택
                 GameObject[] flowerPrefabs = { flowersPrefab, flowers2Prefab, flowers3Prefab };
                 prefab = flowerPrefabs[Random.Range(0, flowerPrefabs.Length)];
             }
             else if (rand < 0.35f)
             {
-                // 버섯 변???�택
+                // 버섯 변형 선택
                 GameObject[] stumpPrefabs = { stumpPrefab, stump2Prefab };
                 prefab = stumpPrefabs[Random.Range(0, stumpPrefabs.Length)];
             }
             else
             {
-                // ?� 변???�택 (4가지 모두 ?�용)
+                // 풀 변형 선택 (4가지 모두 사용)
                 GameObject[] grassPrefabs = { grassPrefab, grass2Prefab };
                 prefab = grassPrefabs[Random.Range(0, grassPrefabs.Length)];
             }
@@ -450,7 +451,7 @@ public static class GrasslandMapGenerator
                 GameObject grass = Object.Instantiate(prefab);
                 grass.transform.parent = cluster.transform;
                 grass.transform.position = centerPos + offset + Vector3.up * 0.15f;
-                // 초원처럼 무성?�게 - ?�기 ?�간 ?�게, 밀???�게
+                // 초원처럼 무성하게 - 크기 약간 작게, 밀도 높게
                 grass.transform.localScale = Vector3.one * Random.Range(0.7f, 1.1f);
             }
             else
@@ -461,7 +462,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// ?�굴 ?�성
+    /// 덩굴 생성
     /// </summary>
     private static void CreateBush(Vector3 position)
     {
@@ -477,7 +478,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// �??�성
+    /// 꽃 생성
     /// </summary>
     private static void CreateFlowers(Vector3 position)
     {
@@ -496,7 +497,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// 버섯 ?�성
+    /// 버섯 생성
     /// </summary>
     private static void CreateMushroom(Vector3 position)
     {
@@ -515,7 +516,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// �??�체???�뜨�?개별 ?� ?�성 (무성??초원)
+    /// 맵 전체에 퍼뜨린 개별 풀 생성 (무성한 초원)
     /// </summary>
     private static void CreateScatteredGrass(Vector3 position)
     {
@@ -528,14 +529,14 @@ public static class GrasslandMapGenerator
             grass.name = "ScatteredGrass_" + Random.Range(1, 10000);
             grass.transform.position = position + Vector3.up * 0.1f;
             grass.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
-            // ?�고密密麻麻?�게
+            // 작고密密麻麻하게
             grass.transform.localScale = Vector3.one * Random.Range(0.5f, 0.9f);
             grass.tag = "EditorOnly";
         }
     }
 
     /// <summary>
-    /// 간단???� (?�백??
+    /// 간단한 풀 (폴백용)
     /// </summary>
     private static void CreateSimpleGrass(Transform parent, Vector3 position)
     {
@@ -547,7 +548,7 @@ public static class GrasslandMapGenerator
     }
 
     /// <summary>
-    /// ?�레?�어 ?�작 지???�성
+    /// 플레이어 시작 지점 생성
     /// </summary>
     private static void CreatePlayerStartPoint()
     {
@@ -565,11 +566,11 @@ public static class GrasslandMapGenerator
         marker.GetComponent<Renderer>().material = markerMat;
         marker.GetComponent<Collider>().enabled = false;
 
-        Debug.Log($"?�레?�어 ?�작 지???�성: {playerStartPosition}");
+        Debug.Log($"플레이어 시작 지점 생성: {playerStartPosition}");
     }
 
     /// <summary>
-    /// ??공룡 ?�폰 ?�치 ?�성
+    /// 적 공룡 스폰 위치 생성
     /// </summary>
     private static void CreateEnemySpawnPoints()
     {
@@ -589,7 +590,7 @@ public static class GrasslandMapGenerator
             }
         }
 
-        Debug.Log("??공룡 ?�폰 ?�치 ?�성 ?�료 (?�벨 1-20)");
+        Debug.Log("적 공룡 스폰 위치 생성 완료 (레벨 1-20)");
     }
 
     private static float GetMinDistanceForLevel(int level)

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public static class DesertMapGenerator
 {
-    // �??�기 ?�정
+    // 맵 크기 설정
     private const float MAP_SIZE = 100f;
     private const float PLAYER_START_ZONE = 25f;
     private const float SAFE_ZONE = 50f;
 
-    // Runemark Studio - Polygon Desert Pack + Tiny Teacup Studio Low Poly Desert Environment ?�셋 경로
+    // Runemark Studio - Polygon Desert Pack + Tiny Teacup Studio Low Poly Desert Environment 에셋 경로
     private const string GROUND_PATH = "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Prefabs/Ground_01.prefab";
     private const string TREE_PATH = "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Prefabs/Tree_01.prefab";
     private const string CACTUS_PATH = "Assets/Runemark Studio/Freebies/Polygon Desert Pack/Prefabs/Cactus1.prefab";
@@ -30,7 +30,7 @@ public static class DesertMapGenerator
     private const string TT_ROCK4_PATH = "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Prefabs/Rock_04.prefab";
     private const string TT_ROCK5_PATH = "Assets/Tiny Teacup Studio/Low Poly Desert Environment/Prefabs/Rock_05.prefab";
 
-    // �??�정
+    // 맵 설정
     private static float mapSize = 250f;
     private static int treeCount = 60;
     private static int rockCount = 120;
@@ -39,7 +39,7 @@ public static class DesertMapGenerator
     private static Vector3 playerStartPosition = new Vector3(0, 0.5f, 0);
     private static int[] enemyCountPerLevel = { 20, 18, 15, 12, 10, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
 
-    // ?�셋 캐시
+    // 에셋 캐시
     private static GameObject groundPrefab;
     private static GameObject treePrefab;
     private static GameObject cactusPrefab;
@@ -61,25 +61,25 @@ public static class DesertMapGenerator
     private static GameObject ttRock5Prefab;
 
     /// <summary>
-    /// ?�디??메뉴?�서 ?�출?�는 �??�성 ?�수
+    /// 에디터 메뉴에서 호출하는 맵 생성 함수
     /// </summary>
     [MenuItem("DinoGrow/Generate Desert Map")]
     public static void GenerateMap()
     {
-        // 기존 �??�리
+        // 기존 맵 정리
         ClearExistingMap();
 
-        // ??�??�성
+        // 새 맵 생성
         CreateGround();
         CreateDesertElements();
         CreatePlayerStartPoint();
         CreateEnemySpawnPoints();
 
-        Debug.Log("?�막 �??�성 ?�료!");
+        Debug.Log("사막 맵 생성 완료!");
     }
 
     /// <summary>
-    /// 기존 �??�브?�트 ??��
+    /// 기존 맵 오브젝트 삭제
     /// </summary>
     private static void ClearExistingMap()
     {
@@ -97,7 +97,7 @@ public static class DesertMapGenerator
     }
 
     /// <summary>
-    /// 지???�성 (?�막) - Desert Pack Ground ?�셋
+    /// 지형 생성 (사막) - Desert Pack Ground 에셋
     /// </summary>
     private static void CreateGround()
     {
@@ -124,11 +124,11 @@ public static class DesertMapGenerator
                 }
             }
 
-            Debug.Log($"지???�성 ?�료: Desert Ground ({tileCount}x{tileCount} ?�??");
+            Debug.Log($"지형 생성 완료: Desert Ground ({tileCount}x{tileCount} 타일)");
         }
         else
         {
-            // ?�백: 기본 Plane (?�막 ?�상)
+            // 폴백: 기본 Plane (사막 색상)
             GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground_Desert";
             ground.transform.localScale = new Vector3(mapSize / 10f, 1, mapSize / 10f);
@@ -138,64 +138,64 @@ public static class DesertMapGenerator
             ground.GetComponent<Renderer>().material = desertMaterial;
 
             ground.tag = "EditorOnly";
-            Debug.Log("지???�성 ?�료: 기본 Plane (?�막 ?�상 ?�백)");
+            Debug.Log("지형 생성 완료: 기본 Plane (사막 색상 폴백)");
         }
     }
 
     /// <summary>
-    /// ?�막 ?�소 ?�성 (?�자?? 바위, ?�인?? ?�벽)
+    /// 사막 요소 생성 (야자수, 바위, 선인장, 절벽)
     /// </summary>
     private static void CreateDesertElements()
     {
         LoadAssets();
 
-        // ?�무 (?�자?? ?�성
+        // 나무 (야자수) 생성
         for (int i = 0; i < treeCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateTree(pos);
         }
 
-        // 바위 ?�성 (?��? ?�갈 ~ 중간 ?�기 바위)
+        // 바위 생성 (작은 자갈 ~ 중간 크기 바위)
         for (int i = 0; i < rockCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateRock(pos, Random.Range(0.3f, 0.8f));
         }
 
-        // ??바위 ?�성
+        // 큰 바위 생성
         for (int i = 0; i < 40; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE + 10f);
             CreateRock(pos, Random.Range(0.8f, 1.8f));
         }
 
-        // ?�인???�성
+        // 선인장 생성
         for (int i = 0; i < cactusCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreateCactus(pos);
         }
 
-        // ?�막 ?�물 ?�성
+        // 사막 식물 생성
         for (int i = 0; i < plantCount; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE);
             CreatePlant(pos);
         }
 
-        // ?�벽 ?�??Tiny Teacup Studio 바위�?지???�테??추�?
+        // 절벽 대신 Tiny Teacup Studio 바위로 지형 디테일 추가
         for (int i = 0; i < 60; i++)
         {
             Vector3 pos = GetRandomPosition(PLAYER_START_ZONE + 15f);
             CreateTTRock(pos, Random.Range(0.8f, 2.0f));
         }
 
-        Debug.Log($"?�막 ?�소 ?�성 ?�료: ?�자??{treeCount}, ?��?바위 {rockCount}, ?�바??40, ?�인??{cactusCount}, ?�물 {plantCount}, TT바위 60");
+        Debug.Log($"사막 요소 생성 완료: 야자수 {treeCount}, 작은바위 {rockCount}, 큰바위 40, 선인장 {cactusCount}, 식물 {plantCount}, TT바위 60");
     }
 
     /// <summary>
-    /// ?�덤 ?�치 반환
+    /// 랜덤 위치 반환
     /// </summary>
     private static Vector3 GetRandomPosition(float minDistanceFromCenter)
     {
@@ -210,7 +210,7 @@ public static class DesertMapGenerator
     }
 
     /// <summary>
-    /// ?�셋 로드
+    /// 에셋 로드
     /// </summary>
     private static void LoadAssets()
     {
@@ -233,7 +233,7 @@ public static class DesertMapGenerator
         if (aloePrefab == null)
             aloePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ALOE_PATH);
 
-        // Rocks (Runemark Studio - 8�?
+        // Rocks (Runemark Studio - 8종)
         if (rockPrefab == null)
             rockPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ROCK_PATH);
         if (rock2Prefab == null)
@@ -251,7 +251,7 @@ public static class DesertMapGenerator
         if (rock8Prefab == null)
             rock8Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ROCK8_PATH);
 
-        // Tiny Teacup Studio Rocks (5�?
+        // Tiny Teacup Studio Rocks (5종)
         if (ttRockPrefab == null)
             ttRockPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TT_ROCK_PATH);
         if (ttRock2Prefab == null)
@@ -263,12 +263,12 @@ public static class DesertMapGenerator
         if (ttRock5Prefab == null)
             ttRock5Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(TT_ROCK5_PATH);
 
-        Debug.Log($"Runemark Studio + Tiny Teacup Desert ?�셋 로드 ?�료: Ground={groundPrefab != null}, Rocks={rockPrefab != null}(8�?, TTRocks={ttRockPrefab != null}(5�?, Cacti={cactusPrefab != null}(3�?Aloe)");
+        Debug.Log($"Runemark Studio + Tiny Teacup Desert 에셋 로드 완료: Ground={groundPrefab != null}, Rocks={rockPrefab != null}(8종), TTRocks={ttRockPrefab != null}(5종), Cacti={cactusPrefab != null}(3종+Aloe)");
 #endif
     }
 
     /// <summary>
-    /// ?�무 (?�자?? ?�성
+    /// 나무 (야자수) 생성
     /// </summary>
     private static void CreateTree(Vector3 position)
     {
@@ -306,7 +306,7 @@ public static class DesertMapGenerator
     }
 
     /// <summary>
-    /// 바위 ?�성
+    /// 바위 생성
     /// </summary>
     private static void CreateRock(Vector3 position, float scale)
     {
@@ -337,7 +337,7 @@ public static class DesertMapGenerator
     }
 
     /// <summary>
-    /// ?�인???�성
+    /// 선인장 생성
     /// </summary>
     private static void CreateCactus(Vector3 position)
     {
@@ -402,7 +402,7 @@ public static class DesertMapGenerator
     }
 
     /// <summary>
-    /// ?�레?�어 ?�작 지???�성
+    /// 플레이어 시작 지점 생성
     /// </summary>
     private static void CreatePlayerStartPoint()
     {
@@ -420,11 +420,11 @@ public static class DesertMapGenerator
         marker.GetComponent<Renderer>().material = markerMat;
         marker.GetComponent<Collider>().enabled = false;
 
-        Debug.Log($"?�레?�어 ?�작 지???�성: {playerStartPosition}");
+        Debug.Log($"플레이어 시작 지점 생성: {playerStartPosition}");
     }
 
     /// <summary>
-    /// ??공룡 ?�폰 ?�치 ?�성
+    /// 적 공룡 스폰 위치 생성
     /// </summary>
     private static void CreateEnemySpawnPoints()
     {
@@ -444,7 +444,7 @@ public static class DesertMapGenerator
             }
         }
 
-        Debug.Log("??공룡 ?�폰 ?�치 ?�성 ?�료 (?�벨 1-20)");
+        Debug.Log("적 공룡 스폰 위치 생성 완료 (레벨 1-20)");
     }
 
     private static float GetMinDistanceForLevel(int level)

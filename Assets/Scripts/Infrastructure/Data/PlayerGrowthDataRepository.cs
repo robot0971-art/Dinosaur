@@ -35,6 +35,20 @@ namespace DinoGrow.Infrastructure.Data
             return recordsByLevel.TryGetValue(level, out record);
         }
 
+        public Dictionary<int, int> CreateRequiredExpMap()
+        {
+            var result = new Dictionary<int, int>();
+            foreach (var pair in recordsByLevel)
+            {
+                if (pair.Value.requiredExp > 0)
+                {
+                    result[pair.Key] = pair.Value.requiredExp;
+                }
+            }
+
+            return result;
+        }
+
         public int MaxLevel => maxLevel;
     }
 }

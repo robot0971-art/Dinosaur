@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DinoGrow.Core.Growth;
+using DinoGrow.Gameplay;
 using DinoGrow.Gameplay.Animation;
 using DinoGrow.Infrastructure.DI;
 using UnityEngine;
@@ -43,6 +44,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private static Material[] prototypeMaterials;
         private static readonly List<DinoEnemy> ActiveEnemies = new();
+        private Action<DinoEnemy> eatenHandler;
         private Action<DinoEnemy> despawnHandler;
         private DeathEffectService deathEffectService;
         private PlayerProgress playerProgress;
@@ -83,8 +85,8 @@ namespace DinoGrow.Gameplay.Enemy
 
             if (mouthEffectOrigin == null)
             {
-                mouthEffectOrigin = FindChildByName(transform, "Head_end")
-                    ?? FindChildByName(transform, "Head");
+                mouthEffectOrigin = TransformSearchUtility.FindChildByName(transform, "Head_end")
+                    ?? TransformSearchUtility.FindChildByName(transform, "Head");
             }
 
             EnsureLevelText();
@@ -164,6 +166,11 @@ namespace DinoGrow.Gameplay.Enemy
             despawnHandler = handler;
         }
 
+        public void SetEatenHandler(Action<DinoEnemy> handler)
+        {
+            eatenHandler = handler;
+        }
+
         public void RefreshLevelTextColor()
         {
             ApplyLevelTextColor();
@@ -177,6 +184,7 @@ namespace DinoGrow.Gameplay.Enemy
             }
 
             isDying = true;
+            eatenHandler?.Invoke(this);
             if (deathRoutine != null)
             {
                 StopCoroutine(deathRoutine);
@@ -197,27 +205,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         public float GetContactRadius()
         {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer == null || targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                    continue;
-                }
-
-                bounds.Encapsulate(targetRenderer.bounds);
-            }
-
-            if (!hasBounds)
+            if (!RendererBoundsUtility.TryCalculateVisibleBounds(transform, out var bounds))
             {
                 return 1f;
             }
@@ -240,6 +228,8 @@ namespace DinoGrow.Gameplay.Enemy
 
         public void OnPlayerBitten()
         {
+            animatorView?.PlayAttack();
+
             if (TryGetComponent(out EnemyWanderMovement wanderMovement))
             {
                 wanderMovement.OnPlayerBitten();
@@ -360,52 +350,9 @@ namespace DinoGrow.Gameplay.Enemy
 
         private Vector3 GetDeathEffectPosition()
         {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(targetRenderer.bounds);
-                }
-            }
-
-            return hasBounds ? bounds.center : transform.position;
-        }
-
-        private static Transform FindChildByName(Transform root, string targetName)
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            if (root.name == targetName)
-            {
-                return root;
-            }
-
-            for (var i = 0; i < root.childCount; i++)
-            {
-                var result = FindChildByName(root.GetChild(i), targetName);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
+            return RendererBoundsUtility.TryCalculateVisibleBounds(transform, out var bounds)
+                ? bounds.center
+                : transform.position;
         }
 
         private void ApplyPrototypeMaterial()
@@ -487,13 +434,18 @@ namespace DinoGrow.Gameplay.Enemy
                 lowerLevelTextColor,
                 sameLevelTextColor,
                 higherLevelTextColor,
-                levelTextColor);
+                IsWhiteFallback(levelTextColor) ? sameLevelTextColor : levelTextColor);
             var playerLevel = playerProgress != null ? playerProgress.Level : 0;
             levelText.color = EnemyLevelTextColorRule.Resolve(
                 level,
                 playerLevel,
                 Application.isPlaying && usePlayerRelativeLevelTextColor,
                 palette);
+        }
+
+        private static bool IsWhiteFallback(Color color)
+        {
+            return color.r > 0.98f && color.g > 0.98f && color.b > 0.98f;
         }
 
         private void ScheduleEditorLevelTextRefresh()
@@ -535,29 +487,7 @@ namespace DinoGrow.Gameplay.Enemy
 
         private Vector3 GetLevelTextPosition()
         {
-            var renderers = GetComponentsInChildren<Renderer>();
-            var hasBounds = false;
-            var bounds = new Bounds(transform.position, Vector3.zero);
-
-            foreach (var targetRenderer in renderers)
-            {
-                if (targetRenderer.GetComponent<TextMesh>() != null)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = targetRenderer.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(targetRenderer.bounds);
-                }
-            }
-
-            if (!hasBounds)
+            if (!RendererBoundsUtility.TryCalculateVisibleBounds(transform, out var bounds))
             {
                 return transform.position + Vector3.up * levelTextHeightPadding;
             }

@@ -447,18 +447,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DinoGrow.Gameplay.Enemy.DinoEnemy
   level: 1
   usePrototypeLevelMaterial: 0
-  levelOneColor: {r: 0.25, g: 0.95, b: 0.35, a: 1}
-  levelTwoColor: {r: 0.2, g: 0.65, b: 1, a: 1}
-  levelThreeColor: {r: 1, g: 0.35, b: 0.2, a: 1}
+  levelOneColor: {r: 0, g: 0.8584906, b: 0.12057459, a: 1}
+  levelTwoColor: {r: 0, g: 0.4573622, b: 0.8113208, a: 1}
+  levelThreeColor: {r: 0.745283, g: 0.13882723, b: 0, a: 1}
   levelText: {fileID: 58198112050916828}
   levelTextHeightPadding: 0.5
-  levelTextCharacterSize: 0.12
-  levelTextFontSize: 75
+  levelTextCharacterSize: 0.3
+  levelTextFontSize: 100
   levelTextColor: {r: 1, g: 1, b: 1, a: 1}
   usePlayerRelativeLevelTextColor: 1
-  lowerLevelTextColor: {r: 0.3, g: 1, b: 0.35, a: 1}
-  sameLevelTextColor: {r: 1, g: 0.9, b: 0.25, a: 1}
-  higherLevelTextColor: {r: 1, g: 0.25, b: 0.2, a: 1}
+  lowerLevelTextColor: {r: 0, g: 0.8490566, b: 0.061663277, a: 1}
+  sameLevelTextColor: {r: 0.745283, g: 0.64773285, b: 0, a: 1}
+  higherLevelTextColor: {r: 0.7830189, g: 0.04989827, b: 0, a: 1}
+  animatorView: {fileID: 882813283665191785}
+  mouthEffectOrigin: {fileID: 6836538402734195020}
+  mouthEffectFallbackOffset: {x: 0, y: 1.05, z: 0.75}
+  spawnDeathEffect: 0
+  deathDespawnDelay: 1.2
 --- !u!114 &1825917175319001160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,8 +480,17 @@ MonoBehaviour:
   turnSpeed: 420
   directionChangeInterval: 1.6
   runAnimationSpeedThreshold: 3
+  walkAnimationReferenceSpeed: 3.5
+  runAnimationReferenceSpeed: 6
   fleeDetectDistance: 18
   fleeSpeedMultiplier: 1.65
+  chaseDetectDistance: 16
+  chaseStopDistance: 22
+  chaseSpeedMultiplier: 1.45
+  useNavMeshAgent: 0
+  navDestinationDistance: 8
+  navSampleDistance: 4
+  navVerticalSampleDistance: 80
   groundColliderRadius: 0.45
   groundColliderHeight: 1.8
   triggerWidth: 1.6
@@ -488,6 +502,7 @@ MonoBehaviour:
   groundRaycastHeight: 50
   groundRaycastDistance: 120
   groundOffset: 0
+  maxGroundSnapStep: 0.2
   ignoreOtherEnemies: 1
   animatorView: {fileID: 882813283665191785}
   areaCenter: {x: 0, y: 0, z: 0}
@@ -535,7 +550,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2641706263895711014}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: e44fffb1356ac4545833cd9255b72b49, type: 3}
   m_Controller: {fileID: 9100000, guid: 3600e04bb02cc2948a0847b1bee931ec, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -997,15 +1012,15 @@ TextMesh:
   m_GameObject: {fileID: 5085746747163196920}
   m_Text: Lv. 1
   m_OffsetZ: 0
-  m_CharacterSize: 0.12
+  m_CharacterSize: 0.3
   m_LineSpacing: 1
   m_Anchor: 4
   m_Alignment: 1
   m_TabSize: 4
-  m_FontSize: 75
+  m_FontSize: 100
   m_FontStyle: 0
   m_RichText: 1
-  m_Font: {fileID: 0}
+  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
