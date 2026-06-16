@@ -46,3 +46,9 @@ Desktop.ini
 *.cachefile
 .vsconfig
 nul
+
+# Project documents
+*.hwp
+
+# Unity auto-generated settings
+ProjectSettings/Packages/com.unity.probuilder/Settings.json
